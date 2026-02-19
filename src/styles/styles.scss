@@ -1,0 +1,303 @@
+// ─── Estilos Globales — ONDRA Monitor ────────────────────────────────────────
+// Dark theme industrial/utilitario con toques cyan.
+// Referencia visual: UniFi Network — denso, ordenado, funcional.
+
+@use '@angular/material' as mat;
+
+// ─── Tema Angular Material (dark) ────────────────────────────────────────────
+@include mat.core();
+
+$ondra-primary:   mat.m2-define-palette(mat.$m2-cyan-palette, 400, 200, 700);
+$ondra-accent:    mat.m2-define-palette(mat.$m2-blue-grey-palette, 400);
+$ondra-warn:      mat.m2-define-palette(mat.$m2-red-palette, 400);
+
+$ondra-theme: mat.m2-define-dark-theme((
+  color: (
+    primary: $ondra-primary,
+    accent:  $ondra-accent,
+    warn:    $ondra-warn,
+  ),
+  typography: mat.m2-define-typography-config(
+    $font-family: "'DM Sans', sans-serif",
+  ),
+  density: -1,
+));
+
+@include mat.all-component-themes($ondra-theme);
+
+// ─── Variables CSS ────────────────────────────────────────────────────────────
+
+:root {
+  // Paleta de fondos
+  --bg-base:      #0a0d12;
+  --bg-surface:   #111418;
+  --bg-elevated:  #181d24;
+  --bg-overlay:   #1e242e;
+  --bg-hover:     #252c38;
+
+  // Primario y acento
+  --color-primary:     #4dd0e1;
+  --color-primary-dim: rgba(77, 208, 225, 0.12);
+  --color-accent:      #78909c;
+
+  // Estados semánticos
+  --status-ok:       #43d98a;
+  --status-warning:  #ffb300;
+  --status-error:    #f44336;
+  --status-unusual:  #ab47bc;
+  --status-paused:   #546e7a;
+  --status-unknown:  #37474f;
+
+  --status-ok-dim:      rgba(67, 217, 138, 0.12);
+  --status-warning-dim: rgba(255, 179, 0, 0.12);
+  --status-error-dim:   rgba(244, 67, 54, 0.12);
+  --status-unusual-dim: rgba(171, 71, 188, 0.12);
+  --status-paused-dim:  rgba(84, 110, 122, 0.12);
+
+  // Texto
+  --text-primary:   #e8eaf0;
+  --text-secondary: #8896a4;
+  --text-muted:     #546272;
+  --text-code:      #4dd0e1;
+
+  // Bordes
+  --border-subtle:  rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.10);
+  --border-strong:  rgba(255, 255, 255, 0.18);
+
+  // Sombras
+  --shadow-card:    0 1px 3px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-modal:   0 8px 40px rgba(0,0,0,0.7);
+
+  // Tipografía
+  --font-body:  'DM Sans', sans-serif;
+  --font-mono:  'Space Mono', monospace;
+
+  // Espaciado base
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+
+  // Transiciones
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// ─── Reset y base ─────────────────────────────────────────────────────────────
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ─── Scrollbars personalizadas ────────────────────────────────────────────────
+
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+// ─── Tipografía ───────────────────────────────────────────────────────────────
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-body);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  letter-spacing: -0.02em;
+}
+
+// ─── Cards ────────────────────────────────────────────────────────────────────
+
+.card {
+  background:    var(--bg-surface);
+  border:        1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow:    var(--shadow-card);
+  overflow:      hidden;
+
+  &__header {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         14px 16px;
+    border-bottom:   1px solid var(--border-subtle);
+  }
+
+  &__title {
+    font-size:   12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color:       var(--text-secondary);
+  }
+
+  &__body {
+    padding: 16px;
+  }
+}
+
+// ─── Sobreescrituras Angular Material ─────────────────────────────────────────
+
+.mat-mdc-form-field {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--border-default) !important;
+  }
+
+  &:hover .mdc-notched-outline__leading,
+  &:hover .mdc-notched-outline__notch,
+  &:hover .mdc-notched-outline__trailing {
+    border-color: var(--border-strong) !important;
+  }
+}
+
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg) !important;
+}
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #2a2a2a;
+  --mdc-snackbar-supporting-text-color: rgba(255, 255, 255, 0.87);
+  --mat-snack-bar-button-color: var(--color-primary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px !important;
+}
+
+.mat-mdc-snack-bar-container.snack-error {
+  --mdc-snackbar-container-color: #3a1a1a;
+  --mdc-snackbar-supporting-text-color: #ef5350;
+  border-color: rgba(239, 83, 80, 0.3);
+}
+
+.mat-mdc-snack-bar-container.snack-success {
+  --mdc-snackbar-container-color: #1a2e1a;
+  --mdc-snackbar-supporting-text-color: #66bb6a;
+  border-color: rgba(102, 187, 106, 0.3);
+}
+
+// Tablas
+.mat-mdc-table {
+  background: transparent !important;
+
+  .mat-mdc-row:hover .mat-mdc-cell {
+    background: var(--bg-hover) !important;
+  }
+
+  .mat-mdc-header-cell {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom-color: var(--border-subtle) !important;
+  }
+
+  .mat-mdc-cell {
+    border-bottom-color: var(--border-subtle) !important;
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+}
+
+// Menú lateral
+.mat-mdc-nav-list .mat-mdc-list-item {
+  border-radius: var(--radius-md) !important;
+  margin-bottom: 2px;
+
+  &.active {
+    background: var(--color-primary-dim) !important;
+    color: var(--color-primary) !important;
+  }
+}
+
+// Chips / badges de estado
+.status-chip {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            5px;
+  padding:        3px 9px;
+  border-radius:  100px;
+  font-size:      11px;
+  font-weight:    600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--ok      { background: var(--status-ok-dim);      color: var(--status-ok);      .dot { background: var(--status-ok);      } }
+  &--warning { background: var(--status-warning-dim); color: var(--status-warning); .dot { background: var(--status-warning); } }
+  &--error   { background: var(--status-error-dim);   color: var(--status-error);   .dot { background: var(--status-error);   } }
+  &--unusual { background: var(--status-unusual-dim); color: var(--status-unusual); .dot { background: var(--status-unusual); } }
+  &--paused  { background: var(--status-paused-dim);  color: var(--status-paused);  .dot { background: var(--status-paused);  } }
+  &--unknown { background: transparent; color: var(--text-muted); border: 1px solid var(--border-subtle); .dot { background: var(--text-muted); } }
+}
+
+// ─── Utilidades ───────────────────────────────────────────────────────────────
+
+.flex         { display: flex; }
+.flex-col     { display: flex; flex-direction: column; }
+.flex-center  { display: flex; align-items: center; justify-content: center; }
+.gap-sm       { gap: 8px; }
+.gap-md       { gap: 16px; }
+.gap-lg       { gap: 24px; }
+.text-muted   { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+.text-primary-color { color: var(--color-primary); }
+.w-full       { width: 100%; }
+.overflow-hidden { overflow: hidden; }
+
+// ─── Animaciones de entrada ───────────────────────────────────────────────────
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.fade-in-up {
+  animation: fadeInUp 280ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-elevated) 25%, var(--bg-hover) 50%, var(--bg-elevated) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

@@ -1,0 +1,173 @@
+<div class="servers-page fade-in-up" *ngIf="!loading(); else loadingTpl">
+
+  <app-page-header title="Servidores VMware" icon="dns" subtitle="Estado en tiempo real de la infraestructura virtual">
+    <app-status-badge [status]="data()?.hosts?.[0]?.status || 'unknown'"></app-status-badge>
+  </app-page-header>
+
+  <div class="error-banner" *ngIf="error()">
+    <mat-icon>error_outline</mat-icon> {{ error() }}
+  </div>
+
+  <ng-container *ngIf="data() as d">
+
+    <!-- SUMMARY STRIP -->
+    <div class="summary-strip">
+      <div class="summary-card">
+        <div class="summary-icon si-ok"><mat-icon>check_circle</mat-icon></div>
+        <div>
+          <div class="summary-label">Sensores OK</div>
+          <div class="summary-value sv-ok">{{ okCount(d) }}</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon si-warn"><mat-icon>warning</mat-icon></div>
+        <div>
+          <div class="summary-label">Warning</div>
+          <div class="summary-value sv-warn">{{ warnCount(d) }}</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon si-error"><mat-icon>error</mat-icon></div>
+        <div>
+          <div class="summary-label">Down</div>
+          <div class="summary-value sv-error">{{ errorCount(d) }}</div>
+        </div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon si-unusual"><mat-icon>info</mat-icon></div>
+        <div>
+          <div class="summary-label">Inusuales</div>
+          <div class="summary-value sv-unusual">{{ unusualCount(d) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOSTS -->
+    <div class="section-label">Hipervisores VMware</div>
+
+    <div class="hosts-grid">
+      <div class="card host-card" *ngFor="let host of d.hosts">
+
+        <div class="card__header">
+          <div class="host-icon"><mat-icon>dns</mat-icon></div>
+          <div class="host-header-text">
+            <div class="card__title">{{ host.name }}</div>
+            <div class="card__subtitle">Uptime: {{ host.uptime }}</div>
+          </div>
+          <app-status-badge [status]="host.status"></app-status-badge>
+        </div>
+
+        <div class="card__body">
+
+          <!-- Donut + Gauges + VMs -->
+<div class="host-metrics">
+
+  <!-- Fila superior: donut + gauges -->
+  <div class="host-top-row">
+    <div class="donut-wrap">
+      <svg width="90" height="90" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--bg-elevated)" stroke-width="12"/>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--status-ok)" stroke-width="12"
+          [attr.stroke-dasharray]="donutArc(hostSensorOk(host), hostSensorTotal(host))"
+          [attr.stroke-dashoffset]="donutOffset(0, hostSensorTotal(host))"
+          transform="rotate(-90 50 50)"/>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--status-warning)" stroke-width="12"
+          [attr.stroke-dasharray]="donutArc(hostSensorWarn(host), hostSensorTotal(host))"
+          [attr.stroke-dashoffset]="donutOffset(hostSensorOk(host), hostSensorTotal(host))"
+          transform="rotate(-90 50 50)"/>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--status-error)" stroke-width="12"
+          [attr.stroke-dasharray]="donutArc(hostSensorError(host), hostSensorTotal(host))"
+          [attr.stroke-dashoffset]="donutOffset(hostSensorOk(host) + hostSensorWarn(host), hostSensorTotal(host))"
+          transform="rotate(-90 50 50)"/>
+        <text x="50" y="46" text-anchor="middle" font-size="20" font-weight="300" fill="var(--text-primary)">{{ hostSensorTotal(host) }}</text>
+        <text x="50" y="58" text-anchor="middle" font-size="8" fill="var(--text-muted)">sensores</text>
+      </svg>
+      <div class="donut-legend">
+        <div class="legend-item"><span class="legend-dot ok"></span>OK<span class="legend-num sv-ok">{{ hostSensorOk(host) }}</span></div>
+        <div class="legend-item"><span class="legend-dot warn"></span>Warn<span class="legend-num sv-warn">{{ hostSensorWarn(host) }}</span></div>
+        <div class="legend-item"><span class="legend-dot error"></span>Down<span class="legend-num sv-error">{{ hostSensorError(host) }}</span></div>
+        <div class="legend-item"><span class="legend-dot unusual"></span>Inusual<span class="legend-num sv-unusual">{{ hostSensorUnusual(host) }}</span></div>
+      </div>
+    </div>
+
+    <!-- Gauges CPU + RAM -->
+    <div class="host-gauge-card">
+      <div class="host-gauge-label">CPU HOST</div>
+      <app-gauge label="CPU" [value]="host.cpu.pct" [status]="host.cpu.status"></app-gauge>
+      <div class="host-gauge-val mono" [class]="'sv-' + host.cpu.status">{{ host.cpu.value }}</div>
+    </div>
+    <div class="host-gauge-card">
+      <div class="host-gauge-label">MEMORIA HOST</div>
+      <app-gauge label="Mem" [value]="host.memory.pct" [status]="host.memory.status"></app-gauge>
+      <div class="host-gauge-val mono" [class]="'sv-' + host.memory.status">{{ host.memory.value }}</div>
+    </div>
+  </div>
+
+  <!-- VMs -->
+  <div>
+    <div class="subsection-title">Máquinas Virtuales ({{ host.vms.length }})</div>
+    <div class="vm-chips">
+      <div *ngFor="let vm of host.vms" class="vm-chip vm-chip--{{ vm.status }}"
+        [matTooltip]="vm.cpuPct > 0 ? 'CPU: ' + vm.cpuPct + '%' : vm.name">
+        <mat-icon>{{ vmIcon(vm.status) }}</mat-icon>
+        <span>{{ vm.name | slice:0:14 }}</span>
+        <span class="vm-cpu mono" *ngIf="vm.cpuPct > 0">{{ vm.cpuPct | number:'1.0-1' }}%</span>
+      </div>
+      <div *ngIf="host.vms.length === 0" class="empty-state">
+        <mat-icon>info</mat-icon> Sin VMs detectadas
+      </div>
+    </div>
+  </div>
+
+</div>
+
+          <!-- Datastores -->
+          <div *ngIf="host.datastores.length > 0">
+            <div class="subsection-title">Almacenamiento</div>
+            <div class="datastore-list">
+              <div *ngFor="let ds of host.datastores" class="datastore-item">
+                <div class="datastore-item__header">
+                  <span class="datastore-item__name">
+                    <mat-icon>storage</mat-icon>{{ ds.name }}
+                  </span>
+                  <span class="mono datastore-item__pct datastore-item__pct--{{ ds.status }}">
+                    {{ ds.freePct | number:'1.0-1' }}% libre
+                  </span>
+                </div>
+                <mat-progress-bar mode="determinate" [value]="ds.usedPct" [color]="datastoreBarColor(ds.status)" class="datastore-item__bar"></mat-progress-bar>
+                <div class="datastore-meta">
+                  <span>Usado: {{ ds.usedPct | number:'1.0-1' }}%</span>
+                  <span [class]="'sv-' + ds.status">{{ ds.status === 'ok' ? '✔ OK' : ds.status === 'warning' ? '⚠ Revisar' : '✘ Crítico' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alertas -->
+          <div>
+            <div class="subsection-title">Alertas activas</div>
+            <div *ngIf="host.alerts.length === 0" class="no-alerts">
+              <mat-icon>check_circle</mat-icon>
+              Sin alertas activas
+            </div>
+            <app-alert-list *ngIf="host.alerts.length > 0" [alerts]="host.alerts"></app-alert-list>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="d.hosts.length === 0" class="empty-state">
+      <mat-icon>info</mat-icon> No se detectaron hipervisores
+    </div>
+
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading-state">
+    <div class="skeleton" style="height:32px;width:200px;margin-bottom:24px;"></div>
+    <div class="skeleton" style="height:80px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:340px;"></div>
+  </div>
+</ng-template>

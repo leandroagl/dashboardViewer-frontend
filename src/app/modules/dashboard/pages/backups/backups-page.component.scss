@@ -1,0 +1,45 @@
+.backups-page { display: flex; flex-direction: column; gap: 16px; }
+
+.backups-top {
+  display: flex;
+  gap:     16px;
+  flex-wrap: wrap;
+}
+
+.jobs-table {
+  &__header {
+    display:     grid;
+    grid-template-columns: 2fr 3fr 1fr 100px;
+    gap:         12px;
+    padding:     6px 8px 10px;
+    font-size:   10px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color:       var(--text-muted);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  &__row {
+    display:     grid;
+    grid-template-columns: 2fr 3fr 1fr 100px;
+    gap:         12px;
+    align-items: center;
+    padding:     10px 8px;
+    border-bottom: 1px solid var(--border-subtle);
+    transition:  background var(--transition);
+    &:last-child { border-bottom: none; }
+    &:hover      { background: var(--bg-hover); }
+  }
+
+  &__name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  &__msg  { font-size: 12px; }
+}
+
+.empty-state {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-muted); font-size: 13px;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+.loading-state { padding: 8px; }

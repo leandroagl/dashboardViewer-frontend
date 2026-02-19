@@ -1,0 +1,42 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__brand">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <div>
+        <div class="admin-sidebar__brand-name">Administración</div>
+        <div class="admin-sidebar__brand-sub">ONDRA Monitor</div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <nav class="admin-sidebar__nav">
+      <a routerLink="clients"  routerLinkActive="active" class="admin-sidebar__item">
+        <mat-icon>business</mat-icon><span>Clientes</span>
+      </a>
+      <a routerLink="users"    routerLinkActive="active" class="admin-sidebar__item">
+        <mat-icon>group</mat-icon><span>Usuarios</span>
+      </a>
+      <a routerLink="logs"     routerLinkActive="active" class="admin-sidebar__item">
+        <mat-icon>history</mat-icon><span>Logs</span>
+      </a>
+    </nav>
+
+    <div class="admin-sidebar__spacer"></div>
+
+    <mat-divider></mat-divider>
+
+    <div class="admin-sidebar__footer">
+      <a *ngIf="clienteSlug()" [routerLink]="'/' + clienteSlug() + '/dashboards'" class="admin-sidebar__item">
+        <mat-icon>dashboard</mat-icon><span>Ver dashboards</span>
+      </a>
+      <button class="admin-sidebar__item" (click)="logout()">
+        <mat-icon>logout</mat-icon><span>Salir</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

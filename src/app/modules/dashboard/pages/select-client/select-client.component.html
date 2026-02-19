@@ -1,0 +1,38 @@
+<div class="select-client-page fade-in-up">
+  <app-page-header title="Seleccionar cliente" icon="business" subtitle="Elegí qué cliente visualizar">
+  </app-page-header>
+
+  <div class="client-grid" *ngIf="!loading(); else loadingTpl">
+    <button
+      *ngFor="let client of clients()"
+      class="client-card"
+      [class.client-card--inactive]="!client.activo"
+      (click)="select(client)"
+      [disabled]="!client.activo"
+    >
+      <div class="client-card__badge" [style.background-color]="client.color_marca || 'var(--color-primary-dim)'">
+        {{ client.nombre.charAt(0) | uppercase }}
+      </div>
+      <div class="client-card__info">
+        <div class="client-card__name">{{ client.nombre }}</div>
+        <div class="client-card__slug mono">{{ client.slug }}</div>
+      </div>
+      <div class="client-card__meta">
+        <span class="text-muted" style="font-size:11px;">{{ client.total_usuarios }} usuarios</span>
+        <app-status-badge [status]="client.activo ? 'ok' : 'paused'" [label]="client.activo ? 'Activo' : 'Inactivo'"></app-status-badge>
+      </div>
+      <mat-icon class="client-card__arrow">arrow_forward_ios</mat-icon>
+    </button>
+
+    <div *ngIf="clients().length === 0" class="empty-state">
+      <mat-icon>business_center</mat-icon>
+      <span>No hay clientes configurados</span>
+    </div>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="client-grid">
+      <div *ngFor="let i of [1,2,3]" class="skeleton" style="height: 80px; border-radius: 12px;"></div>
+    </div>
+  </ng-template>
+</div>

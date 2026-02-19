@@ -1,0 +1,85 @@
+<div class="users-page fade-in-up">
+
+  <app-page-header title="Usuarios" icon="group" [subtitle]="users().length + ' usuarios registrados'">
+    <button mat-stroked-button (click)="openNewUserDialog()">
+  <mat-icon>person_add</mat-icon> Nuevo usuario
+</button>
+  </app-page-header>
+
+  <div class="card">
+    <mat-progress-bar *ngIf="loading()" mode="indeterminate"></mat-progress-bar>
+
+    <table mat-table [dataSource]="users()" class="w-full">
+
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Usuario</th>
+        <td mat-cell *matCellDef="let u">
+          <div>
+            <div style="font-weight: 500;">{{ u.nombre }}</div>
+            <div class="text-muted" style="font-size: 11px;">{{ u.email }}</div>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rol">
+        <th mat-header-cell *matHeaderCellDef>Rol</th>
+        <td mat-cell *matCellDef="let u">
+          <span class="rol-badge rol-badge--{{ u.rol }}">{{ getRolLabel(u.rol) }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="cliente">
+        <th mat-header-cell *matHeaderCellDef>Cliente</th>
+        <td mat-cell *matCellDef="let u">
+          <span class="text-secondary" style="font-size: 13px;">{{ u.cliente_nombre || '—' }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ultimo_acceso">
+        <th mat-header-cell *matHeaderCellDef>Último acceso</th>
+        <td mat-cell *matCellDef="let u">
+          <span class="text-secondary" style="font-size: 12px;">
+            {{ u.ultimo_acceso ? (u.ultimo_acceso | date:'dd/MM/yy HH:mm') : 'Nunca' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="activo">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let u">
+          <app-status-badge [status]="u.activo ? 'ok' : 'paused'" [label]="u.activo ? 'Activo' : 'Inactivo'"></app-status-badge>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let u">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="toggleStatus(u)">
+              <mat-icon>{{ u.activo ? 'block' : 'check_circle' }}</mat-icon>
+              {{ u.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+            <button mat-menu-item (click)="resetPassword(u)">
+              <mat-icon>key</mat-icon> Resetear contraseña
+            </button>
+            <button *ngIf="u.es_kiosk" mat-menu-item (click)="revokeKiosk(u)">
+              <mat-icon>tv_off</mat-icon> Revocar sesión kiosk
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedCols"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedCols;"></tr>
+    </table>
+
+    <div *ngIf="!loading() && users().length === 0" class="empty-table-state">
+      <mat-icon>person_off</mat-icon>
+      <span>No hay usuarios registrados</span>
+    </div>
+  </div>
+
+</div>

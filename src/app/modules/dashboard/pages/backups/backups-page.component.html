@@ -1,0 +1,56 @@
+<div class="backups-page fade-in-up" *ngIf="!loading(); else loadingTpl">
+
+  <app-page-header title="Backups Veeam" icon="backup" subtitle="Estado de los jobs de respaldo">
+    <app-status-badge [status]="rateStatus(data()?.successRate7d || 0)"></app-status-badge>
+  </app-page-header>
+
+  <ng-container *ngIf="data() as d">
+
+    <div class="backups-top">
+      <app-kpi-card label="Tasa de éxito 7 días" [value]="d.successRate7d + '%'" [status]="rateStatus(d.successRate7d)" sublabel="últimos 7 días"></app-kpi-card>
+      <app-kpi-card label="Jobs configurados"    [value]="d.jobs.length"         status="ok"                             sublabel="total de jobs"></app-kpi-card>
+      <app-kpi-card label="Jobs con error"       [value]="jobsErrorCount(d)"     [status]="jobsErrorStatus(d)"           sublabel="último resultado"></app-kpi-card>
+    </div>
+
+    <div class="card">
+      <div class="card__header">
+        <span class="card__title">Jobs de backup</span>
+      </div>
+      <div class="card__body">
+        <div class="jobs-table">
+          <div class="jobs-table__header">
+            <span>Job</span>
+            <span>Último resultado</span>
+            <span>Valor</span>
+            <span>Estado</span>
+          </div>
+          <div *ngFor="let job of d.jobs" class="jobs-table__row">
+            <span class="jobs-table__name">{{ job.name }}</span>
+            <span class="jobs-table__msg text-secondary">{{ job.lastMessage | slice:0:60 }}</span>
+            <span class="mono" style="font-size:12px;">{{ job.lastValue }}</span>
+            <app-status-badge [status]="job.lastStatus"></app-status-badge>
+          </div>
+          <div *ngIf="d.jobs.length === 0" class="empty-state" style="padding: 16px;">
+            <mat-icon>info</mat-icon> Sin jobs configurados
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__header"><span class="card__title">Alertas activas</span></div>
+      <div class="card__body">
+        <app-alert-list [alerts]="d.alerts"></app-alert-list>
+      </div>
+    </div>
+
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading-state">
+    <div class="skeleton" style="height: 32px; width: 200px; margin-bottom: 24px;"></div>
+    <div class="skeleton" style="height: 120px; margin-bottom: 16px;"></div>
+    <div class="skeleton" style="height: 280px;"></div>
+  </div>
+</ng-template>

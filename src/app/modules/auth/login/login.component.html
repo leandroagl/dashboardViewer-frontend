@@ -1,0 +1,64 @@
+<div class="login-page">
+  <div class="login-page__bg">
+    <div class="login-page__grid"></div>
+    <div class="login-page__glow"></div>
+  </div>
+
+  <div class="login-card fade-in-up">
+    <div class="login-card__brand">
+      <div class="login-card__logo">
+        <mat-icon>monitoring</mat-icon>
+      </div>
+      <div>
+        <div class="login-card__brand-name">ONDRA</div>
+        <div class="login-card__brand-sub">Monitor de Infraestructura</div>
+      </div>
+    </div>
+
+    <h1 class="login-card__title">Iniciar sesión</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="login-card__form">
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" />
+        <mat-icon matSuffix>alternate_email</mat-icon>
+        <mat-error *ngIf="form.get('email')?.hasError('required')">Email requerido</mat-error>
+        <mat-error *ngIf="form.get('email')?.hasError('email')">Email inválido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Contraseña</mat-label>
+        <input matInput [type]="showPwd() ? 'text' : 'password'" formControlName="password" autocomplete="current-password" />
+        <button mat-icon-button matSuffix type="button" (click)="showPwd.set(!showPwd())" tabindex="-1">
+          <mat-icon>{{ showPwd() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('password')?.hasError('required')">Contraseña requerida</mat-error>
+      </mat-form-field>
+
+      <!-- Olvidé mi contraseña -->
+      <div class="login-card__forgot">
+        <button type="button" mat-button class="login-card__forgot-btn" (click)="showForgotMsg.set(true)">
+          ¿Olvidaste tu contraseña?
+        </button>
+      </div>
+
+      <div class="login-card__forgot-msg" *ngIf="showForgotMsg()">
+        <mat-icon>info_outline</mat-icon>
+        Contactá al administrador del sistema para restablecer tu contraseña.
+      </div>
+
+      <div class="login-card__error" *ngIf="error()">
+        <mat-icon>error_outline</mat-icon>
+        {{ error() }}
+      </div>
+
+      <button mat-flat-button type="submit" class="login-card__submit" [disabled]="form.invalid || loading()">
+        <mat-spinner *ngIf="loading()" diameter="18" class="inline-spinner"></mat-spinner>
+        <span *ngIf="!loading()">Ingresar</span>
+        <span *ngIf="loading()">Verificando...</span>
+      </button>
+
+    </form>
+  </div>
+</div>

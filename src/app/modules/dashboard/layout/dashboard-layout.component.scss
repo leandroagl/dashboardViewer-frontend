@@ -1,0 +1,187 @@
+// ─── Layout fullscreen ────────────────────────────────────────────────────────
+
+.dash-shell {
+  position:   relative;
+  width:      100vw;
+  height:     100vh;
+  overflow:   hidden;
+  background: var(--bg-base);
+}
+
+// ─── Contenido ocupa todo ─────────────────────────────────────────────────────
+
+.dash-content {
+  width:      100%;
+  height:     100vh;
+  overflow-y: auto;
+  padding:    64px 24px 80px; // espacio para topbar + bottombar
+}
+
+// ─── Capa de controles (fade in/out) ──────────────────────────────────────────
+
+.controls-layer {
+  transition: opacity 500ms ease, transform 500ms ease;
+  opacity:    1;
+}
+
+.dash-shell.controls-hidden .controls-layer {
+  opacity:        0;
+  pointer-events: none;
+}
+
+// ─── Barra superior ───────────────────────────────────────────────────────────
+
+.dash-topbar {
+  position:        fixed;
+  top:             0;
+  left:            0;
+  right:           0;
+  height:          52px;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 16px;
+  background:      linear-gradient(to bottom, rgba(10,13,18,0.85) 0%, transparent 100%);
+  backdrop-filter: blur(0px);
+  z-index:         100;
+
+  &__brand {
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+    font-size:   13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color:       rgba(255,255,255,0.6);
+
+    mat-icon { color: var(--color-primary); font-size: 18px; width: 18px; height: 18px; }
+  }
+
+  &__actions {
+    display:     flex;
+    align-items: center;
+    gap:         4px;
+
+    button, a {
+      color:      rgba(255,255,255,0.5) !important;
+      transition: color var(--transition) !important;
+      &:hover { color: rgba(255,255,255,0.9) !important; }
+    }
+  }
+}
+
+// ─── Dots de navegación ───────────────────────────────────────────────────────
+
+.dash-dots {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+}
+
+.dash-dot {
+  width:         8px;
+  height:        8px;
+  border-radius: 50%;
+  background:    rgba(255,255,255,0.25);
+  border:        none;
+  cursor:        pointer;
+  padding:       0;
+  transition:    all 300ms ease;
+
+  &:hover          { background: rgba(255,255,255,0.5); transform: scale(1.3); }
+  &--active        { background: var(--color-primary); transform: scale(1.2); }
+}
+
+// ─── Botones de flecha laterales ──────────────────────────────────────────────
+
+.dash-nav-btn {
+  position:        fixed;
+  top:             50%;
+  transform:       translateY(-50%);
+  width:           44px;
+  height:          44px;
+  border-radius:   50%;
+  border:          1px solid rgba(255,255,255,0.12);
+  background:      rgba(10,13,18,0.5);
+  backdrop-filter: blur(8px);
+  color:           rgba(255,255,255,0.6);
+  cursor:          pointer;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  z-index:         100;
+  transition:      background var(--transition), color var(--transition), transform 500ms ease, opacity 500ms ease;
+
+  mat-icon { font-size: 22px; width: 22px; height: 22px; }
+
+  &:hover {
+    background: rgba(77,208,225,0.15);
+    color:      var(--color-primary);
+  }
+
+  &--left  { left:  16px; }
+  &--right { right: 16px; }
+}
+
+// ─── Barra inferior ───────────────────────────────────────────────────────────
+
+.dash-bottombar {
+  position:        fixed;
+  bottom:          0;
+  left:            0;
+  right:           0;
+  height:          56px;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 16px;
+  background:      linear-gradient(to top, rgba(10,13,18,0.85) 0%, transparent 100%);
+  z-index:         100;
+
+  &__left, &__right, &__center {
+    display:     flex;
+    align-items: center;
+    gap:         4px;
+    flex:        1;
+  }
+
+  &__center { justify-content: center; }
+  &__right  { justify-content: flex-end; }
+
+  button {
+    color:      rgba(255,255,255,0.5) !important;
+    transition: color var(--transition) !important;
+    &:hover { color: rgba(255,255,255,0.9) !important; }
+  }
+}
+
+.dash-current-label {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  font-size:   12px;
+  font-weight: 500;
+  color:       rgba(255,255,255,0.5);
+  letter-spacing: 0.04em;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; color: var(--color-primary); }
+}
+
+.dash-progress {
+  font-size:   11px;
+  font-family: var(--font-mono);
+  color:       rgba(255,255,255,0.3);
+  margin-left: 8px;
+}
+
+// ─── Loading ──────────────────────────────────────────────────────────────────
+
+.dash-loading {
+  position:        fixed;
+  inset:           0;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      var(--bg-base);
+  z-index:         200;
+}

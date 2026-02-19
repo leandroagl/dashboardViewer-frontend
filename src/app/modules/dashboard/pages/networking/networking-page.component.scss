@@ -1,0 +1,31 @@
+.networking-page { display: flex; flex-direction: column; gap: 16px; }
+
+.net-kpis { display: flex; gap: 16px; flex-wrap: wrap; }
+
+.device-header {
+  display: flex; align-items: center; gap: 10px;
+  &__icon  { color: var(--color-primary); font-size: 20px; width: 20px; height: 20px; }
+  &__name  { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+}
+
+.sensor-grid { display: flex; flex-direction: column; gap: 0; }
+
+.sensor-row {
+  display:     grid;
+  grid-template-columns: 2fr 1fr 110px;
+  align-items: center;
+  gap:         12px;
+  padding:     8px 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  &:last-child { border-bottom: none; }
+  &:hover      { background: var(--bg-hover); }
+
+  &__name  { font-size: 13px; color: var(--text-secondary); }
+  &__value { font-size: 12px; color: var(--text-primary); }
+}
+
+.empty-state {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-muted); font-size: 13px;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}

@@ -1,0 +1,56 @@
+<div class="networking-page fade-in-up" *ngIf="!loading(); else loadingTpl">
+
+  <app-page-header title="Networking" icon="router" subtitle="Estado de equipos de red y conectividad">
+    <app-status-badge [status]="data() ? alertsStatus(data()!) : 'unknown'"></app-status-badge>
+  </app-page-header>
+
+  <ng-container *ngIf="data() as d">
+
+    <div class="net-kpis">
+      <app-kpi-card label="Dispositivos" [value]="d.devices.length"    status="ok"                     sublabel="monitoreados"></app-kpi-card>
+      <app-kpi-card label="Con errores"  [value]="devicesErrorCount(d)" [status]="devicesErrorStatus(d)" sublabel="dispositivos"></app-kpi-card>
+      <app-kpi-card label="Alertas"      [value]="d.alerts.length"      [status]="alertsStatus(d)"       sublabel="activas"></app-kpi-card>
+    </div>
+
+    <div class="card" *ngFor="let device of d.devices">
+      <div class="card__header">
+        <div class="device-header">
+          <mat-icon class="device-header__icon">router</mat-icon>
+          <span class="device-header__name">{{ device.name }}</span>
+        </div>
+        <app-status-badge [status]="device.status"></app-status-badge>
+      </div>
+      <div class="card__body">
+        <div class="sensor-grid">
+          <div *ngFor="let sensor of device.sensors" class="sensor-row">
+            <span class="sensor-row__name">{{ sensor.name }}</span>
+            <span class="mono sensor-row__value">{{ sensor.value }}</span>
+            <app-status-badge [status]="sensor.status"></app-status-badge>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" *ngIf="d.devices.length === 0">
+      <div class="card__body empty-state">
+        <mat-icon>info</mat-icon> Sin dispositivos de red detectados
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__header"><span class="card__title">Alertas activas</span></div>
+      <div class="card__body">
+        <app-alert-list [alerts]="d.alerts"></app-alert-list>
+      </div>
+    </div>
+
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <div style="padding: 8px;">
+    <div class="skeleton" style="height: 32px; width: 200px; margin-bottom: 24px;"></div>
+    <div class="skeleton" style="height: 180px; margin-bottom: 16px;"></div>
+    <div class="skeleton" style="height: 180px;"></div>
+  </div>
+</ng-template>

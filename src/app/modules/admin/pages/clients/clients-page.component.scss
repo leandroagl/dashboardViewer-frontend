@@ -1,0 +1,17 @@
+.clients-page { display: flex; flex-direction: column; gap: 16px; }
+
+.client-name-cell {
+  display: flex; align-items: center; gap: 10px;
+  &__badge {
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: var(--bg-base);
+    flex-shrink: 0;
+  }
+}
+
+.empty-table-state {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 32px; color: var(--text-muted); font-size: 14px;
+  mat-icon { font-size: 24px; width: 24px; height: 24px; }
+}

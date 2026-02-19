@@ -1,0 +1,20 @@
+.users-page { display: flex; flex-direction: column; gap: 16px; }
+
+.rol-badge {
+  padding:       3px 9px;
+  border-radius: 100px;
+  font-size:     11px;
+  font-weight:   600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &--admin_ondra  { background: var(--color-primary-dim); color: var(--color-primary); }
+  &--viewer       { background: var(--bg-hover);          color: var(--text-secondary); }
+  &--viewer_kiosk { background: var(--status-unusual-dim); color: var(--status-unusual); }
+}
+
+.empty-table-state {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 32px; color: var(--text-muted); font-size: 14px;
+  mat-icon { font-size: 24px; width: 24px; height: 24px; }
+}

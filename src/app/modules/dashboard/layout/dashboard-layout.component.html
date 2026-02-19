@@ -1,0 +1,94 @@
+<div class="dash-shell" [class.controls-hidden]="!controlsVisible()">
+
+  <!-- ─── Contenido principal (fullscreen) ─────────────────────────────────── -->
+  <main class="dash-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- ─── Barra superior: logo + cliente + nav dots ─────────────────────────── -->
+  <div class="dash-topbar controls-layer">
+
+    <div class="dash-topbar__brand">
+      <mat-icon>monitoring</mat-icon>
+      <span>{{ slug() | uppercase }}</span>
+    </div>
+
+    <!-- Dots de navegación -->
+    <div class="dash-dots" *ngIf="!loading() && totalDashes() > 1">
+      <button
+        *ngFor="let item of navItems(); let i = index"
+        class="dash-dot"
+        [class.dash-dot--active]="i === activeIndex()"
+        (click)="navigateTo(i)"
+        [matTooltip]="item.label"
+      ></button>
+    </div>
+
+    <!-- Acciones top-right -->
+    <div class="dash-topbar__actions">
+      <a *ngIf="isAdmin()" routerLink="/admin/clients" mat-icon-button matTooltip="Administración">
+        <mat-icon>admin_panel_settings</mat-icon>
+      </a>
+      <button mat-icon-button (click)="logout()" matTooltip="Salir">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ─── Controles de navegación (laterales + barra inferior) ─────────────── -->
+  <ng-container *ngIf="!loading() && totalDashes() > 1">
+
+    <!-- Flecha izquierda -->
+    <button class="dash-nav-btn dash-nav-btn--left controls-layer" (click)="goPrev()" matTooltip="Anterior">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <!-- Flecha derecha -->
+    <button class="dash-nav-btn dash-nav-btn--right controls-layer" (click)="goNext()" matTooltip="Siguiente">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+
+    <!-- Barra de controles inferior -->
+    <div class="dash-bottombar controls-layer">
+
+      <div class="dash-bottombar__left">
+        <span class="dash-current-label">
+          <mat-icon>{{ currentDash().icon }}</mat-icon>
+          {{ currentDash().label }}
+        </span>
+        <span class="dash-progress" *ngIf="!paused()">
+          {{ activeIndex() + 1 }} / {{ totalDashes() }}
+        </span>
+      </div>
+
+      <div class="dash-bottombar__center">
+        <button mat-icon-button (click)="goPrev()" matTooltip="Anterior">
+          <mat-icon>skip_previous</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="togglePause()" [matTooltip]="paused() ? 'Reanudar' : 'Pausar'">
+          <mat-icon>{{ paused() ? 'play_arrow' : 'pause' }}</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="goNext()" matTooltip="Siguiente">
+          <mat-icon>skip_next</mat-icon>
+        </button>
+      </div>
+
+      <div class="dash-bottombar__right">
+        <button mat-icon-button (click)="toggleFullscreen()" [matTooltip]="'Pantalla completa'">
+          <mat-icon>{{ fullscreenIcon }}</mat-icon>
+        </button>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+  <!-- Skeleton mientras carga -->
+  <div class="dash-loading" *ngIf="loading()">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+</div>

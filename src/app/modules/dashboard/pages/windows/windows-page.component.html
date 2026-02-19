@@ -1,0 +1,57 @@
+<div class="windows-page fade-in-up" *ngIf="!loading(); else loadingTpl">
+
+  <app-page-header title="Windows Server" icon="computer" subtitle="Estado de todos los servidores Windows del cliente">
+    <app-status-badge [status]="data() ? alertsStatus(data()!) : 'unknown'"></app-status-badge>
+  </app-page-header>
+
+  <ng-container *ngIf="data() as d">
+
+    <div class="servers-grid">
+      <div *ngFor="let srv of d.servers" class="card server-card server-card--{{ srv.status }}">
+        <div class="card__header">
+          <div class="server-card__name">
+            <mat-icon>computer</mat-icon>
+            {{ srv.name }}
+          </div>
+          <app-status-badge [status]="srv.status"></app-status-badge>
+        </div>
+        <div class="card__body server-card__body">
+          <div class="server-card__metrics">
+            <app-gauge label="CPU"   [value]="parseValue(srv.cpu.value)"    [status]="srv.cpu.status"    unit="%"></app-gauge>
+            <app-gauge label="RAM"   [value]="parseValue(srv.memory.value)" [status]="srv.memory.status" unit="%"></app-gauge>
+            <app-gauge label="Disco" [value]="parseValue(srv.disk.value)"   [status]="srv.disk.status"   unit="%"></app-gauge>
+          </div>
+          <div class="server-card__uptime">
+            <mat-icon>schedule</mat-icon>
+            <span class="text-secondary" style="font-size:12px;">Uptime:</span>
+            <span class="mono" style="font-size:12px;">{{ srv.uptime.value }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" *ngIf="d.servers.length === 0">
+      <div class="card__body empty-state">
+        <mat-icon>info</mat-icon> Sin servidores Windows detectados
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card__header"><span class="card__title">Alertas activas</span></div>
+      <div class="card__body">
+        <app-alert-list [alerts]="d.alerts"></app-alert-list>
+      </div>
+    </div>
+
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <div style="padding: 8px;">
+    <div class="skeleton" style="height: 32px; width: 200px; margin-bottom: 24px;"></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div class="skeleton" style="height: 200px;"></div>
+      <div class="skeleton" style="height: 200px;"></div>
+    </div>
+  </div>
+</ng-template>
