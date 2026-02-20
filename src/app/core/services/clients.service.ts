@@ -28,4 +28,8 @@ export class ClientsService {
   setStatus(id: string, activo: boolean): Observable<Client> {
     return this.http.patch<ApiResponse<Client>>(`${this.base}/${id}/status`, { activo }).pipe(map(r => r.data!));
   }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(map(() => void 0));
+  }
 }

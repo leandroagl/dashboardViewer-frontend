@@ -39,11 +39,39 @@ export class ClientsPageComponent implements OnInit {
     });
   }
 
+  protected openEditClientDialog(client: Client): void {
+    const ref = this.dialog.open(ClientDialogComponent, {
+      width: '480px',
+      disableClose: true,
+      data: { client },
+    });
+    ref.afterClosed().subscribe(result => {
+      if (!result) return;
+      this.clients.update(list => list.map(c => c.id === result.id ? { ...c, ...result } : c));
+      this.snackbar.open('Cliente actualizado', 'OK', { duration: 3000 });
+    });
+  }
+
   protected toggleStatus(client: Client): void {
     this.service.setStatus(client.id, !client.activo).subscribe({
       next: updated => {
         this.clients.update(list => list.map(c => c.id === updated.id ? updated : c));
         this.snackbar.open(`Cliente ${updated.activo ? 'activado' : 'desactivado'}`, 'OK', { duration: 3000 });
+      },
+    });
+  }
+
+  protected deleteClient(client: Client): void {
+    const ok = confirm(`¿Eliminar el cliente "${client.nombre}"? Esta acción no se puede deshacer.`);
+    if (!ok) return;
+    this.service.delete(client.id).subscribe({
+      next: () => {
+        this.clients.update(list => list.filter(c => c.id !== client.id));
+        this.snackbar.open('Cliente eliminado', 'OK', { duration: 3000 });
+      },
+      error: (err: any) => {
+        const msg = err?.error?.error || 'Error al eliminar el cliente';
+        this.snackbar.open(msg, 'OK', { duration: 4000 });
       },
     });
   }

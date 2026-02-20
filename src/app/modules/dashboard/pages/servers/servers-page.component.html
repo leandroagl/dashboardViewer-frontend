@@ -121,37 +121,45 @@
 
 </div>
 
-          <!-- Datastores -->
-          <div *ngIf="host.datastores.length > 0">
-            <div class="subsection-title">Almacenamiento</div>
-            <div class="datastore-list">
-              <div *ngFor="let ds of host.datastores" class="datastore-item">
-                <div class="datastore-item__header">
-                  <span class="datastore-item__name">
-                    <mat-icon>storage</mat-icon>{{ ds.name }}
-                  </span>
-                  <span class="mono datastore-item__pct datastore-item__pct--{{ ds.status }}">
-                    {{ ds.freePct | number:'1.0-1' }}% libre
-                  </span>
-                </div>
-                <mat-progress-bar mode="determinate" [value]="ds.usedPct" [color]="datastoreBarColor(ds.status)" class="datastore-item__bar"></mat-progress-bar>
-                <div class="datastore-meta">
-                  <span>Usado: {{ ds.usedPct | number:'1.0-1' }}%</span>
-                  <span [class]="'sv-' + ds.status">{{ ds.status === 'ok' ? '✔ OK' : ds.status === 'warning' ? '⚠ Revisar' : '✘ Crítico' }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <!-- Datastores + Alertas en dos columnas -->
+<div class="ds-alerts-row" *ngIf="host.datastores.length > 0 || host.alerts.length > 0">
 
-          <!-- Alertas -->
-          <div>
-            <div class="subsection-title">Alertas activas</div>
-            <div *ngIf="host.alerts.length === 0" class="no-alerts">
-              <mat-icon>check_circle</mat-icon>
-              Sin alertas activas
-            </div>
-            <app-alert-list *ngIf="host.alerts.length > 0" [alerts]="host.alerts"></app-alert-list>
-          </div>
+  <!-- Datastores -->
+  <div class="ds-col" *ngIf="host.datastores.length > 0">
+    <div class="subsection-title">Almacenamiento</div>
+    <div class="datastore-list">
+      <div *ngFor="let ds of host.datastores" class="datastore-item">
+        <div class="datastore-item__header">
+          <span class="datastore-item__name">
+            <mat-icon>storage</mat-icon>{{ ds.name }}
+          </span>
+          <span class="mono datastore-item__pct datastore-item__pct--{{ ds.status }}">
+            {{ ds.freePct | number:'1.0-1' }}% libre
+          </span>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="ds.usedPct"
+          [color]="datastoreBarColor(ds.status)" class="datastore-item__bar">
+        </mat-progress-bar>
+        <div class="datastore-meta">
+          <span>Usado: {{ ds.usedPct | number:'1.0-1' }}%</span>
+          <span [class]="'sv-' + ds.status">
+            {{ ds.status === 'ok' ? '✔ OK' : ds.status === 'warning' ? '⚠ Revisar' : '✘ Crítico' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div class="alerts-col">
+    <div class="subsection-title">Alertas activas</div>
+    <div *ngIf="host.alerts.length === 0" class="no-alerts">
+      <mat-icon>check_circle</mat-icon> Sin alertas activas
+    </div>
+    <app-alert-list *ngIf="host.alerts.length > 0" [alerts]="host.alerts"></app-alert-list>
+  </div>
+
+</div>
 
         </div>
       </div>

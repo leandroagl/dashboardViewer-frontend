@@ -34,12 +34,23 @@ export class UsersPageComponent implements OnInit {
     ref.afterClosed().subscribe(result => {
       if (!result) return;
       this.users.update(list => [...list, result]);
-      // Mostrar contraseña generada — es la única oportunidad de verla
       this.snackbar.open(
         `Usuario creado. Contraseña: ${result.plainPassword} — copiala ahora`,
-        'OK',
-        { duration: 15000, panelClass: 'snack-password' }
+        'OK', { duration: 15000, panelClass: 'snack-password' }
       );
+    });
+  }
+
+  protected openEditUserDialog(user: User): void {
+    const ref = this.dialog.open(UserDialogComponent, {
+      width: '480px',
+      disableClose: true,
+      data: { user },
+    });
+    ref.afterClosed().subscribe(result => {
+      if (!result) return;
+      this.users.update(list => list.map(u => u.id === result.id ? { ...u, ...result } : u));
+      this.snackbar.open('Usuario actualizado', 'OK', { duration: 3000 });
     });
   }
 
@@ -57,10 +68,21 @@ export class UsersPageComponent implements OnInit {
       next: res => {
         this.snackbar.open(
           `Nueva contraseña: ${res.plainPassword} — copiala ahora`,
-          'OK',
-          { duration: 15000 }
+          'OK', { duration: 15000 }
         );
       },
+    });
+  }
+
+  protected deleteUser(user: User): void {
+    const ok = confirm(`¿Eliminar el usuario "${user.nombre}"? Esta acción no se puede deshacer.`);
+    if (!ok) return;
+    this.service.delete(user.id).subscribe({
+      next: () => {
+        this.users.update(list => list.filter(u => u.id !== user.id));
+        this.snackbar.open('Usuario eliminado', 'OK', { duration: 3000 });
+      },
+      error: () => this.snackbar.open('Error al eliminar el usuario', 'OK', { duration: 3000 }),
     });
   }
 

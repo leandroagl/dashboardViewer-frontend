@@ -92,9 +92,18 @@ export interface BackupJob {
   lastMessage: string;
   lastValue:   string;
 }
+
+export interface BackupDevice {
+  name:    string;
+  type:    'veeam' | 'qnap' | 'other';
+  status:  SensorStatus;
+  jobs:    BackupJob[];
+  alerts:  { name: string; message: string }[];
+}
+
 export interface BackupsDashboard {
   successRate7d: number;
-  jobs:          BackupJob[];
+  devices:       BackupDevice[];
   alerts:        { name: string; message: string }[];
 }
 

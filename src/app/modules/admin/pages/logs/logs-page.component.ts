@@ -79,10 +79,17 @@ export class LogsPageComponent implements OnInit {
   }
 
   protected clearLogs(): void {
-    const ok = confirm('¿Confirmar depuración de todos los registros? Esta acción no se puede deshacer.');
-    if (!ok) return;
-    this.snackbar.open('Funcionalidad pendiente de implementación en el backend.', 'OK', { duration: 4000 });
-  }
+  const ok = confirm('¿Confirmar depuración de todos los registros? Esta acción no se puede deshacer.');
+  if (!ok) return;
+  this.service.purgeLogs().subscribe({
+    next: ({ deleted }) => {
+      this.logs.set([]);
+      this.meta.set(null);
+      this.snackbar.open(`${deleted} registros eliminados`, 'OK', { duration: 4000 });
+    },
+    error: () => this.snackbar.open('Error al depurar registros', 'OK', { duration: 3000 }),
+  });
+}
 
   protected isSuspiciousIp(ip: string): boolean {
     return this.suspiciousIps().some(s => s.ip_origen === ip);

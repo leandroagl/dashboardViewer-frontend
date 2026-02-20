@@ -64,9 +64,16 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditClientDialog(c)">
+              <mat-icon>edit</mat-icon> Editar
+            </button>
             <button mat-menu-item (click)="toggleStatus(c)">
               <mat-icon>{{ c.activo ? 'block' : 'check_circle' }}</mat-icon>
               {{ c.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item class="menu-item--danger" (click)="deleteClient(c)">
+              <mat-icon>delete</mat-icon> Eliminar
             </button>
           </mat-menu>
         </td>

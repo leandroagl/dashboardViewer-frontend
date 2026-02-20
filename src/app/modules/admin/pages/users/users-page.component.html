@@ -2,8 +2,8 @@
 
   <app-page-header title="Usuarios" icon="group" [subtitle]="users().length + ' usuarios registrados'">
     <button mat-stroked-button (click)="openNewUserDialog()">
-  <mat-icon>person_add</mat-icon> Nuevo usuario
-</button>
+      <mat-icon>person_add</mat-icon> Nuevo usuario
+    </button>
   </app-page-header>
 
   <div class="card">
@@ -47,7 +47,8 @@
       <ng-container matColumnDef="activo">
         <th mat-header-cell *matHeaderCellDef>Estado</th>
         <td mat-cell *matCellDef="let u">
-          <app-status-badge [status]="u.activo ? 'ok' : 'paused'" [label]="u.activo ? 'Activo' : 'Inactivo'"></app-status-badge>
+          <app-status-badge [status]="u.activo ? 'ok' : 'paused'"
+            [label]="u.activo ? 'Activo' : 'Inactivo'"></app-status-badge>
         </td>
       </ng-container>
 
@@ -58,6 +59,9 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditUserDialog(u)">
+              <mat-icon>edit</mat-icon> Editar
+            </button>
             <button mat-menu-item (click)="toggleStatus(u)">
               <mat-icon>{{ u.activo ? 'block' : 'check_circle' }}</mat-icon>
               {{ u.activo ? 'Desactivar' : 'Activar' }}
@@ -67,6 +71,10 @@
             </button>
             <button *ngIf="u.es_kiosk" mat-menu-item (click)="revokeKiosk(u)">
               <mat-icon>tv_off</mat-icon> Revocar sesión kiosk
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item class="menu-item--danger" (click)="deleteUser(u)">
+              <mat-icon>delete</mat-icon> Eliminar
             </button>
           </mat-menu>
         </td>

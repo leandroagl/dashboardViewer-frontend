@@ -26,7 +26,7 @@ export interface AlertItem {
         <mat-icon class="alert-list__icon">warning</mat-icon>
         <div class="alert-list__content">
           <div class="alert-list__name">{{ alert.name }}</div>
-          <div class="alert-list__msg">{{ alert.message }}</div>
+          <div class="alert-list__msg">{{ alert.message | stripHtml }}</div>
         </div>
       </div>
     </div>

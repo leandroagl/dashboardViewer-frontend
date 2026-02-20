@@ -21,6 +21,14 @@ export class UsersService {
     return this.http.post<ApiResponse<User & { plainPassword: string }>>(this.base, payload).pipe(map(r => r.data!));
   }
 
+  update(id: string, payload: Partial<CreateUserPayload>): Observable<User> {
+    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}`, payload).pipe(map(r => r.data!));
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(map(() => void 0));
+  }
+
   setStatus(id: string, activo: boolean): Observable<void> {
     return this.http.patch<void>(`${this.base}/${id}/status`, { activo });
   }

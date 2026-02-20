@@ -14,6 +14,7 @@ import { KpiCardComponent }     from './components/kpi-card/kpi-card.component';
 import { GaugeComponent }       from './components/gauge/gauge.component';
 import { AlertListComponent }   from './components/alert-list/alert-list.component';
 import { PageHeaderComponent }  from './components/page-header/page-header.component';
+import { StripHtmlPipe } from './pipes/strip-html.pipe';
 
 const COMPONENTS = [
   StatusBadgeComponent,
@@ -21,6 +22,7 @@ const COMPONENTS = [
   GaugeComponent,
   AlertListComponent,
   PageHeaderComponent,
+  StripHtmlPipe
 ];
 
 const MATERIAL = [
