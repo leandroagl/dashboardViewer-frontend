@@ -4,13 +4,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { UsersService } from '@core/services/users.service';
 import { User } from '@core/models';
 import { UserDialogComponent } from './user-dialog.component';
+import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector:    'app-users-page',
-  standalone:  false,
+  selector:        'app-users-page',
+  standalone:      false,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './users-page.component.html',
-  styleUrls:   ['./users-page.component.scss'],
+  templateUrl:     './users-page.component.html',
+  styleUrls:       ['./users-page.component.scss'],
 })
 export class UsersPageComponent implements OnInit {
   private readonly service  = inject(UsersService);
@@ -76,14 +77,23 @@ export class UsersPageComponent implements OnInit {
   }
 
   protected deleteUser(user: User): void {
-    const ok = confirm(`¿Eliminar el usuario "${user.nombre}"? Esta acción no se puede deshacer.`);
-    if (!ok) return;
-    this.service.delete(user.id).subscribe({
-      next: () => {
-        this.users.update(list => list.filter(u => u.id !== user.id));
-        this.snackbar.open('Usuario eliminado', 'OK', { duration: 3000 });
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title:        'Eliminar usuario',
+        message:      `¿Eliminar el usuario "${user.nombre}"? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+        isDanger:     true,
       },
-      error: () => this.snackbar.open('Error al eliminar el usuario', 'OK', { duration: 3000 }),
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.service.delete(user.id).subscribe({
+        next: () => {
+          this.users.update(list => list.filter(u => u.id !== user.id));
+          this.snackbar.open('Usuario eliminado', 'OK', { duration: 3000 });
+        },
+        error: () => this.snackbar.open('Error al eliminar el usuario', 'OK', { duration: 3000 }),
+      });
     });
   }
 

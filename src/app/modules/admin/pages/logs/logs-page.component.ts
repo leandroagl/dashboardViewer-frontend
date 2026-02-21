@@ -1,20 +1,23 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { LogsService, LogFilters } from '@core/services/logs.service';
 import { AuditLog, LogsMeta } from '@core/models';
+import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector:    'app-logs-page',
-  standalone:  false,
+  selector:        'app-logs-page',
+  standalone:      false,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './logs-page.component.html',
-  styleUrls:   ['./logs-page.component.scss'],
+  templateUrl:     './logs-page.component.html',
+  styleUrls:       ['./logs-page.component.scss'],
 })
 export class LogsPageComponent implements OnInit {
   private readonly service  = inject(LogsService);
   private readonly fb       = inject(FormBuilder);
   private readonly snackbar = inject(MatSnackBar);
+  private readonly dialog   = inject(MatDialog);
 
   protected readonly logs          = signal<AuditLog[]>([]);
   protected readonly meta          = signal<LogsMeta | null>(null);
@@ -80,17 +83,26 @@ export class LogsPageComponent implements OnInit {
   }
 
   protected clearLogs(): void {
-  const ok = confirm('¿Confirmar depuración de todos los registros? Esta acción no se puede deshacer.');
-  if (!ok) return;
-  this.service.purgeLogs().subscribe({
-    next: ({ deleted }) => {
-      this.logs.set([]);
-      this.meta.set(null);
-      this.snackbar.open(`${deleted} registros eliminados`, 'OK', { duration: 4000 });
-    },
-    error: () => this.snackbar.open('Error al depurar registros', 'OK', { duration: 3000 }),
-  });
-}
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      data: {
+        title:        'Depurar registros',
+        message:      '¿Confirmar depuración de todos los registros? Esta acción no se puede deshacer.',
+        confirmLabel: 'Depurar',
+        isDanger:     true,
+      },
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.service.purgeLogs().subscribe({
+        next: ({ deleted }) => {
+          this.logs.set([]);
+          this.meta.set(null);
+          this.snackbar.open(`${deleted} registros eliminados`, 'OK', { duration: 4000 });
+        },
+        error: () => this.snackbar.open('Error al depurar registros', 'OK', { duration: 3000 }),
+      });
+    });
+  }
 
   protected isSuspiciousIp(ip: string): boolean {
     return this.suspiciousIps().some(s => s.ip_origen === ip);
