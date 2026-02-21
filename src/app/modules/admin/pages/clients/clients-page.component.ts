@@ -5,6 +5,7 @@ import { ClientsService } from '@core/services/clients.service';
 import { Client } from '@core/models';
 import { ClientDialogComponent } from './client-dialog.component';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
+import { SNACKBAR_SHORT, SNACKBAR_LONG } from '@core/constants/app.constants';
 
 @Component({
   selector:        'app-clients-page',
@@ -36,7 +37,7 @@ export class ClientsPageComponent implements OnInit {
     ref.afterClosed().subscribe(result => {
       if (result) {
         this.clients.update(list => [...list, result]);
-        this.snackbar.open(`Cliente "${result.nombre}" creado.`, 'OK', { duration: 4000 });
+        this.snackbar.open(`Cliente "${result.nombre}" creado.`, 'OK', { duration: SNACKBAR_LONG });
       }
     });
   }
@@ -50,7 +51,7 @@ export class ClientsPageComponent implements OnInit {
     ref.afterClosed().subscribe(result => {
       if (!result) return;
       this.clients.update(list => list.map(c => c.id === result.id ? { ...c, ...result } : c));
-      this.snackbar.open('Cliente actualizado', 'OK', { duration: 3000 });
+      this.snackbar.open('Cliente actualizado', 'OK', { duration: SNACKBAR_SHORT });
     });
   }
 
@@ -58,7 +59,7 @@ export class ClientsPageComponent implements OnInit {
     this.service.setStatus(client.id, !client.activo).subscribe({
       next: updated => {
         this.clients.update(list => list.map(c => c.id === updated.id ? updated : c));
-        this.snackbar.open(`Cliente ${updated.activo ? 'activado' : 'desactivado'}`, 'OK', { duration: 3000 });
+        this.snackbar.open(`Cliente ${updated.activo ? 'activado' : 'desactivado'}`, 'OK', { duration: SNACKBAR_SHORT });
       },
     });
   }
@@ -77,11 +78,11 @@ export class ClientsPageComponent implements OnInit {
       this.service.delete(client.id).subscribe({
         next: () => {
           this.clients.update(list => list.filter(c => c.id !== client.id));
-          this.snackbar.open('Cliente eliminado', 'OK', { duration: 3000 });
+          this.snackbar.open('Cliente eliminado', 'OK', { duration: SNACKBAR_SHORT });
         },
         error: (err: any) => {
           const msg = err?.error?.error || 'Error al eliminar el cliente';
-          this.snackbar.open(msg, 'OK', { duration: 4000 });
+          this.snackbar.open(msg, 'OK', { duration: SNACKBAR_LONG });
         },
       });
     });

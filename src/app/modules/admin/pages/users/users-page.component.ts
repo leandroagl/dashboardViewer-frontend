@@ -5,6 +5,7 @@ import { UsersService } from '@core/services/users.service';
 import { User } from '@core/models';
 import { UserDialogComponent } from './user-dialog.component';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
+import { SNACKBAR_SHORT, SNACKBAR_LONG, SNACKBAR_PASSWORD } from '@core/constants/app.constants';
 
 @Component({
   selector:        'app-users-page',
@@ -38,7 +39,7 @@ export class UsersPageComponent implements OnInit {
       this.users.update(list => [...list, result]);
       this.snackbar.open(
         `Usuario creado. Contraseña: ${result.plainPassword} — copiala ahora`,
-        'OK', { duration: 15000, panelClass: 'snack-password' }
+        'OK', { duration: SNACKBAR_PASSWORD, panelClass: 'snack-password' }
       );
     });
   }
@@ -52,7 +53,7 @@ export class UsersPageComponent implements OnInit {
     ref.afterClosed().subscribe(result => {
       if (!result) return;
       this.users.update(list => list.map(u => u.id === result.id ? { ...u, ...result } : u));
-      this.snackbar.open('Usuario actualizado', 'OK', { duration: 3000 });
+      this.snackbar.open('Usuario actualizado', 'OK', { duration: SNACKBAR_SHORT });
     });
   }
 
@@ -60,7 +61,7 @@ export class UsersPageComponent implements OnInit {
     this.service.setStatus(user.id, !user.activo).subscribe({
       next: () => {
         this.users.update(list => list.map(u => u.id === user.id ? { ...u, activo: !u.activo } : u));
-        this.snackbar.open('Usuario actualizado', 'OK', { duration: 3000 });
+        this.snackbar.open('Usuario actualizado', 'OK', { duration: SNACKBAR_SHORT });
       },
     });
   }
@@ -70,7 +71,7 @@ export class UsersPageComponent implements OnInit {
       next: res => {
         this.snackbar.open(
           `Nueva contraseña: ${res.plainPassword} — copiala ahora`,
-          'OK', { duration: 15000 }
+          'OK', { duration: SNACKBAR_PASSWORD }
         );
       },
     });
@@ -90,16 +91,16 @@ export class UsersPageComponent implements OnInit {
       this.service.delete(user.id).subscribe({
         next: () => {
           this.users.update(list => list.filter(u => u.id !== user.id));
-          this.snackbar.open('Usuario eliminado', 'OK', { duration: 3000 });
+          this.snackbar.open('Usuario eliminado', 'OK', { duration: SNACKBAR_SHORT });
         },
-        error: () => this.snackbar.open('Error al eliminar el usuario', 'OK', { duration: 3000 }),
+        error: () => this.snackbar.open('Error al eliminar el usuario', 'OK', { duration: SNACKBAR_SHORT }),
       });
     });
   }
 
   protected revokeKiosk(user: User): void {
     this.service.revokeKiosk(user.id).subscribe({
-      next: () => this.snackbar.open('Sesión kiosk revocada', 'OK', { duration: 3000 }),
+      next: () => this.snackbar.open('Sesión kiosk revocada', 'OK', { duration: SNACKBAR_SHORT }),
     });
   }
 

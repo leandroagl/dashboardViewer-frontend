@@ -11,6 +11,7 @@ import { map } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { DashboardService } from '@core/services/dashboard.service';
 import { DashboardType } from '@core/models';
+import { AUTO_ADVANCE_MS, CONTROLS_HIDE_MS } from '@core/constants/app.constants';
 
 interface NavItem {
   type:  DashboardType;
@@ -26,8 +27,6 @@ const NAV_CONFIG: Record<DashboardType, Omit<NavItem, 'type' | 'path'>> = {
   windows:    { label: 'Windows',    icon: 'computer' },
 };
 
-const AUTO_ADVANCE_MS  = 60_000; // 60 segundos entre dashboards
-const CONTROLS_HIDE_MS = 4_000;  // 4 segundos sin actividad → ocultar controles
 
 @Component({
   selector:    'app-dashboard-layout',
