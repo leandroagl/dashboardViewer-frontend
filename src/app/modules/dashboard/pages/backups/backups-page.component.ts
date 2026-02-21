@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
-import { BackupsDashboard, SensorStatus } from '@core/models';
+import { BackupDevice, BackupsDashboard, SensorStatus } from '@core/models';
 import { BaseDashboardPage } from '../base-dashboard-page';
 
 @Component({
@@ -35,5 +35,26 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   protected jobsErrorStatus(d: BackupsDashboard): SensorStatus {
     const count = this.jobsErrorCount(d);
     return count === 0 ? 'ok' : count <= 2 ? 'warning' : 'error';
+  }
+
+  protected veeamDevices(d: BackupsDashboard): BackupDevice[] {
+    return d.devices.filter(dev => dev.type === 'veeam');
+  }
+
+  protected nasDevices(d: BackupsDashboard): BackupDevice[] {
+    return d.devices.filter(dev => dev.type === 'qnap' || dev.type === 'other');
+  }
+
+  protected nasIcon(sensorName: string): string {
+    if (/disk|storage|space|volume|drive/i.test(sensorName)) return 'storage';
+    if (/cpu|processor/i.test(sensorName))                   return 'memory';
+    if (/mem|memory|ram/i.test(sensorName))                  return 'memory';
+    if (/temp|thermal/i.test(sensorName))                    return 'thermostat';
+    if (/fan/i.test(sensorName))                             return 'air';
+    if (/ups|battery/i.test(sensorName))                     return 'battery_charging_full';
+    if (/network|traffic|eth|wan|lan/i.test(sensorName))     return 'router';
+    if (/raid/i.test(sensorName))                            return 'dns';
+    if (/ping|latency/i.test(sensorName))                    return 'network_check';
+    return 'sensors';
   }
 }

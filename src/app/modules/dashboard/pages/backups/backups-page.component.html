@@ -1,59 +1,107 @@
 <div class="backups-page fade-in-up" *ngIf="!loading(); else loadingTpl">
 
-  <app-page-header title="Backups Veeam" icon="backup" subtitle="Estado de los jobs de respaldo">
+  <app-page-header title="Backups" icon="backup" subtitle="Estado de los jobs de respaldo y almacenamiento NAS">
     <app-status-badge [status]="rateStatus(data()?.successRate7d || 0)"></app-status-badge>
   </app-page-header>
 
   <ng-container *ngIf="data() as d">
-  <div class="backups-top">
-    <app-kpi-card label="Tasa de éxito" [value]="d.successRate7d + '%'"
-      [status]="rateStatus(d.successRate7d)" sublabel="jobs Veeam"></app-kpi-card>
-    <app-kpi-card label="Dispositivos" [value]="d.devices.length"
-      status="ok" sublabel="total"></app-kpi-card>
-    <app-kpi-card label="Jobs con error" [value]="jobsErrorCount(d)"
-      [status]="jobsErrorStatus(d)" sublabel="último resultado"></app-kpi-card>
-  </div>
 
-  <!-- Grid de dispositivos -->
-  <div class="devices-grid">
-    <div class="card device-card" *ngFor="let dev of d.devices">
-      <div class="card__header">
-        <div class="device-icon device-icon--{{ dev.type }}">
-          <mat-icon>{{ dev.type === 'qnap' ? 'storage' : 'backup' }}</mat-icon>
+    <!-- KPI strip -->
+    <div class="backups-top">
+      <app-kpi-card label="Tasa de éxito" [value]="d.successRate7d + '%'"
+        [status]="rateStatus(d.successRate7d)" sublabel="jobs Veeam"></app-kpi-card>
+      <app-kpi-card label="Dispositivos" [value]="d.devices.length"
+        status="ok" sublabel="total"></app-kpi-card>
+      <app-kpi-card label="Jobs con error" [value]="jobsErrorCount(d)"
+        [status]="jobsErrorStatus(d)" sublabel="último resultado"></app-kpi-card>
+    </div>
+
+    <!-- Layout principal: Veeam izq / NAS der -->
+    <div class="backups-main-grid">
+
+      <!-- ── Columna Veeam (izquierda) ─────────────────────────────────────── -->
+      <div class="backups-col">
+        <div class="section-label">Jobs de Veeam</div>
+
+        <div class="card device-card" *ngFor="let dev of veeamDevices(d)">
+          <div class="card__header">
+            <div class="device-icon device-icon--veeam"><mat-icon>backup</mat-icon></div>
+            <div class="device-header-text">
+              <div class="card__title">{{ dev.name }}</div>
+              <div class="card__subtitle">{{ dev.jobs.length }} jobs</div>
+            </div>
+            <app-status-badge [status]="dev.status"></app-status-badge>
+          </div>
+          <div class="card__body">
+            <div class="jobs-table">
+              <div class="jobs-table__header">
+                <span>Job</span>
+                <span>Último valor</span>
+                <span>Estado</span>
+              </div>
+              <div *ngFor="let job of dev.jobs" class="jobs-table__row">
+                <span class="jobs-table__name">{{ job.name }}</span>
+                <span class="mono" style="font-size:12px;">{{ job.lastValue }}</span>
+                <app-status-badge [status]="job.lastStatus"></app-status-badge>
+              </div>
+              <div *ngIf="dev.jobs.length === 0" class="empty-state" style="padding:16px;">
+                <mat-icon>info</mat-icon> Sin jobs
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="device-header-text">
-          <div class="card__title">{{ dev.name }}</div>
-          <div class="card__subtitle">{{ dev.jobs.length }} sensores</div>
+
+        <div *ngIf="veeamDevices(d).length === 0" class="empty-state">
+          <mat-icon>info</mat-icon> Sin dispositivos Veeam detectados
         </div>
-        <app-status-badge [status]="dev.status"></app-status-badge>
       </div>
+
+      <!-- ── Columna NAS / QNAP (derecha) ──────────────────────────────────── -->
+      <div class="backups-col">
+        <div class="section-label">Almacenamiento NAS</div>
+
+        <div class="card nas-card" *ngFor="let dev of nasDevices(d)">
+          <div class="card__header">
+            <div class="device-icon device-icon--{{ dev.type }}"><mat-icon>storage</mat-icon></div>
+            <div class="device-header-text">
+              <div class="card__title">{{ dev.name }}</div>
+              <div class="card__subtitle">{{ dev.jobs.length }} sensores</div>
+            </div>
+            <app-status-badge [status]="dev.status"></app-status-badge>
+          </div>
+          <div class="card__body">
+            <div class="nas-sensors-grid">
+              <div *ngFor="let sensor of dev.jobs"
+                class="nas-sensor-card nas-sensor-card--{{ sensor.lastStatus }}">
+                <mat-icon class="nas-sensor-card__icon">{{ nasIcon(sensor.name) }}</mat-icon>
+                <div class="nas-sensor-card__name">{{ sensor.name }}</div>
+                <div class="nas-sensor-card__val mono" [class]="'sv-' + sensor.lastStatus">
+                  {{ sensor.lastValue }}
+                </div>
+              </div>
+            </div>
+            <div *ngIf="dev.jobs.length === 0" class="empty-state" style="padding:16px;">
+              <mat-icon>info</mat-icon> Sin sensores
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="nasDevices(d).length === 0" class="empty-state">
+          <mat-icon>info</mat-icon> Sin dispositivos NAS detectados
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Alertas activas -->
+    <div class="card" *ngIf="d.alerts.length > 0">
+      <div class="card__header"><span class="card__title">Alertas activas</span></div>
       <div class="card__body">
-        <div class="jobs-table">
-          <div class="jobs-table__header">
-            <span>Sensor</span>
-            <span>Valor</span>
-            <span>Estado</span>
-          </div>
-          <div *ngFor="let job of dev.jobs" class="jobs-table__row">
-            <span class="jobs-table__name">{{ job.name }}</span>
-            <span class="mono" style="font-size:12px;">{{ job.lastValue }}</span>
-            <app-status-badge [status]="job.lastStatus"></app-status-badge>
-          </div>
-          <div *ngIf="dev.jobs.length === 0" class="empty-state" style="padding:16px;">
-            <mat-icon>info</mat-icon> Sin sensores
-          </div>
-        </div>
+        <app-alert-list [alerts]="d.alerts"></app-alert-list>
       </div>
     </div>
-  </div>
 
-  <div class="card" *ngIf="d.alerts.length > 0">
-    <div class="card__header"><span class="card__title">Alertas activas</span></div>
-    <div class="card__body">
-      <app-alert-list [alerts]="d.alerts"></app-alert-list>
-    </div>
-  </div>
-</ng-container>
+  </ng-container>
 </div>
 
 <ng-template #loadingTpl>

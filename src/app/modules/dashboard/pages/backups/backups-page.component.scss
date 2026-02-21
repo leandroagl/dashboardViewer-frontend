@@ -2,55 +2,49 @@
 
 .backups-top {
   display: flex;
-  gap:     16px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
-.jobs-table {
-  &__header {
-    display:     grid;
-    grid-template-columns: 2fr 3fr 1fr 100px;
-    gap:         12px;
-    padding:     6px 8px 10px;
-    font-size:   10px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color:       var(--text-muted);
-    border-bottom: 1px solid var(--border-subtle);
-  }
+// ── Section label ──────────────────────────────────────────────────────────────
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
 
-  &__row {
-    display:     grid;
-    grid-template-columns: 2fr 3fr 1fr 100px;
-    gap:         12px;
-    align-items: center;
-    padding:     10px 8px;
-    border-bottom: 1px solid var(--border-subtle);
-    transition:  background var(--transition);
-    &:last-child { border-bottom: none; }
-    &:hover      { background: var(--bg-hover); }
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-subtle);
   }
-
-  &__name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
-  &__msg  { font-size: 12px; }
 }
 
-.empty-state {
-  display: flex; align-items: center; gap: 8px;
-  color: var(--text-muted); font-size: 13px;
-  mat-icon { font-size: 18px; width: 18px; height: 18px; }
-}
-
-.loading-state { padding: 8px; }
-
-.devices-grid {
+// ── Layout principal: dos columnas ────────────────────────────────────────────
+.backups-main-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 20px;
-  margin-bottom: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
 }
 
+.backups-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Device icons ──────────────────────────────────────────────────────────────
 .device-icon {
   width: 40px;
   height: 40px;
@@ -60,9 +54,97 @@
   justify-content: center;
   flex-shrink: 0;
 
-  &--veeam  { background: rgba(77, 208, 225, 0.15); color: var(--color-primary); }
-  &--qnap   { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
-  &--other  { background: rgba(255,255,255,0.05);   color: var(--text-muted); }
+  &--veeam { background: rgba(77, 208, 225, 0.15); color: var(--color-primary); }
+  &--qnap  { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
+  &--other { background: rgba(255,255,255,0.05);   color: var(--text-muted); }
 }
 
 .device-header-text { flex: 1; min-width: 0; padding: 0 12px; }
+
+// ── Jobs table (Veeam) ────────────────────────────────────────────────────────
+.jobs-table {
+  &__header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 80px;
+    gap: 12px;
+    padding: 6px 8px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 80px;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background var(--transition);
+    &:last-child { border-bottom: none; }
+    &:hover      { background: var(--bg-hover); }
+  }
+
+  &__name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+}
+
+// ── NAS sensor cards ──────────────────────────────────────────────────────────
+.nas-sensors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.nas-sensor-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  transition: box-shadow var(--transition);
+
+  &:hover { box-shadow: 0 2px 10px rgba(0,0,0,.35); }
+
+  &--ok      { border-color: rgba(67,217,138,.2); }
+  &--warning { border-color: rgba(255,179,0,.2); }
+  &--error   { border-color: rgba(244,67,54,.2); }
+
+  &__icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: var(--color-primary);
+    opacity: 0.85;
+  }
+
+  &__name {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+
+  &__val {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+  }
+}
+
+// ── Misc ──────────────────────────────────────────────────────────────────────
+.empty-state {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-muted); font-size: 13px;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+.loading-state { padding: 8px; }
