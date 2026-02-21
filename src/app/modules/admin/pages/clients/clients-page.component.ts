@@ -4,13 +4,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { ClientsService } from '@core/services/clients.service';
 import { Client } from '@core/models';
 import { ClientDialogComponent } from './client-dialog.component';
+import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector:    'app-clients-page',
-  standalone:  false,
+  selector:        'app-clients-page',
+  standalone:      false,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './clients-page.component.html',
-  styleUrls:   ['./clients-page.component.scss'],
+  templateUrl:     './clients-page.component.html',
+  styleUrls:       ['./clients-page.component.scss'],
 })
 export class ClientsPageComponent implements OnInit {
   private readonly service  = inject(ClientsService);
@@ -63,17 +64,26 @@ export class ClientsPageComponent implements OnInit {
   }
 
   protected deleteClient(client: Client): void {
-    const ok = confirm(`¿Eliminar el cliente "${client.nombre}"? Esta acción no se puede deshacer.`);
-    if (!ok) return;
-    this.service.delete(client.id).subscribe({
-      next: () => {
-        this.clients.update(list => list.filter(c => c.id !== client.id));
-        this.snackbar.open('Cliente eliminado', 'OK', { duration: 3000 });
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title:        'Eliminar cliente',
+        message:      `¿Eliminar el cliente "${client.nombre}"? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+        isDanger:     true,
       },
-      error: (err: any) => {
-        const msg = err?.error?.error || 'Error al eliminar el cliente';
-        this.snackbar.open(msg, 'OK', { duration: 4000 });
-      },
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.service.delete(client.id).subscribe({
+        next: () => {
+          this.clients.update(list => list.filter(c => c.id !== client.id));
+          this.snackbar.open('Cliente eliminado', 'OK', { duration: 3000 });
+        },
+        error: (err: any) => {
+          const msg = err?.error?.error || 'Error al eliminar el cliente';
+          this.snackbar.open(msg, 'OK', { duration: 4000 });
+        },
+      });
     });
   }
 }
