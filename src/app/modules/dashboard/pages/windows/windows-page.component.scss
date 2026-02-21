@@ -1,9 +1,27 @@
 .windows-page { display: flex; flex-direction: column; gap: 16px; }
 
+.win-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.servers-col { display: flex; flex-direction: column; gap: 16px; }
+
 .servers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
+}
+
+.alerts-panel {
+  position: sticky;
+  top: 16px;
 }
 
 .server-card {
@@ -15,25 +33,17 @@
     font-size: 14px; font-weight: 500; color: var(--text-primary);
     mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--color-primary); }
   }
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  &__metrics {
-    display: flex;
-    justify-content: space-around;
-    padding: 8px 0;
-  }
-
-  &__uptime {
-    display:     flex;
-    align-items: center;
-    gap:         6px;
-    padding-top: 10px;
-    border-top:  1px solid var(--border-subtle);
+  &__body    { display: flex; flex-direction: column; gap: 14px; }
+  &__metrics { display: flex; justify-content: space-around; padding: 8px 0; }
+  &__uptime  {
+    display: flex; align-items: center; gap: 6px;
+    padding-top: 10px; border-top: 1px solid var(--border-subtle);
     mat-icon { font-size: 14px; width: 14px; height: 14px; color: var(--text-muted); }
   }
+}
+
+.empty-state {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-muted); font-size: 13px;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
 }
