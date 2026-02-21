@@ -4,6 +4,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class StripHtmlPipe implements PipeTransform {
   transform(value: string): string {
     if (!value) return '';
-    return value.replace(/<[^>]*>/g, '').trim();
+    const el = document.createElement('div');
+    el.innerHTML = value;
+    return el.textContent ?? '';
   }
 }
