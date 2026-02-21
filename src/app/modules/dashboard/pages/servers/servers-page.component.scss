@@ -292,7 +292,7 @@
 
 .host-top-row {
   display: grid;
-  grid-template-columns: auto 1fr 1fr;
+  grid-template-columns: auto 1fr 1fr 1fr;
   gap: 20px;
   align-items: center;
 }
@@ -413,4 +413,44 @@
 
 .host-gauge-val {
   font-size: 11px;
+}
+
+// ── Disco host I/O card ─────────────────────────────────────────────────────
+.host-disk-card {
+  justify-content: flex-start;
+}
+
+.disk-io {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.disk-io__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.disk-io__icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.disk-io__label {
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.disk-io__val {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  text-align: right;
 }

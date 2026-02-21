@@ -54,7 +54,6 @@
             <div class="card__title">{{ host.name }}</div>
             <div class="card__subtitle">Uptime: {{ host.uptime }}</div>
           </div>
-          <app-status-badge [status]="host.status"></app-status-badge>
         </div>
 
         <div class="card__body">
@@ -90,7 +89,7 @@
       </div>
     </div>
 
-    <!-- Gauges CPU + RAM -->
+    <!-- Gauges CPU + RAM + Disco -->
     <div class="host-gauge-card">
       <div class="host-gauge-label">CPU HOST</div>
       <app-gauge label="CPU" [value]="host.cpu.pct" [status]="host.cpu.status"></app-gauge>
@@ -100,6 +99,21 @@
       <div class="host-gauge-label">MEMORIA HOST</div>
       <app-gauge label="Mem" [value]="host.memory.pct" [status]="host.memory.status"></app-gauge>
       <div class="host-gauge-val mono" [class]="'sv-' + host.memory.status">{{ host.memory.value }}</div>
+    </div>
+    <div class="host-gauge-card host-disk-card">
+      <div class="host-gauge-label">DISCO HOST</div>
+      <div class="disk-io">
+        <div class="disk-io__row">
+          <mat-icon class="disk-io__icon">arrow_downward</mat-icon>
+          <span class="disk-io__label">Lectura</span>
+          <span class="disk-io__val mono" [class]="'sv-' + host.disk.read.status">{{ host.disk.read.value }}</span>
+        </div>
+        <div class="disk-io__row">
+          <mat-icon class="disk-io__icon">arrow_upward</mat-icon>
+          <span class="disk-io__label">Escritura</span>
+          <span class="disk-io__val mono" [class]="'sv-' + host.disk.write.status">{{ host.disk.write.value }}</span>
+        </div>
+      </div>
     </div>
   </div>
 
