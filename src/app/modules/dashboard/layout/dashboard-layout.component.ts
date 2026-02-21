@@ -3,7 +3,7 @@
 // Los controles se desvanecen tras 4 segundos de inactividad.
 
 import {
-  ChangeDetectionStrategy, Component, inject, signal, computed, OnInit, OnDestroy, HostListener, ElementRef
+  ChangeDetectionStrategy, Component, inject, signal, computed, OnInit, OnDestroy, HostListener
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -36,11 +36,10 @@ const NAV_CONFIG: Record<DashboardType, Omit<NavItem, 'type' | 'path'>> = {
   styleUrls:   ['./dashboard-layout.component.scss'],
 })
 export class DashboardLayoutComponent implements OnInit, OnDestroy {
-  private readonly route           = inject(ActivatedRoute);
-  private readonly router          = inject(Router);
-  private readonly authService     = inject(AuthService);
+  private readonly route            = inject(ActivatedRoute);
+  private readonly router           = inject(Router);
+  private readonly authService      = inject(AuthService);
   private readonly dashboardService = inject(DashboardService);
-  private readonly el              = inject(ElementRef);
 
   protected readonly slug      = toSignal(this.route.paramMap.pipe(map(p => p.get('slug') ?? '')), { initialValue: '' });
   protected readonly navItems  = signal<NavItem[]>([]);
@@ -59,7 +58,7 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
 
   private advanceInterval?: ReturnType<typeof setInterval>;
   private hideControlsTimer?: ReturnType<typeof setTimeout>;
-  private isFullscreen = signal(false);
+  protected readonly isFullscreen = signal(false);
 
   ngOnInit(): void {
     this.loadDashboards();
@@ -139,13 +138,18 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
   // ─── Pantalla completa ────────────────────────────────────────────────────────
 
   protected toggleFullscreen(): void {
-    const el = document.documentElement;
     if (!document.fullscreenElement) {
-      el.requestFullscreen().then(() => this.isFullscreen.set(true));
+      document.documentElement.requestFullscreen();
     } else {
-      document.exitFullscreen().then(() => this.isFullscreen.set(false));
+      document.exitFullscreen();
     }
     this.showControls();
+  }
+
+  // Sincroniza el signal con el estado real del browser (cubre el caso Esc).
+  @HostListener('document:fullscreenchange')
+  protected onFullscreenChange(): void {
+    this.isFullscreen.set(!!document.fullscreenElement);
   }
 
   protected get fullscreenIcon(): string {
