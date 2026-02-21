@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ConfirmDialogComponent } from './confirm-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from './confirm-dialog.component';
 
 describe('ConfirmDialogComponent', () => {
   let fixture: ComponentFixture<ConfirmDialogComponent>;
   let component: ConfirmDialogComponent;
   let dialogRef: jest.Mocked<MatDialogRef<ConfirmDialogComponent>>;
 
-  const defaultData = {
+  const defaultData: ConfirmDialogData = {
     title:   'Confirmar acción',
     message: '¿Estás seguro?',
   };
 
-  const setup = (data = defaultData) => {
+  const setup = (data: ConfirmDialogData = defaultData) => {
     dialogRef = { close: jest.fn() } as unknown as jest.Mocked<MatDialogRef<ConfirmDialogComponent>>;
 
     TestBed.configureTestingModule({
