@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LogsService, LogFilters } from '@core/services/logs.service';
 import { AuditLog, LogsMeta } from '@core/models';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
+import { SNACKBAR_SHORT, SNACKBAR_LONG } from '@core/constants/app.constants';
 
 @Component({
   selector:        'app-logs-page',
@@ -97,9 +98,9 @@ export class LogsPageComponent implements OnInit {
         next: ({ deleted }) => {
           this.logs.set([]);
           this.meta.set(null);
-          this.snackbar.open(`${deleted} registros eliminados`, 'OK', { duration: 4000 });
+          this.snackbar.open(`${deleted} registros eliminados`, 'OK', { duration: SNACKBAR_LONG });
         },
-        error: () => this.snackbar.open('Error al depurar registros', 'OK', { duration: 3000 }),
+        error: () => this.snackbar.open('Error al depurar registros', 'OK', { duration: SNACKBAR_SHORT }),
       });
     });
   }

@@ -6,8 +6,7 @@ import { Directive, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, Observable } from 'rxjs';
-
-const REFRESH_INTERVAL_MS = 60_000;
+import { REFRESH_INTERVAL_MS } from '@core/constants/app.constants';
 
 @Directive()
 export abstract class BaseDashboardPage<T> implements OnInit, OnDestroy {
