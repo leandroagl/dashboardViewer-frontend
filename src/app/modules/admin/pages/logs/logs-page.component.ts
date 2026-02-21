@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LogsService, LogFilters } from '@core/services/logs.service';
@@ -7,6 +7,7 @@ import { AuditLog, LogsMeta } from '@core/models';
 @Component({
   selector:    'app-logs-page',
   standalone:  false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './logs-page.component.html',
   styleUrls:   ['./logs-page.component.scss'],
 })

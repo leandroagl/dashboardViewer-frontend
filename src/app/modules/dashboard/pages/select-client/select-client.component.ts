@@ -1,11 +1,12 @@
 // SelectClientComponent — Admin elige qué cliente visualizar
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientsService } from '@core/services/clients.service';
 import { Client } from '@core/models';
 
 @Component({
   selector: 'app-select-client', standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './select-client.component.html',
   styleUrls: ['./select-client.component.scss'],
 })

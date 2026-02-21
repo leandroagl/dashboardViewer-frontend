@@ -1,7 +1,7 @@
 // ─── StatusBadgeComponent ─────────────────────────────────────────────────────
 // Chip de color semántico para representar el estado de un sensor.
 
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SensorStatus } from '@core/models';
 
@@ -17,6 +17,7 @@ const STATUS_LABELS: Record<SensorStatus, string> = {
 @Component({
   selector:    'app-status-badge',
   standalone:  false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <span class="status-chip status-chip--{{ status }}">
       <span class="dot"></span>

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { UsersService } from '@core/services/users.service';
@@ -8,6 +8,7 @@ import { UserDialogComponent } from './user-dialog.component';
 @Component({
   selector:    'app-users-page',
   standalone:  false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './users-page.component.html',
   styleUrls:   ['./users-page.component.scss'],
 })

@@ -1,12 +1,13 @@
 // ─── GaugeComponent ───────────────────────────────────────────────────────────
 // Gauge semicircular SVG para CPU, RAM, uso de disco, etc.
 
-import { Component, Input, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, computed, signal } from '@angular/core';
 import { SensorStatus } from '@core/models';
 
 @Component({
   selector:   'app-gauge',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="gauge">
       <svg viewBox="0 0 120 70" class="gauge__svg">

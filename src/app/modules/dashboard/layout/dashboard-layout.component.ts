@@ -3,7 +3,7 @@
 // Los controles se desvanecen tras 4 segundos de inactividad.
 
 import {
-  Component, inject, signal, computed, OnInit, OnDestroy, HostListener, ElementRef
+  ChangeDetectionStrategy, Component, inject, signal, computed, OnInit, OnDestroy, HostListener, ElementRef
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -32,6 +32,7 @@ const CONTROLS_HIDE_MS = 4_000;  // 4 segundos sin actividad → ocultar control
 @Component({
   selector:    'app-dashboard-layout',
   standalone:  false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard-layout.component.html',
   styleUrls:   ['./dashboard-layout.component.scss'],
 })
