@@ -8,6 +8,7 @@ import {
   ApiResponse, DashboardType,
   VmwareDashboard, BackupsDashboard, NetworkingDashboard, WindowsDashboard
 } from '../models';
+import { requireData } from '../utils/api.utils';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -24,21 +25,21 @@ export class DashboardService {
 
   getServers(slug: string): Observable<VmwareDashboard> {
     return this.http.get<ApiResponse<VmwareDashboard>>(this.url(slug, '/servers'))
-      .pipe(map(r => r.data!));
+      .pipe(map(requireData));
   }
 
   getBackups(slug: string): Observable<BackupsDashboard> {
     return this.http.get<ApiResponse<BackupsDashboard>>(this.url(slug, '/backups'))
-      .pipe(map(r => r.data!));
+      .pipe(map(requireData));
   }
 
   getNetworking(slug: string): Observable<NetworkingDashboard> {
     return this.http.get<ApiResponse<NetworkingDashboard>>(this.url(slug, '/networking'))
-      .pipe(map(r => r.data!));
+      .pipe(map(requireData));
   }
 
   getWindows(slug: string): Observable<WindowsDashboard> {
     return this.http.get<ApiResponse<WindowsDashboard>>(this.url(slug, '/windows'))
-      .pipe(map(r => r.data!));
+      .pipe(map(requireData));
   }
 }

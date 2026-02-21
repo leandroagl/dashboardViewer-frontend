@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UsersService } from '@core/services/users.service';
 import { ClientsService } from '@core/services/clients.service';
-import { Client } from '@core/models';
+import { Client, UserRole } from '@core/models';
 
 @Component({
   selector:   'app-user-dialog',
@@ -134,7 +134,7 @@ export class UserDialogComponent implements OnInit {
     this.usersService.create({
       nombre:     val.nombre!,
       email:      val.email!,
-      rol:        val.rol as any,
+      rol:        val.rol as UserRole,
       cliente_id: val.cliente_id || undefined,
       es_kiosk:   val.es_kiosk ?? false,
     }).subscribe({

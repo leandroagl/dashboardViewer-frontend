@@ -41,7 +41,7 @@ export class ChangePasswordComponent {
     this.auth.changePassword(oldPassword!, newPassword!).subscribe({
       next: res => {
         this.loading.set(false);
-        if (!res.ok) { this.error.set((res as any).error ?? 'Error al cambiar contraseña.'); return; }
+        if (!res.ok) { this.error.set(res.error ?? 'Error al cambiar contraseña.'); return; }
         this.router.navigate(['/login']);
       },
       error: (err) => {
