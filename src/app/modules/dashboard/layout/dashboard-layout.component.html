@@ -21,15 +21,17 @@
         [class.dash-dot--active]="i === activeIndex()"
         (click)="navigateTo(i)"
         [matTooltip]="item.label"
+        [attr.aria-label]="'Ir a ' + item.label"
+        [attr.aria-current]="i === activeIndex() ? 'true' : null"
       ></button>
     </div>
 
     <!-- Acciones top-right -->
     <div class="dash-topbar__actions">
-      <a *ngIf="isAdmin()" routerLink="/admin/clients" mat-icon-button matTooltip="Administración">
+      <a *ngIf="isAdmin()" routerLink="/admin/clients" mat-icon-button matTooltip="Administración" aria-label="Administración">
         <mat-icon>admin_panel_settings</mat-icon>
       </a>
-      <button mat-icon-button (click)="logout()" matTooltip="Salir">
+      <button mat-icon-button (click)="logout()" matTooltip="Salir" aria-label="Salir">
         <mat-icon>logout</mat-icon>
       </button>
     </div>
@@ -40,12 +42,12 @@
   <ng-container *ngIf="!loading() && totalDashes() > 1">
 
     <!-- Flecha izquierda -->
-    <button class="dash-nav-btn dash-nav-btn--left controls-layer" (click)="goPrev()" matTooltip="Anterior">
+    <button class="dash-nav-btn dash-nav-btn--left controls-layer" (click)="goPrev()" matTooltip="Anterior" aria-label="Dashboard anterior">
       <mat-icon>chevron_left</mat-icon>
     </button>
 
     <!-- Flecha derecha -->
-    <button class="dash-nav-btn dash-nav-btn--right controls-layer" (click)="goNext()" matTooltip="Siguiente">
+    <button class="dash-nav-btn dash-nav-btn--right controls-layer" (click)="goNext()" matTooltip="Siguiente" aria-label="Dashboard siguiente">
       <mat-icon>chevron_right</mat-icon>
     </button>
 
@@ -63,21 +65,21 @@
       </div>
 
       <div class="dash-bottombar__center">
-        <button mat-icon-button (click)="goPrev()" matTooltip="Anterior">
+        <button mat-icon-button (click)="goPrev()" matTooltip="Anterior" aria-label="Dashboard anterior">
           <mat-icon>skip_previous</mat-icon>
         </button>
 
-        <button mat-icon-button (click)="togglePause()" [matTooltip]="paused() ? 'Reanudar' : 'Pausar'">
+        <button mat-icon-button (click)="togglePause()" [matTooltip]="paused() ? 'Reanudar' : 'Pausar'" [attr.aria-label]="paused() ? 'Reanudar rotación' : 'Pausar rotación'" [attr.aria-pressed]="paused()">
           <mat-icon>{{ paused() ? 'play_arrow' : 'pause' }}</mat-icon>
         </button>
 
-        <button mat-icon-button (click)="goNext()" matTooltip="Siguiente">
+        <button mat-icon-button (click)="goNext()" matTooltip="Siguiente" aria-label="Dashboard siguiente">
           <mat-icon>skip_next</mat-icon>
         </button>
       </div>
 
       <div class="dash-bottombar__right">
-        <button mat-icon-button (click)="toggleFullscreen()" [matTooltip]="'Pantalla completa'">
+        <button mat-icon-button (click)="toggleFullscreen()" matTooltip="Pantalla completa" [attr.aria-label]="isFullscreen() ? 'Salir de pantalla completa' : 'Pantalla completa'" [attr.aria-pressed]="isFullscreen()">
           <mat-icon>{{ fullscreenIcon }}</mat-icon>
         </button>
       </div>
