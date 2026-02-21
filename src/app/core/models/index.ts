@@ -76,7 +76,7 @@ export interface VmwareHost {
   cpu:        { value: string; pct: number; status: SensorStatus };
   memory:     { value: string; pct: number; status: SensorStatus };
   disk:       { read: { value: string; status: SensorStatus }; write: { value: string; status: SensorStatus } };
-  vms:        { name: string; cpuPct: number; status: SensorStatus }[];
+  vms:        { name: string; status: SensorStatus }[];
   datastores: { name: string; freePct: number; usedPct: number; status: SensorStatus }[];
   alerts:     { name: string; message: string; status: SensorStatus }[];
 }

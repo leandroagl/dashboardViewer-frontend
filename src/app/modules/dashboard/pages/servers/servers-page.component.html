@@ -133,10 +133,9 @@
     <div class="subsection-title">Máquinas Virtuales ({{ host.vms.length }})</div>
     <div class="vm-chips">
       <div *ngFor="let vm of host.vms" class="vm-chip vm-chip--{{ vm.status }}"
-        [matTooltip]="vm.cpuPct > 0 ? 'CPU: ' + vm.cpuPct + '%' : vm.name">
+        [matTooltip]="vm.name">
         <mat-icon>{{ vmIcon(vm.status) }}</mat-icon>
         <span>{{ vm.name | slice:0:14 }}</span>
-        <span class="vm-cpu mono" *ngIf="vm.cpuPct > 0">{{ vm.cpuPct | number:'1.0-1' }}%</span>
       </div>
       <div *ngIf="host.vms.length === 0" class="empty-state">
         <mat-icon>info</mat-icon> Sin VMs detectadas
