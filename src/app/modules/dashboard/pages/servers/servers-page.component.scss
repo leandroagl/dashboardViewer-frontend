@@ -416,16 +416,30 @@
 }
 
 // ── Disco host I/O card ─────────────────────────────────────────────────────
-.host-disk-card {
-  justify-content: flex-start;
+.disk-svg {
+  width: 120px;
+  height: 68px;
+  overflow: visible;
 }
+
+.disk-arrow {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+.disk-arrow--ok      { stroke: var(--status-ok); }
+.disk-arrow--warning { stroke: var(--status-warning); }
+.disk-arrow--error   { stroke: var(--status-error); }
+.disk-arrow--unusual { stroke: var(--status-unusual); }
+.disk-arrow--paused  { stroke: var(--status-paused); }
+.disk-arrow--unknown { stroke: var(--text-muted); }
 
 .disk-io {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
-  margin-top: 4px;
 }
 
 .disk-io__row {
@@ -433,14 +447,6 @@
   align-items: center;
   gap: 6px;
   font-size: 11px;
-}
-
-.disk-io__icon {
-  font-size: 13px;
-  width: 13px;
-  height: 13px;
-  color: var(--text-muted);
-  flex-shrink: 0;
 }
 
 .disk-io__label {
