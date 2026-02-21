@@ -1,7 +1,7 @@
 // ─── AlertListComponent ───────────────────────────────────────────────────────
 // Lista compacta de alertas activas.
 
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { SensorStatus } from '@core/models';
 
 export interface AlertItem {
@@ -13,6 +13,7 @@ export interface AlertItem {
 @Component({
   selector:   'app-alert-list',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="alert-list">
       <div *ngIf="alerts.length === 0" class="alert-list__empty">

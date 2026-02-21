@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ClientsService } from '@core/services/clients.service';
@@ -8,6 +8,7 @@ import { ClientDialogComponent } from './client-dialog.component';
 @Component({
   selector:    'app-clients-page',
   standalone:  false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './clients-page.component.html',
   styleUrls:   ['./clients-page.component.scss'],
 })

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -12,6 +12,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
 @Component({
   selector:    'app-change-password',
   standalone:  false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './change-password.component.html',
   styleUrls:   ['./change-password.component.scss'],
 })
@@ -40,7 +41,7 @@ export class ChangePasswordComponent {
     this.auth.changePassword(oldPassword!, newPassword!).subscribe({
       next: res => {
         this.loading.set(false);
-        if (!res.ok) { this.error.set((res as any).error ?? 'Error al cambiar contraseña.'); return; }
+        if (!res.ok) { this.error.set(res.error ?? 'Error al cambiar contraseña.'); return; }
         this.router.navigate(['/login']);
       },
       error: (err) => {

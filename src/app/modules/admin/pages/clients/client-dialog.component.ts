@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { ClientsService } from '@core/services/clients.service';
 @Component({
   selector:   'app-client-dialog',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule, ReactiveFormsModule,
     MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule,
@@ -84,7 +85,8 @@ export class ClientDialogComponent {
     if (this.form.invalid || this.loading()) return;
     this.error.set('');
     this.loading.set(true);
-    this.service.create(this.form.getRawValue() as any).subscribe({
+    const { nombre, slug, prtg_group } = this.form.getRawValue();
+    this.service.create({ nombre: nombre!, slug: slug!, prtg_group: prtg_group! }).subscribe({
       next:  c   => this.dialogRef.close(c),
       error: err => { this.loading.set(false); this.error.set(err?.error?.error ?? 'Error al crear el cliente.'); },
     });

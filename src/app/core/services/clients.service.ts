@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '@env/environment';
 import { ApiResponse, Client } from '../models';
+import { requireData } from '../utils/api.utils';
 
 @Injectable({ providedIn: 'root' })
 export class ClientsService {
@@ -14,19 +15,19 @@ export class ClientsService {
   }
 
   getOne(id: string): Observable<Client> {
-    return this.http.get<ApiResponse<Client>>(`${this.base}/${id}`).pipe(map(r => r.data!));
+    return this.http.get<ApiResponse<Client>>(`${this.base}/${id}`).pipe(map(requireData));
   }
 
   create(payload: Partial<Client>): Observable<Client> {
-    return this.http.post<ApiResponse<Client>>(this.base, payload).pipe(map(r => r.data!));
+    return this.http.post<ApiResponse<Client>>(this.base, payload).pipe(map(requireData));
   }
 
   update(id: string, payload: Partial<Client>): Observable<Client> {
-    return this.http.patch<ApiResponse<Client>>(`${this.base}/${id}`, payload).pipe(map(r => r.data!));
+    return this.http.patch<ApiResponse<Client>>(`${this.base}/${id}`, payload).pipe(map(requireData));
   }
 
   setStatus(id: string, activo: boolean): Observable<Client> {
-    return this.http.patch<ApiResponse<Client>>(`${this.base}/${id}/status`, { activo }).pipe(map(r => r.data!));
+    return this.http.patch<ApiResponse<Client>>(`${this.base}/${id}/status`, { activo }).pipe(map(requireData));
   }
 
   delete(id: string): Observable<void> {

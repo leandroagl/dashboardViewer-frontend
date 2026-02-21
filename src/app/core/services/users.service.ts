@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '@env/environment';
 import { ApiResponse, User, CreateUserPayload } from '../models';
+import { requireData } from '../utils/api.utils';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
@@ -18,11 +19,11 @@ export class UsersService {
   }
 
   create(payload: CreateUserPayload): Observable<User & { plainPassword: string }> {
-    return this.http.post<ApiResponse<User & { plainPassword: string }>>(this.base, payload).pipe(map(r => r.data!));
+    return this.http.post<ApiResponse<User & { plainPassword: string }>>(this.base, payload).pipe(map(requireData));
   }
 
   update(id: string, payload: Partial<CreateUserPayload>): Observable<User> {
-    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}`, payload).pipe(map(r => r.data!));
+    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}`, payload).pipe(map(requireData));
   }
 
   delete(id: string): Observable<void> {
@@ -35,7 +36,7 @@ export class UsersService {
 
   resetPassword(id: string): Observable<{ plainPassword: string }> {
     return this.http.post<ApiResponse<{ plainPassword: string }>>(`${this.base}/${id}/reset-password`, {})
-      .pipe(map(r => r.data!));
+      .pipe(map(requireData));
   }
 
   revokeKiosk(id: string): Observable<void> {

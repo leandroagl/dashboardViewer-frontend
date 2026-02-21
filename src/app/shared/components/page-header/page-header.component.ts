@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector:   'app-page-header',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="page-header">
       <div class="page-header__left">

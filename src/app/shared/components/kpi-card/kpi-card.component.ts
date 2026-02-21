@@ -1,12 +1,13 @@
 // ─── KpiCardComponent ─────────────────────────────────────────────────────────
 // Tarjeta compacta para mostrar un valor numérico con etiqueta y estado.
 
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { SensorStatus } from '@core/models';
 
 @Component({
   selector:   'app-kpi-card',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="kpi-card kpi-card--{{ status }}">
       <div class="kpi-card__label">{{ label }}</div>

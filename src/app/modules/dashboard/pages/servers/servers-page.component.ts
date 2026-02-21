@@ -1,45 +1,21 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
 import { VmwareDashboard, VmwareHost, SensorStatus } from '@core/models';
+import { BaseDashboardPage } from '../base-dashboard-page';
 
 @Component({
-  selector:    'app-servers-page',
-  standalone:  false,
-  templateUrl: './servers-page.component.html',
-  styleUrls:   ['./servers-page.component.scss'],
+  selector:        'app-servers-page',
+  standalone:      false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl:     './servers-page.component.html',
+  styleUrls:       ['./servers-page.component.scss'],
 })
-export class ServersPageComponent implements OnInit, OnDestroy {
-  private readonly route   = inject(ActivatedRoute);
+export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   private readonly service = inject(DashboardService);
 
-  private readonly slug = toSignal(
-    this.route.parent!.paramMap.pipe(map(p => p.get('slug') ?? '')),
-    { initialValue: '' }
-  );
-
-  protected readonly loading = signal(true);
-  protected readonly data    = signal<VmwareDashboard | null>(null);
-  protected readonly error   = signal('');
-
-  private refreshInterval?: ReturnType<typeof setInterval>;
-
-  ngOnInit(): void {
-    this.load();
-    this.refreshInterval = setInterval(() => this.load(), 60_000);
-  }
-
-  ngOnDestroy(): void { clearInterval(this.refreshInterval); }
-
-  private load(): void {
-    const slug = this.slug();
-    if (!slug) return;
-    this.service.getServers(slug).subscribe({
-      next:  d  => { this.data.set(d); this.loading.set(false); },
-      error: () => { this.error.set('No se pudo cargar el dashboard.'); this.loading.set(false); },
-    });
+  protected fetchData(slug: string): Observable<VmwareDashboard> {
+    return this.service.getServers(slug);
   }
 
   // ── Summary counts (sobre todos los hosts) ────────────────────────────────
