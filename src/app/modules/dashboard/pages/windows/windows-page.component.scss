@@ -47,3 +47,25 @@
   color: var(--text-muted); font-size: 13px;
   mat-icon { font-size: 18px; width: 18px; height: 18px; }
 }
+
+// ── Responsive: smartphones (≤ 600px) ─────────────────────────────────────────
+@media (max-width: 600px) {
+  .windows-page { gap: 10px; }
+
+  // Una card por fila, sin overflow horizontal
+  .servers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  // Grid de 3 columnas iguales: cada gauge ocupa exactamente 1/3 del ancho
+  .server-card__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    // CSS custom properties heredadas por el gauge child component
+    --gauge-w:          78px;
+    --gauge-h:          49px;
+    --gauge-font-value: 14px;
+    --gauge-font-label: 9px;
+  }
+}
