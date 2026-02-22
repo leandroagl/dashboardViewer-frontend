@@ -114,37 +114,6 @@
   &--active        { background: var(--color-primary); transform: scale(1.2); }
 }
 
-// ─── Botones de flecha laterales ──────────────────────────────────────────────
-
-.dash-nav-btn {
-  position:        fixed;
-  top:             50%;
-  transform:       translateY(-50%);
-  width:           44px;
-  height:          44px;
-  border-radius:   50%;
-  border:          1px solid rgba(255,255,255,0.12);
-  background:      rgba(10,13,18,0.5);
-  backdrop-filter: blur(8px);
-  color:           rgba(255,255,255,0.6);
-  cursor:          pointer;
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  z-index:         100;
-  transition:      background var(--transition), color var(--transition), transform 500ms ease, opacity 500ms ease;
-
-  mat-icon { font-size: 22px; width: 22px; height: 22px; }
-
-  &:hover {
-    background: rgba(77,208,225,0.15);
-    color:      var(--color-primary);
-  }
-
-  &--left  { left:  16px; }
-  &--right { right: 16px; }
-}
-
 // ─── Barra inferior ───────────────────────────────────────────────────────────
 
 .dash-bottombar {

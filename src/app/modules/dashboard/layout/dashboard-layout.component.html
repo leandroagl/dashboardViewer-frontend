@@ -42,16 +42,6 @@
   <!-- ─── Controles de navegación (laterales + barra inferior) ─────────────── -->
   <ng-container *ngIf="!loading() && totalDashes() > 1">
 
-    <!-- Flecha izquierda -->
-    <button class="dash-nav-btn dash-nav-btn--left controls-layer" (click)="goPrev()" matTooltip="Anterior" aria-label="Dashboard anterior">
-      <mat-icon>chevron_left</mat-icon>
-    </button>
-
-    <!-- Flecha derecha -->
-    <button class="dash-nav-btn dash-nav-btn--right controls-layer" (click)="goNext()" matTooltip="Siguiente" aria-label="Dashboard siguiente">
-      <mat-icon>chevron_right</mat-icon>
-    </button>
-
     <!-- Barra de controles inferior -->
     <div class="dash-bottombar controls-layer">
 

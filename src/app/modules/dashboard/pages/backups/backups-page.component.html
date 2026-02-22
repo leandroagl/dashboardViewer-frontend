@@ -18,8 +18,10 @@
     <!-- Layout principal: Veeam izq / NAS der -->
     <div class="backups-main-grid">
 
-      <!-- ── Columna Veeam (izquierda) ─────────────────────────────────────── -->
+      <!-- ── Columna Veeam + Acronis (izquierda) ──────────────────────────── -->
       <div class="backups-col">
+
+        <!-- Veeam -->
         <div class="section-label">Jobs de Veeam</div>
 
         <div class="card device-card" *ngFor="let dev of veeamDevices(d)">
@@ -34,12 +36,10 @@
             <div class="jobs-table">
               <div class="jobs-table__header">
                 <span>Job</span>
-                <span>Último valor</span>
                 <span>Estado</span>
               </div>
               <div *ngFor="let job of dev.jobs" class="jobs-table__row">
                 <span class="jobs-table__name">{{ job.name }}</span>
-                <span class="mono" style="font-size:12px;">{{ job.lastValue }}</span>
                 <app-status-badge [status]="job.lastStatus"></app-status-badge>
               </div>
               <div *ngIf="dev.jobs.length === 0" class="empty-state" style="padding:16px;">
@@ -52,6 +52,37 @@
         <div *ngIf="veeamDevices(d).length === 0" class="empty-state">
           <mat-icon>info</mat-icon> Sin dispositivos Veeam detectados
         </div>
+
+        <!-- Acronis -->
+        <ng-container *ngIf="acronisDevices(d).length > 0">
+          <div class="section-label" style="margin-top:8px;">Jobs de Acronis</div>
+
+          <div class="card device-card" *ngFor="let dev of acronisDevices(d)">
+            <div class="card__header">
+              <div class="device-icon device-icon--acronis"><mat-icon>cloud_done</mat-icon></div>
+              <div class="device-header-text">
+                <div class="card__title">{{ dev.name }}</div>
+                <div class="card__subtitle">{{ dev.jobs.length }} jobs</div>
+              </div>
+            </div>
+            <div class="card__body">
+              <div class="jobs-table">
+                <div class="jobs-table__header">
+                  <span>Job</span>
+                  <span>Estado</span>
+                </div>
+                <div *ngFor="let job of dev.jobs" class="jobs-table__row">
+                  <span class="jobs-table__name">{{ job.name }}</span>
+                  <app-status-badge [status]="job.lastStatus"></app-status-badge>
+                </div>
+                <div *ngIf="dev.jobs.length === 0" class="empty-state" style="padding:16px;">
+                  <mat-icon>info</mat-icon> Sin jobs
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
       </div>
 
       <!-- ── Columna NAS / QNAP (centro) ──────────────────────────────────── -->

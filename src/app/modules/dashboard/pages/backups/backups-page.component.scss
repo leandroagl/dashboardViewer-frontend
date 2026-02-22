@@ -71,9 +71,10 @@
   justify-content: center;
   flex-shrink: 0;
 
-  &--veeam { background: rgba(77, 208, 225, 0.15); color: var(--color-primary); }
-  &--qnap  { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
-  &--other { background: rgba(156, 39, 176, 0.15);  color: #ce93d8; }
+  &--veeam   { background: rgba(77, 208, 225, 0.15); color: var(--color-primary); }
+  &--acronis { background: rgba(255, 152,  0, 0.15); color: #ffb74d; }
+  &--qnap    { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
+  &--other   { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
 }
 
 .device-header-text { flex: 1; min-width: 0; padding: 0 12px; }
@@ -82,7 +83,7 @@
 .jobs-table {
   &__header {
     display: grid;
-    grid-template-columns: 2fr 1fr 80px;
+    grid-template-columns: 1fr 80px;
     gap: 12px;
     padding: 6px 8px 10px;
     font-size: 10px;
@@ -95,7 +96,7 @@
 
   &__row {
     display: grid;
-    grid-template-columns: 2fr 1fr 80px;
+    grid-template-columns: 1fr 80px;
     gap: 12px;
     align-items: center;
     padding: 10px 8px;
