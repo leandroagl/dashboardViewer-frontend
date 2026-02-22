@@ -20,19 +20,19 @@ export class NetworkingPageComponent extends BaseDashboardPage<NetworkingDashboa
 
   // ─── Helpers para el template ────────────────────────────────────────────────
 
+  protected totalDevicesCount(d: NetworkingDashboard): number {
+    return d.devices.length + d.switches.length + d.ptpAntennas.length;
+  }
+
   protected devicesErrorCount(d: NetworkingDashboard): number {
-    return d.devices.filter(dv => dv.status === 'error').length;
+    return [...d.devices, ...d.switches, ...d.ptpAntennas].filter(dv => dv.status === 'error').length;
   }
 
   protected devicesErrorStatus(d: NetworkingDashboard): SensorStatus {
-    return d.devices.some(dv => dv.status === 'error') ? 'error' : 'ok';
+    return [...d.devices, ...d.switches, ...d.ptpAntennas].some(dv => dv.status === 'error') ? 'error' : 'ok';
   }
 
   protected alertsStatus(d: NetworkingDashboard): SensorStatus {
     return d.alerts.length > 0 ? 'error' : 'ok';
-  }
-
-  protected hasDevices(d: NetworkingDashboard): boolean {
-    return d.devices.length > 0;
   }
 }

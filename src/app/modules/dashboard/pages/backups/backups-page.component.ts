@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
-import { BackupDevice, BackupsDashboard, SensorStatus } from '@core/models';
+import { BackupDevice, BackupJob, BackupsDashboard, SensorStatus } from '@core/models';
 import { BaseDashboardPage } from '../base-dashboard-page';
 
 @Component({
@@ -56,5 +56,26 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
     if (/raid/i.test(sensorName))                            return 'dns';
     if (/ping|latency/i.test(sensorName))                    return 'network_check';
     return 'sensors';
+  }
+
+  protected isLogicalDisk(name: string): boolean {
+    return /logical.?disk/i.test(name);
+  }
+
+  protected nasLogicalDisks(jobs: BackupJob[]): BackupJob[] {
+    return jobs.filter(j => this.isLogicalDisk(j.name));
+  }
+
+  protected nasOtherSensors(jobs: BackupJob[]): BackupJob[] {
+    return jobs.filter(j => !this.isLogicalDisk(j.name));
+  }
+
+  protected parseFreePct(value: string): number {
+    const m = value.match(/(\d+(?:[.,]\d+)?)/);
+    return m ? parseFloat(m[1].replace(',', '.')) : 0;
+  }
+
+  protected datastoreBarColor(status: SensorStatus): string {
+    return status === 'ok' ? 'primary' : 'warn';
   }
 }

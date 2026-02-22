@@ -29,7 +29,7 @@
 // ── Layout principal: tres columnas ───────────────────────────────────────────
 .backups-main-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 24px;
   align-items: start;
 
@@ -154,6 +154,52 @@
     font-size: 13px;
     font-family: var(--font-mono);
     color: var(--text-primary);
+  }
+}
+
+// ── NAS logical disk items (datastore style) ──────────────────────────────────
+.nas-disk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.nas-disk-item {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  &__name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    mat-icon { font-size: 14px; width: 14px; height: 14px; color: var(--color-primary); }
+  }
+
+  &__pct { font-size: 12px; font-family: var(--font-mono); }
+  &__pct--ok      { color: var(--status-ok); }
+  &__pct--warning { color: var(--status-warning); }
+  &__pct--error   { color: var(--status-error); }
+  &__bar { border-radius: 4px; height: 6px !important; }
+
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 10px;
+    color: var(--text-muted);
   }
 }
 
