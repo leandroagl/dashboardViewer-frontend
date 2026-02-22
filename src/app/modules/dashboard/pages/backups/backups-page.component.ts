@@ -57,4 +57,25 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
     if (/ping|latency/i.test(sensorName))                    return 'network_check';
     return 'sensors';
   }
+
+  protected isLogicalDisk(name: string): boolean {
+    return /logical.?disk/i.test(name);
+  }
+
+  protected nasLogicalDisks(jobs: BackupJob[]): BackupJob[] {
+    return jobs.filter(j => this.isLogicalDisk(j.name));
+  }
+
+  protected nasOtherSensors(jobs: BackupJob[]): BackupJob[] {
+    return jobs.filter(j => !this.isLogicalDisk(j.name));
+  }
+
+  protected parseFreePct(value: string): number {
+    const m = value.match(/(\d+(?:[.,]\d+)?)/);
+    return m ? parseFloat(m[1].replace(',', '.')) : 0;
+  }
+
+  protected datastoreBarColor(status: SensorStatus): string {
+    return status === 'ok' ? 'primary' : 'warn';
+  }
 }
