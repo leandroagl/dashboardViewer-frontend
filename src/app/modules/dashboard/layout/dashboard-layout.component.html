@@ -8,9 +8,7 @@
   <!-- ─── Barra superior: logo + cliente + nav dots ─────────────────────────── -->
   <div class="dash-topbar controls-layer">
 
-    <div class="dash-topbar__brand">
-      <mat-icon>monitoring</mat-icon>
-    </div>
+    <div class="dash-topbar__brand"></div>
 
     <!-- Dots de navegación -->
     <div class="dash-dots" *ngIf="!loading() && totalDashes() > 1">
@@ -30,7 +28,10 @@
       <a *ngIf="isAdmin()" routerLink="/admin/clients" mat-icon-button matTooltip="Administración" aria-label="Administración">
         <mat-icon>admin_panel_settings</mat-icon>
       </a>
-      <span class="dash-client-name">{{ slug() | uppercase }}</span>
+      <div class="dash-client-info">
+        <mat-icon>monitoring</mat-icon>
+        <span class="dash-client-name">{{ slug() | uppercase }}</span>
+      </div>
       <button mat-icon-button (click)="logout()" matTooltip="Salir" aria-label="Salir">
         <mat-icon>logout</mat-icon>
       </button>
