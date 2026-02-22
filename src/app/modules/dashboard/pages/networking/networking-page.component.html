@@ -41,22 +41,12 @@
         <!-- Switches -->
         <div *ngIf="d.switches.length > 0">
           <div class="section-label">Switches</div>
-          <div class="devices-grid">
-            <div class="card" *ngFor="let device of d.switches">
+          <div class="ping-grid">
+            <div class="card ping-card" *ngFor="let device of d.switches">
               <div class="card__header">
-                <div class="device-header">
-                  <mat-icon class="device-header__icon">hub</mat-icon>
-                  <span class="device-header__name">{{ device.name }}</span>
-                </div>
-              </div>
-              <div class="card__body">
-                <div class="sensor-grid">
-                  <div *ngFor="let sensor of device.sensors" class="sensor-row">
-                    <span class="sensor-row__name">{{ sensor.name }}</span>
-                    <span class="mono sensor-row__value">{{ sensor.value }}</span>
-                    <app-status-badge [status]="sensor.status"></app-status-badge>
-                  </div>
-                </div>
+                <mat-icon class="device-header__icon">hub</mat-icon>
+                <span class="device-header__name">{{ device.name }}</span>
+                <span class="ping-dot ping-dot--{{ device.status }}"></span>
               </div>
             </div>
           </div>
@@ -65,22 +55,12 @@
         <!-- Antenas PTP -->
         <div *ngIf="d.ptpAntennas.length > 0">
           <div class="section-label">Antenas PTP</div>
-          <div class="devices-grid">
-            <div class="card" *ngFor="let device of d.ptpAntennas">
+          <div class="ping-grid">
+            <div class="card ping-card" *ngFor="let device of d.ptpAntennas">
               <div class="card__header">
-                <div class="device-header">
-                  <mat-icon class="device-header__icon">cell_tower</mat-icon>
-                  <span class="device-header__name">{{ device.name }}</span>
-                </div>
-              </div>
-              <div class="card__body">
-                <div class="sensor-grid">
-                  <div *ngFor="let sensor of device.sensors" class="sensor-row">
-                    <span class="sensor-row__name">{{ sensor.name }}</span>
-                    <span class="mono sensor-row__value">{{ sensor.value }}</span>
-                    <app-status-badge [status]="sensor.status"></app-status-badge>
-                  </div>
-                </div>
+                <mat-icon class="device-header__icon">cell_tower</mat-icon>
+                <span class="device-header__name">{{ device.name }}</span>
+                <span class="ping-dot ping-dot--{{ device.status }}"></span>
               </div>
             </div>
           </div>
