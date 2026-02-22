@@ -58,7 +58,7 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   }
 
   protected isLogicalDisk(name: string): boolean {
-    return /logical.?disk/i.test(name);
+    return /logical.?disk|disk.?free/i.test(name);
   }
 
   protected nasLogicalDisks(jobs: BackupJob[]): BackupJob[] {
