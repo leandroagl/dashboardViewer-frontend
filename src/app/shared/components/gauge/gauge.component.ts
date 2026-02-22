@@ -38,10 +38,10 @@ import { SensorStatus } from '@core/models';
   `,
   styles: [`
     .gauge { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .gauge__svg   { width: 120px; height: 75px; overflow: visible; }
-    .gauge__value { font-family: var(--font-mono); font-size: 18px; font-weight: 700; fill: var(--text-primary); }
+    .gauge__svg   { width: var(--gauge-w, 120px); height: var(--gauge-h, 75px); overflow: visible; }
+    .gauge__value { font-family: var(--font-mono); font-size: var(--gauge-font-value, 18px); font-weight: 700; fill: var(--text-primary); }
     .gauge__unit  { font-size: 9px; fill: var(--text-muted); font-family: var(--font-body); }
-    .gauge__label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); }
+    .gauge__label { font-size: var(--gauge-font-label, 10px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); }
   `]
 })
 export class GaugeComponent {
