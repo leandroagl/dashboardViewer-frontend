@@ -96,7 +96,7 @@ export interface BackupJob {
 
 export interface BackupDevice {
   name:    string;
-  type:    'veeam' | 'qnap' | 'other';
+  type:    'veeam' | 'acronis' | 'qnap' | 'other';
   status:  SensorStatus;
   jobs:    BackupJob[];
   alerts:  { name: string; message: string }[];

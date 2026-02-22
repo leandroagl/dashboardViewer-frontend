@@ -40,6 +40,10 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
     return d.devices.filter(dev => dev.type === 'veeam');
   }
 
+  protected acronisDevices(d: BackupsDashboard): BackupDevice[] {
+    return d.devices.filter(dev => dev.type === 'acronis');
+  }
+
   protected nasDevices(d: BackupsDashboard): BackupDevice[] {
     return d.devices.filter(dev => dev.type === 'qnap' || dev.type === 'other');
   }
