@@ -1,6 +1,5 @@
 <div class="networking-page fade-in-up" *ngIf="!loading(); else loadingTpl">
   <app-page-header title="Networking" icon="router" subtitle="Estado de equipos de red y conectividad">
-    <app-status-badge [status]="data() ? alertsStatus(data()!) : 'unknown'"></app-status-badge>
   </app-page-header>
 
   <ng-container *ngIf="data() as d">

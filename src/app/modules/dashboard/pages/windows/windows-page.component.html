@@ -1,6 +1,5 @@
 <div class="windows-page fade-in-up" *ngIf="!loading(); else loadingTpl">
   <app-page-header title="Windows Server" icon="computer" subtitle="Estado de todos los servidores Windows del cliente">
-    <app-status-badge [status]="data() ? alertsStatus(data()!) : 'unknown'"></app-status-badge>
   </app-page-header>
 
   <ng-container *ngIf="data() as d">
