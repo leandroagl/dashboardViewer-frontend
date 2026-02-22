@@ -33,8 +33,7 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   }
 
   protected jobsErrorStatus(d: BackupsDashboard): SensorStatus {
-    const count = this.jobsErrorCount(d);
-    return count === 0 ? 'ok' : count <= 2 ? 'warning' : 'error';
+    return this.jobsErrorCount(d) > 0 ? 'error' : 'ok';
   }
 
   protected veeamDevices(d: BackupsDashboard): BackupDevice[] {
@@ -59,7 +58,7 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   }
 
   protected isLogicalDisk(name: string): boolean {
-    return /logical.?disk/i.test(name);
+    return /logical.?disk|disk.?free/i.test(name);
   }
 
   protected nasLogicalDisks(jobs: BackupJob[]): BackupJob[] {

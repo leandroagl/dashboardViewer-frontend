@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 
 @Component({
-  selector:   'app-page-header',
+  selector: "app-page-header",
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -18,14 +18,41 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
       </div>
     </header>
   `,
-  styles: [`
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .page-header__left { display: flex; align-items: center; gap: 12px; }
-    .page-header__icon { font-size: 28px; width: 28px; height: 28px; color: var(--color-primary); }
-    .page-header__title { font-size: 20px; font-weight: 500; color: var(--text-primary); }
-    .page-header__subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-    .page-header__actions { display: flex; align-items: center; gap: 8px; }
-  `]
+  styles: [
+    `
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .page-header__left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .page-header__icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+        color: var(--color-primary);
+      }
+      .page-header__title {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+      .page-header__subtitle {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .page-header__actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    `,
+  ],
 })
 export class PageHeaderComponent {
   @Input({ required: true }) title!: string;

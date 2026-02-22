@@ -33,6 +33,6 @@ export class NetworkingPageComponent extends BaseDashboardPage<NetworkingDashboa
   }
 
   protected alertsStatus(d: NetworkingDashboard): SensorStatus {
-    return d.alerts.length > 0 ? 'error' : 'ok';
+    return d.alerts.length > 0 ? 'warning' : 'ok';
   }
 }

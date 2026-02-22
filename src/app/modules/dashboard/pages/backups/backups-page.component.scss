@@ -73,7 +73,7 @@
 
   &--veeam { background: rgba(77, 208, 225, 0.15); color: var(--color-primary); }
   &--qnap  { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
-  &--other { background: rgba(255,255,255,0.05);   color: var(--text-muted); }
+  &--other { background: rgba(156, 39, 176, 0.15);  color: #ce93d8; }
 }
 
 .device-header-text { flex: 1; min-width: 0; padding: 0 12px; }
