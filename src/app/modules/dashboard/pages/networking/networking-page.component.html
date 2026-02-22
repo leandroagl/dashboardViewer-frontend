@@ -4,41 +4,96 @@
 
   <ng-container *ngIf="data() as d">
     <div class="net-kpis">
-      <app-kpi-card label="Dispositivos" [value]="d.devices.length"     status="ok"                      sublabel="monitoreados"></app-kpi-card>
-      <app-kpi-card label="Con errores"  [value]="devicesErrorCount(d)" [status]="devicesErrorStatus(d)"  sublabel="dispositivos"></app-kpi-card>
-      <app-kpi-card label="Alertas"      [value]="d.alerts.length"      [status]="alertsStatus(d)"        sublabel="activas"></app-kpi-card>
+      <app-kpi-card label="Dispositivos" [value]="totalDevicesCount(d)" status="ok"                     sublabel="monitoreados"></app-kpi-card>
+      <app-kpi-card label="Con errores"  [value]="devicesErrorCount(d)" [status]="devicesErrorStatus(d)" sublabel="dispositivos"></app-kpi-card>
+      <app-kpi-card label="Alertas"      [value]="d.alerts.length"      [status]="alertsStatus(d)"       sublabel="activas"></app-kpi-card>
     </div>
 
     <div class="net-body">
 
-      <!-- Dispositivos en grilla 2 columnas -->
-      <div class="devices-grid">
-        <div class="card" *ngFor="let device of d.devices">
-          <div class="card__header">
-            <div class="device-header">
-              <mat-icon class="device-header__icon">router</mat-icon>
-              <span class="device-header__name">{{ device.name }}</span>
-            </div>
-          </div>
-          <div class="card__body">
-            <div class="sensor-grid">
-              <div *ngFor="let sensor of device.sensors" class="sensor-row">
-                <span class="sensor-row__name">{{ sensor.name }}</span>
-                <span class="mono sensor-row__value">{{ sensor.value }}</span>
-                <app-status-badge [status]="sensor.status"></app-status-badge>
+      <!-- Columna izquierda: todas las secciones de dispositivos -->
+      <div class="net-devices-col">
+
+        <!-- Dispositivos de red (routers, firewalls) -->
+        <div *ngIf="d.devices.length > 0">
+          <div class="section-label">Dispositivos de red</div>
+          <div class="devices-grid">
+            <div class="card" *ngFor="let device of d.devices">
+              <div class="card__header">
+                <div class="device-header">
+                  <mat-icon class="device-header__icon">router</mat-icon>
+                  <span class="device-header__name">{{ device.name }}</span>
+                </div>
+              </div>
+              <div class="card__body">
+                <div class="sensor-grid">
+                  <div *ngFor="let sensor of device.sensors" class="sensor-row">
+                    <span class="sensor-row__name">{{ sensor.name }}</span>
+                    <span class="mono sensor-row__value">{{ sensor.value }}</span>
+                    <app-status-badge [status]="sensor.status"></app-status-badge>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="card" *ngIf="d.devices.length === 0">
-          <div class="card__body empty-state">
-            <mat-icon>info</mat-icon> Sin dispositivos de red detectados
+        <!-- Switches -->
+        <div *ngIf="d.switches.length > 0">
+          <div class="section-label">Switches</div>
+          <div class="devices-grid">
+            <div class="card" *ngFor="let device of d.switches">
+              <div class="card__header">
+                <div class="device-header">
+                  <mat-icon class="device-header__icon">hub</mat-icon>
+                  <span class="device-header__name">{{ device.name }}</span>
+                </div>
+              </div>
+              <div class="card__body">
+                <div class="sensor-grid">
+                  <div *ngFor="let sensor of device.sensors" class="sensor-row">
+                    <span class="sensor-row__name">{{ sensor.name }}</span>
+                    <span class="mono sensor-row__value">{{ sensor.value }}</span>
+                    <app-status-badge [status]="sensor.status"></app-status-badge>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- Antenas PTP -->
+        <div *ngIf="d.ptpAntennas.length > 0">
+          <div class="section-label">Antenas PTP</div>
+          <div class="devices-grid">
+            <div class="card" *ngFor="let device of d.ptpAntennas">
+              <div class="card__header">
+                <div class="device-header">
+                  <mat-icon class="device-header__icon">cell_tower</mat-icon>
+                  <span class="device-header__name">{{ device.name }}</span>
+                </div>
+              </div>
+              <div class="card__body">
+                <div class="sensor-grid">
+                  <div *ngFor="let sensor of device.sensors" class="sensor-row">
+                    <span class="sensor-row__name">{{ sensor.name }}</span>
+                    <span class="mono sensor-row__value">{{ sensor.value }}</span>
+                    <app-status-badge [status]="sensor.status"></app-status-badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sin dispositivos en ninguna categoría -->
+        <div *ngIf="totalDevicesCount(d) === 0" class="empty-state">
+          <mat-icon>info</mat-icon> Sin dispositivos de red detectados
+        </div>
+
       </div>
 
-      <!-- Alertas en media pantalla -->
+      <!-- Columna derecha: alertas -->
       <div class="alerts-panel">
         <div class="card">
           <div class="card__header"><span class="card__title">Alertas activas</span></div>

@@ -115,8 +115,10 @@ export interface NetworkDevice {
   sensors: { name: string; value: string; status: SensorStatus }[];
 }
 export interface NetworkingDashboard {
-  devices: NetworkDevice[];
-  alerts:  { name: string; message: string; status: SensorStatus }[];
+  devices:     NetworkDevice[];
+  switches:    NetworkDevice[];
+  ptpAntennas: NetworkDevice[];
+  alerts:      { name: string; message: string; status: SensorStatus }[];
 }
 
 // Windows
