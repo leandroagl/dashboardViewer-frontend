@@ -55,7 +55,7 @@
         </div>
       </div>
 
-      <!-- ── Columna NAS / QNAP (derecha) ──────────────────────────────────── -->
+      <!-- ── Columna NAS / QNAP (centro) ──────────────────────────────────── -->
       <div class="backups-col">
         <div class="section-label">Almacenamiento NAS</div>
 
@@ -90,14 +90,20 @@
         </div>
       </div>
 
-    </div>
+      <!-- ── Columna Alertas (derecha) ──────────────────────────────────────── -->
+      <div class="backups-col">
+        <div class="section-label">Alertas activas</div>
 
-    <!-- Alertas activas -->
-    <div class="card" *ngIf="d.alerts.length > 0">
-      <div class="card__header"><span class="card__title">Alertas activas</span></div>
-      <div class="card__body">
-        <app-alert-list [alerts]="d.alerts"></app-alert-list>
+        <div class="card" *ngIf="d.alerts.length > 0">
+          <div class="card__body">
+            <app-alert-list [alerts]="d.alerts"></app-alert-list>
+          </div>
+        </div>
+        <div *ngIf="d.alerts.length === 0" class="no-alerts">
+          <mat-icon>check_circle</mat-icon> Sin alertas activas
+        </div>
       </div>
+
     </div>
 
   </ng-container>
