@@ -19,7 +19,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
     </header>
   `,
   styles: [`
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .page-header__left { display: flex; align-items: center; gap: 12px; }
     .page-header__icon { font-size: 28px; width: 28px; height: 28px; color: var(--color-primary); }
     .page-header__title { font-size: 20px; font-weight: 500; color: var(--text-primary); }
