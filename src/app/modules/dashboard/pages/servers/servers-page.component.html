@@ -1,7 +1,6 @@
 <div class="servers-page fade-in-up" *ngIf="!loading(); else loadingTpl">
 
   <app-page-header title="Servidores VMware" icon="dns" subtitle="Estado en tiempo real de la infraestructura virtual">
-    <app-status-badge [status]="data()?.hosts?.[0]?.status || 'unknown'"></app-status-badge>
   </app-page-header>
 
   <div class="error-banner" *ngIf="error()">

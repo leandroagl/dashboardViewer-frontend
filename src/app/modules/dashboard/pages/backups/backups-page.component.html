@@ -1,7 +1,6 @@
 <div class="backups-page fade-in-up" *ngIf="!loading(); else loadingTpl">
 
   <app-page-header title="Backups" icon="backup" subtitle="Estado de los jobs de respaldo y almacenamiento NAS">
-    <app-status-badge [status]="rateStatus(data()?.successRate7d || 0)"></app-status-badge>
   </app-page-header>
 
   <ng-container *ngIf="data() as d">

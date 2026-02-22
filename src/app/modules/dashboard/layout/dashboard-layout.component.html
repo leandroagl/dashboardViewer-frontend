@@ -10,7 +10,6 @@
 
     <div class="dash-topbar__brand">
       <mat-icon>monitoring</mat-icon>
-      <span>{{ slug() | uppercase }}</span>
     </div>
 
     <!-- Dots de navegación -->
@@ -31,6 +30,7 @@
       <a *ngIf="isAdmin()" routerLink="/admin/clients" mat-icon-button matTooltip="Administración" aria-label="Administración">
         <mat-icon>admin_panel_settings</mat-icon>
       </a>
+      <span class="dash-client-name">{{ slug() | uppercase }}</span>
       <button mat-icon-button (click)="logout()" matTooltip="Salir" aria-label="Salir">
         <mat-icon>logout</mat-icon>
       </button>
