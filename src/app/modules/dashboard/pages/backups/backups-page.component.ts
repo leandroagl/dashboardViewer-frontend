@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
-import { BackupDevice, BackupsDashboard, SensorStatus } from '@core/models';
+import { BackupDevice, BackupJob, BackupsDashboard, SensorStatus } from '@core/models';
 import { BaseDashboardPage } from '../base-dashboard-page';
 
 @Component({
