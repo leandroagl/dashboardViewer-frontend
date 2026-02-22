@@ -33,8 +33,7 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   }
 
   protected jobsErrorStatus(d: BackupsDashboard): SensorStatus {
-    const count = this.jobsErrorCount(d);
-    return count === 0 ? 'ok' : count <= 2 ? 'warning' : 'error';
+    return this.jobsErrorCount(d) > 0 ? 'error' : 'ok';
   }
 
   protected veeamDevices(d: BackupsDashboard): BackupDevice[] {
