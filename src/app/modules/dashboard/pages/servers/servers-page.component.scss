@@ -455,3 +455,60 @@
   color: var(--text-primary);
   text-align: right;
 }
+
+// ── Responsive: smartphones (≤ 600px) ─────────────────────────────────────────
+@media (max-width: 600px) {
+  .servers-page { gap: 12px; }
+
+  // Summary: 2×2
+  .summary-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .summary-card  { padding: 12px 14px; }
+  .summary-value { font-size: 22px; }
+
+  // Una card por fila, sin overflow horizontal
+  .hosts-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .host-card .card__header { padding: 12px 14px; }
+
+  // Donut arriba a full ancho, 3 gauges abajo en fila
+  .host-metrics { gap: 10px; }
+
+  .host-top-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+
+    .donut-wrap {
+      grid-column: 1 / -1;
+      justify-content: center;
+    }
+  }
+
+  // Gauge cards compactos
+  .host-gauge-card {
+    padding: 4px !important;
+    min-width: unset !important;
+    gap: 2px;
+  }
+  .host-gauge-label { font-size: 8px !important; }
+  .host-gauge-val   { font-size: 10px !important; }
+
+  // Escalar SVG del gauge (componente hijo, requiere ::ng-deep)
+  ::ng-deep .host-gauge-card .gauge__svg {
+    width: 80px !important;
+    height: 50px !important;
+  }
+  ::ng-deep .host-gauge-card .gauge__value { font-size: 13px !important; }
+
+  // Disco I/O
+  .disk-svg     { width: 80px; height: 46px; }
+  .disk-io__row { font-size: 10px; }
+
+  // VM chips más compactos
+  .vm-chip { padding: 4px 8px; font-size: 11px; }
+}
