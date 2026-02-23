@@ -2,6 +2,7 @@
 // Módulo raíz de la aplicación. Usa lazy loading para todos los módulos.
 
 import { inject, NgModule } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import {
@@ -56,10 +57,7 @@ const routes: Routes = [
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAppInitializer(() => {
       const auth = inject(AuthService);
-      return auth
-        .refresh()
-        .toPromise()
-        .catch(() => {});
+      return firstValueFrom(auth.refresh()).catch(() => {});
     }),
   ],
   bootstrap: [AppComponent],
