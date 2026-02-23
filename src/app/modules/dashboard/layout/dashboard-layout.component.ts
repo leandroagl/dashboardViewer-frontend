@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { DashboardService } from '@core/services/dashboard.service';
 import { DashboardType } from '@core/models';
@@ -58,6 +58,7 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
 
   private advanceInterval?: ReturnType<typeof setInterval>;
   private hideControlsTimer?: ReturnType<typeof setTimeout>;
+  private urlSub?: Subscription;
   protected readonly isFullscreen = signal(false);
 
   ngOnInit(): void {
@@ -65,7 +66,7 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
     this.scheduleHideControls();
 
     // Sincronizar activeIndex con la URL actual
-    this.route.firstChild?.url.subscribe(segments => {
+    this.urlSub = this.route.firstChild?.url.subscribe(segments => {
       const current = segments[segments.length - 1]?.path as DashboardType;
       const idx = this.navItems().findIndex(n => n.type === current);
       if (idx >= 0) this.activeIndex.set(idx);
@@ -75,6 +76,7 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     clearInterval(this.advanceInterval);
     clearTimeout(this.hideControlsTimer);
+    this.urlSub?.unsubscribe();
   }
 
   // ─── Carga de dashboards disponibles ─────────────────────────────────────────
