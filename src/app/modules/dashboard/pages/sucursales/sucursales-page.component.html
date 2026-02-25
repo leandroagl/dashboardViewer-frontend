@@ -52,7 +52,7 @@
           {{ suc.latency ?? '---' }}
         </div>
 
-        <div class="suc-card__msg" [title]="suc.message">{{ suc.message }}</div>
+        <div class="suc-card__msg suc-card__msg--{{ suc.status }}" [title]="suc.message">{{ suc.message }}</div>
       </div>
     </div>
 
