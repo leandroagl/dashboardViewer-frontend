@@ -1,7 +1,7 @@
 // ─── Modelos de dominio (espejo del backend) ──────────────────────────────────
 
 export type UserRole = 'admin_ondra' | 'viewer' | 'viewer_kiosk';
-export type DashboardType = 'servers' | 'backups' | 'networking' | 'windows';
+export type DashboardType = 'servers' | 'backups' | 'networking' | 'windows' | 'sucursales';
 export type SensorStatus = 'ok' | 'warning' | 'error' | 'unusual' | 'paused' | 'unknown';
 export type AuditResult = 'ok' | 'error' | 'unauthorized';
 
@@ -135,6 +135,20 @@ export interface WindowsServer {
 export interface WindowsDashboard {
   servers: WindowsServer[];
   alerts:  { name: string; message: string; status: SensorStatus }[];
+}
+
+// Sucursales
+export interface SucursalDevice {
+  name:    string;
+  status:  SensorStatus;
+  latency: string | null;
+  message: string;
+}
+export interface SucursalesDashboard {
+  sucursales:   SucursalDevice[];
+  onlineCount:  number;
+  offlineCount: number;
+  alerts:       { name: string; message: string; status: SensorStatus }[];
 }
 
 // ─── Logs ─────────────────────────────────────────────────────────────────────
