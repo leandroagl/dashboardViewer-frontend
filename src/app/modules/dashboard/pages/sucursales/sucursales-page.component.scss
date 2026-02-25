@@ -127,10 +127,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  .suc-card--error &,
-  .suc-card--unknown & {
-    color: var(--status-error);
-  }
+  &--error,
+  &--unknown { color: var(--status-error); }
+
+  &--paused  { color: #4fc3f7; }  // azul suave para "Paused by ..."
 }
 
 // ─── Empty state ──────────────────────────────────────────────────────────────
