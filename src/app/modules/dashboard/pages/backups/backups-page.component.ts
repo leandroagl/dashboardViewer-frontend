@@ -81,4 +81,9 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   protected datastoreBarColor(status: SensorStatus): string {
     return status === 'ok' ? 'primary' : 'warn';
   }
+
+  protected formatGb(gb: number): string {
+    if (gb >= 1024) return (gb / 1024).toFixed(1) + ' TB';
+    return Math.round(gb) + ' GB';
+  }
 }

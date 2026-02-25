@@ -67,4 +67,9 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   protected vmIcon(status: SensorStatus): string {
     return status === 'ok' ? 'check' : status === 'warning' ? 'warning' : 'error';
   }
+
+  protected formatGb(gb: number): string {
+    if (gb >= 1024) return (gb / 1024).toFixed(1) + ' TB';
+    return Math.round(gb) + ' GB';
+  }
 }

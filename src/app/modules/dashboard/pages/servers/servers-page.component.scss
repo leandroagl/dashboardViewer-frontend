@@ -238,9 +238,14 @@
 .datastore-meta {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
   margin-top: 5px;
   font-size: 10px;
   color: var(--text-muted);
+
+  &__gb { color: var(--text-secondary); font-size: 10px; }
 }
 
 // ── No alerts ──────────────────────────────────────────────────────────────────

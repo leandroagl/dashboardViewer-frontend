@@ -116,6 +116,9 @@
                 </mat-progress-bar>
                 <div class="nas-disk-item__meta">
                   <span>Usado: {{ (100 - parseFreePct(sensor.lastValue)) | number:'1.0-1' }}%</span>
+                  <span *ngIf="sensor.freeGb != null" class="mono nas-disk-item__gb">
+                    {{ formatGb(sensor.freeGb) }} libre{{ sensor.totalGb != null ? ' / ' + formatGb(sensor.totalGb) : '' }}
+                  </span>
                   <span [class]="'sv-' + sensor.lastStatus">
                     {{ sensor.lastStatus === 'ok' ? '✔ OK' : sensor.lastStatus === 'warning' ? '⚠ Revisar' : '✘ Crítico' }}
                   </span>
