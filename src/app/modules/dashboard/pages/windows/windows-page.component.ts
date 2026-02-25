@@ -27,9 +27,4 @@ export class WindowsPageComponent extends BaseDashboardPage<WindowsDashboard> {
   protected alertsStatus(d: WindowsDashboard): SensorStatus {
     return d.alerts.length > 0 ? 'error' : 'ok';
   }
-
-  protected formatGb(gb: number): string {
-    if (gb >= 1024) return (gb / 1024).toFixed(1) + ' TB';
-    return Math.round(gb) + ' GB';
-  }
 }
