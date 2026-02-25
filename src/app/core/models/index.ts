@@ -77,7 +77,7 @@ export interface VmwareHost {
   memory:     { value: string; pct: number; status: SensorStatus };
   disk:       { read: { value: string; status: SensorStatus }; write: { value: string; status: SensorStatus } };
   vms:        { name: string; status: SensorStatus }[];
-  datastores: { name: string; freePct: number; usedPct: number; status: SensorStatus }[];
+  datastores: { name: string; freePct: number; usedPct: number; status: SensorStatus; freeGb: number | null; totalGb: number | null }[];
   alerts:     { name: string; message: string; status: SensorStatus }[];
 }
 
@@ -92,6 +92,8 @@ export interface BackupJob {
   lastStatus:  SensorStatus;
   lastMessage: string;
   lastValue:   string;
+  freeGb:      number | null;
+  totalGb:     number | null;
 }
 
 export interface BackupDevice {
@@ -127,7 +129,7 @@ export interface WindowsServer {
   status: SensorStatus;
   cpu:    StatusValue;
   memory: StatusValue;
-  disk:   StatusValue;
+  disk:   StatusValue & { freeGb: number | null };
   uptime: StatusValue;
 }
 export interface WindowsDashboard {

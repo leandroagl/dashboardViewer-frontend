@@ -165,6 +165,9 @@
         </mat-progress-bar>
         <div class="datastore-meta">
           <span>Usado: {{ ds.usedPct | number:'1.0-1' }}%</span>
+          <span *ngIf="ds.freeGb != null" class="mono datastore-meta__gb">
+            {{ formatGb(ds.freeGb) }} libre{{ ds.totalGb != null ? ' / ' + formatGb(ds.totalGb) : '' }}
+          </span>
           <span [class]="'sv-' + ds.status">
             {{ ds.status === 'ok' ? '✔ OK' : ds.status === 'warning' ? '⚠ Revisar' : '✘ Crítico' }}
           </span>

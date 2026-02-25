@@ -21,6 +21,11 @@
                 <app-gauge label="RAM"   [value]="parseValue(srv.memory.value)" [status]="srv.memory.status" unit="%"></app-gauge>
                 <app-gauge label="Disco" [value]="parseValue(srv.disk.value)"   [status]="srv.disk.status"   unit="%"></app-gauge>
               </div>
+              <div class="server-card__uptime" *ngIf="srv.disk.freeGb != null">
+                <mat-icon>storage</mat-icon>
+                <span class="text-secondary" style="font-size:12px;">Disco libre:</span>
+                <span class="mono" style="font-size:12px;">{{ formatGb(srv.disk.freeGb) }}</span>
+              </div>
               <div class="server-card__uptime">
                 <mat-icon>schedule</mat-icon>
                 <span class="text-secondary" style="font-size:12px;">Uptime:</span>
