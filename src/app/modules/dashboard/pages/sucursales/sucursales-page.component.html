@@ -1,0 +1,81 @@
+<div class="sucursales-page fade-in-up" *ngIf="!loading(); else loadingTpl">
+  <app-page-header
+    title="Sucursales"
+    icon="location_city"
+    subtitle="Conectividad VPN de puntos de venta">
+  </app-page-header>
+
+  <ng-container *ngIf="data() as d">
+    <!-- KPI Strip -->
+    <div class="suc-kpis">
+      <app-kpi-card
+        label="Total"
+        [value]="d.sucursales.length"
+        status="ok"
+        sublabel="sucursales">
+      </app-kpi-card>
+      <app-kpi-card
+        label="En línea"
+        [value]="d.onlineCount"
+        status="ok"
+        sublabel="conectadas">
+      </app-kpi-card>
+      <app-kpi-card
+        label="Sin conexión"
+        [value]="d.offlineCount"
+        [status]="offlineStatus(d)"
+        sublabel="desconectadas">
+      </app-kpi-card>
+      <app-kpi-card
+        label="Conectividad"
+        [value]="connectivityPct(d) + '%'"
+        [status]="connectivityStatus(d)"
+        sublabel="disponibilidad">
+      </app-kpi-card>
+    </div>
+
+    <!-- Grid de sucursales -->
+    <div class="suc-grid" *ngIf="d.sucursales.length > 0; else emptyState">
+      <div
+        class="suc-card suc-card--{{ suc.status }}"
+        *ngFor="let suc of d.sucursales">
+
+        <span class="suc-card__dot suc-card__dot--{{ suc.status }}"></span>
+
+        <mat-icon class="suc-card__icon suc-card__icon--{{ suc.status }}">
+          {{ sucursalIcon(suc.status) }}
+        </mat-icon>
+
+        <div class="suc-card__name">{{ suc.name }}</div>
+
+        <div class="suc-card__latency mono">
+          {{ suc.latency ?? '---' }}
+        </div>
+
+        <div class="suc-card__msg" [title]="suc.message">{{ suc.message }}</div>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <mat-icon>info</mat-icon>
+        Sin sucursales configuradas
+      </div>
+    </ng-template>
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <div style="padding: 8px;">
+    <div class="skeleton" style="height: 32px; width: 220px; margin-bottom: 24px;"></div>
+    <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+      <div class="skeleton" style="height: 80px; flex: 1;"></div>
+      <div class="skeleton" style="height: 80px; flex: 1;"></div>
+      <div class="skeleton" style="height: 80px; flex: 1;"></div>
+      <div class="skeleton" style="height: 80px; flex: 1;"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px;">
+      <div class="skeleton" style="height: 140px;" *ngFor="let i of [1,2,3,4,5,6,7,8]"></div>
+    </div>
+  </div>
+</ng-template>
