@@ -6,7 +6,8 @@ import { Observable, map } from 'rxjs';
 import { environment } from '@env/environment';
 import {
   ApiResponse, DashboardType,
-  VmwareDashboard, BackupsDashboard, NetworkingDashboard, WindowsDashboard
+  VmwareDashboard, BackupsDashboard, NetworkingDashboard, WindowsDashboard,
+  SucursalesDashboard
 } from '../models';
 import { requireData } from '../utils/api.utils';
 
@@ -40,6 +41,11 @@ export class DashboardService {
 
   getWindows(slug: string): Observable<WindowsDashboard> {
     return this.http.get<ApiResponse<WindowsDashboard>>(this.url(slug, '/windows'))
+      .pipe(map(requireData));
+  }
+
+  getSucursales(slug: string): Observable<SucursalesDashboard> {
+    return this.http.get<ApiResponse<SucursalesDashboard>>(this.url(slug, '/sucursales'))
       .pipe(map(requireData));
   }
 }

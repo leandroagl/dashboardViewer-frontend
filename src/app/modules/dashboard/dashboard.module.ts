@@ -16,6 +16,7 @@ import { ServersPageComponent }      from './pages/servers/servers-page.componen
 import { BackupsPageComponent }      from './pages/backups/backups-page.component';
 import { NetworkingPageComponent }   from './pages/networking/networking-page.component';
 import { WindowsPageComponent }      from './pages/windows/windows-page.component';
+import { SucursalesPageComponent }   from './pages/sucursales/sucursales-page.component';
 
 const routes: Routes = [
   {
@@ -32,7 +33,8 @@ const routes: Routes = [
       { path: 'dashboards/servers',    component: ServersPageComponent },
       { path: 'dashboards/backups',    component: BackupsPageComponent },
       { path: 'dashboards/networking', component: NetworkingPageComponent },
-      { path: 'dashboards/windows',    component: WindowsPageComponent },
+      { path: 'dashboards/windows',     component: WindowsPageComponent },
+      { path: 'dashboards/sucursales',  component: SucursalesPageComponent },
     ],
   },
 ];
@@ -45,6 +47,7 @@ const routes: Routes = [
     BackupsPageComponent,
     NetworkingPageComponent,
     WindowsPageComponent,
+    SucursalesPageComponent,
   ],
   imports: [
     SharedModule,

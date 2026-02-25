@@ -21,10 +21,11 @@ interface NavItem {
 }
 
 const NAV_CONFIG: Record<DashboardType, Omit<NavItem, 'type' | 'path'>> = {
-  servers:    { label: 'Servidores', icon: 'dns'      },
-  backups:    { label: 'Backups',    icon: 'backup'   },
-  networking: { label: 'Networking', icon: 'router'   },
-  windows:    { label: 'Windows',    icon: 'computer' },
+  servers:    { label: 'Servidores', icon: 'dns'           },
+  backups:    { label: 'Backups',    icon: 'backup'        },
+  networking: { label: 'Networking', icon: 'router'        },
+  windows:    { label: 'Windows',    icon: 'computer'      },
+  sucursales: { label: 'Sucursales', icon: 'location_city' },
 };
 
 
