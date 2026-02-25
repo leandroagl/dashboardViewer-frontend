@@ -8,30 +8,10 @@
   <ng-container *ngIf="data() as d">
     <!-- KPI Strip -->
     <div class="suc-kpis">
-      <app-kpi-card
-        label="Total"
-        [value]="d.sucursales.length"
-        status="ok"
-        sublabel="sucursales">
-      </app-kpi-card>
-      <app-kpi-card
-        label="En línea"
-        [value]="d.onlineCount"
-        status="ok"
-        sublabel="conectadas">
-      </app-kpi-card>
-      <app-kpi-card
-        label="Sin conexión"
-        [value]="d.offlineCount"
-        [status]="offlineStatus(d)"
-        sublabel="desconectadas">
-      </app-kpi-card>
-      <app-kpi-card
-        label="Conectividad"
-        [value]="connectivityPct(d) + '%'"
-        [status]="connectivityStatus(d)"
-        sublabel="disponibilidad">
-      </app-kpi-card>
+      <app-kpi-card label="Total"        [value]="d.sucursales.length"       status="ok"></app-kpi-card>
+      <app-kpi-card label="En línea"     [value]="d.onlineCount"             status="ok"></app-kpi-card>
+      <app-kpi-card label="Sin conexión" [value]="d.offlineCount"            [status]="offlineStatus(d)"></app-kpi-card>
+      <app-kpi-card label="Conectividad" [value]="connectivityPct(d) + '%'"  [status]="connectivityStatus(d)"></app-kpi-card>
     </div>
 
     <!-- Grid de sucursales -->

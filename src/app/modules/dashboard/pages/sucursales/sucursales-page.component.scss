@@ -49,12 +49,17 @@
     background: var(--status-warning-dim);
   }
 
-  // Estado offline / error / unknown / paused
+  // Estado offline / error / unknown
   &--error,
-  &--unknown,
-  &--paused {
+  &--unknown {
     border-left-color: var(--status-error);
     background: var(--status-error-dim);
+  }
+
+  // Estado pausado
+  &--paused {
+    border-left-color: #4fc3f7;
+    background: rgba(79, 195, 247, 0.08);
   }
 }
 
@@ -73,7 +78,7 @@
   &--warning { background: var(--status-warning);  box-shadow: 0 0 6px var(--status-warning); }
   &--error,
   &--unknown { background: var(--status-error);    animation: dot-pulse 1.8s ease-in-out infinite; }
-  &--paused  { background: var(--status-paused); }
+  &--paused  { background: #4fc3f7; box-shadow: 0 0 6px #4fc3f7; }
 }
 
 @keyframes dot-pulse {
@@ -91,8 +96,8 @@
   &--ok      { color: var(--status-ok); }
   &--warning { color: var(--status-warning); }
   &--error,
-  &--unknown,
-  &--paused  { color: var(--status-error); }
+  &--unknown { color: var(--status-error); }
+  &--paused  { color: #4fc3f7; }
 }
 
 // ─── Nombre ───────────────────────────────────────────────────────────────────
