@@ -6,55 +6,6 @@
   background: var(--bg-base);
 }
 
-// ─── Panel derecho (topbar + contenido) ────────────────────────────────────
-
-.admin-right {
-  display:        flex;
-  flex-direction: column;
-  height:         100vh;
-  overflow:       hidden;
-}
-
-.admin-topbar {
-  display:         flex;
-  align-items:     center;
-  justify-content: flex-end;
-  padding:         0 24px;
-  height:          52px;
-  flex-shrink:     0;
-  background:      var(--bg-surface);
-  border-bottom:   1px solid var(--border-subtle);
-
-  &__user {
-    display:     flex;
-    align-items: center;
-    gap:         8px;
-  }
-
-  &__avatar {
-    width:           32px;
-    height:          32px;
-    background:      var(--color-primary-dim);
-    border:          1px solid rgba(77, 208, 225, 0.25);
-    border-radius:   50%;
-    display:         flex;
-    align-items:     center;
-    justify-content: center;
-
-    mat-icon {
-      font-size: 18px;
-      width:     18px;
-      height:    18px;
-      color:     var(--color-primary);
-    }
-  }
-
-  &__name {
-    font-size:   13px;
-    font-weight: 500;
-    color:       var(--text-primary);
-  }
-}
 
 .admin-sidebar {
   display:        flex;
@@ -108,11 +59,41 @@
 
   &__spacer { flex: 1; }
   &__footer { display: flex; flex-direction: column; gap: 2px; padding: 8px 8px 16px; }
+
+  &__user {
+    display:     flex;
+    align-items: center;
+    gap:         10px;
+    padding:     10px 12px;
+
+    &-avatar {
+      width:           32px;
+      height:          32px;
+      background:      var(--color-primary-dim);
+      border:          1px solid rgba(77, 208, 225, 0.2);
+      border-radius:   50%;
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+      flex-shrink:     0;
+
+      mat-icon { font-size: 16px; width: 16px; height: 16px; color: var(--color-primary); }
+    }
+
+    &-name {
+      font-size:     12px;
+      font-weight:   500;
+      color:         var(--text-primary);
+      white-space:   nowrap;
+      overflow:      hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .admin-content {
   overflow-y: auto;
-  flex:       1;
+  height:     100vh;
   padding:    24px;
   background: var(--bg-base);
 }

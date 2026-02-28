@@ -45,24 +45,22 @@
     <mat-divider></mat-divider>
 
     <div class="admin-sidebar__footer">
+      <div class="admin-sidebar__user">
+        <div class="admin-sidebar__user-avatar">
+          <mat-icon>person</mat-icon>
+        </div>
+        <span class="admin-sidebar__user-name">{{ currentNombre() }}</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
       <button class="admin-sidebar__item" (click)="logout()">
         <mat-icon>logout</mat-icon><span>Salir</span>
       </button>
     </div>
   </aside>
 
-  <div class="admin-right">
-    <header class="admin-topbar">
-      <div class="admin-topbar__user">
-        <div class="admin-topbar__avatar">
-          <mat-icon>person</mat-icon>
-        </div>
-        <span class="admin-topbar__name">{{ currentNombre() }}</span>
-      </div>
-    </header>
-
-    <main class="admin-content">
-      <router-outlet></router-outlet>
-    </main>
-  </div>
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
 </div>
