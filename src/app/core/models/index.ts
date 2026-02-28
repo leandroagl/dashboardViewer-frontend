@@ -56,6 +56,7 @@ export interface User {
   activo:                boolean;
   debe_cambiar_password: boolean;
   es_kiosk:              boolean;
+  es_superadmin:         boolean;
   ultimo_acceso?:        string;
   creado_en:             string;
 }
