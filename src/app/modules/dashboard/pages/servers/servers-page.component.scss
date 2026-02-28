@@ -202,6 +202,32 @@
   &--unknown { background: var(--bg-hover);           color: var(--text-muted); }
 }
 
+// ── Snapshots ──────────────────────────────────────────────────────────────────
+.snapshot-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.snapshot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  border: 1px solid transparent;
+  cursor: default;
+  transition: filter var(--transition);
+
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+
+  &:hover { filter: brightness(1.15); }
+  &--ok      { background: var(--status-ok-dim);      color: var(--status-ok);      border-color: rgba(67,217,138,.2); }
+  &--warning { background: var(--status-warning-dim); color: var(--status-warning); border-color: rgba(255,179,0,.2); }
+  &--error   { background: var(--status-error-dim);   color: var(--status-error);   border-color: rgba(244,67,54,.2); }
+  &--unknown { background: var(--bg-hover);           color: var(--text-muted); }
+
+  &__name  { font-weight: 500; }
+  &__value { opacity: 0.75; padding-left: 2px; }
+}
+
 // ── Datastores ─────────────────────────────────────────────────────────────────
 .datastore-list { display: flex; flex-direction: column; gap: 10px; }
 

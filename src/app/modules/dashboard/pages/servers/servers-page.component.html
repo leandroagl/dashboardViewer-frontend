@@ -142,6 +142,20 @@
     </div>
   </div>
 
+  <!-- Snapshots -->
+  <div *ngIf="host.snapshots.length > 0">
+    <div class="subsection-title">Snapshots ({{ host.snapshots.length }})</div>
+    <div class="snapshot-chips">
+      <div *ngFor="let snap of host.snapshots"
+        class="snapshot-chip snapshot-chip--{{ snap.status }}"
+        [matTooltip]="snap.name">
+        <mat-icon>history</mat-icon>
+        <span class="snapshot-chip__name">{{ snap.name | slice:0:20 }}</span>
+        <span class="snapshot-chip__value mono">{{ snap.value }}</span>
+      </div>
+    </div>
+  </div>
+
 </div>
 
           <!-- Datastores + Alertas en dos columnas -->
