@@ -18,6 +18,7 @@ export class AuthService {
 
   private readonly _state = signal<AuthState>({
     accessToken:   null,
+    nombre:        null,
     rol:           null,
     clienteSlug:   null,
     dashboards:    [],
@@ -27,6 +28,7 @@ export class AuthService {
   // Señales derivadas (readonly para el resto de la app)
   readonly isAuthenticated = computed(() => !!this._state().accessToken);
   readonly currentUser     = computed(() => this._state());
+  readonly nombre          = computed(() => this._state().nombre);
   readonly rol             = computed(() => this._state().rol);
   readonly clienteSlug     = computed(() => this._state().clienteSlug);
   readonly dashboards      = computed(() => this._state().dashboards);
@@ -44,6 +46,7 @@ export class AuthService {
           if (res.ok && res.data) {
             this._state.set({
               accessToken:   res.data.accessToken,
+              nombre:        res.data.nombre,
               rol:           res.data.rol,
               clienteSlug:   res.data.clienteSlug,
               dashboards:    res.data.dashboardsDisponibles,
@@ -65,6 +68,7 @@ export class AuthService {
             this._state.update(s => ({
               ...s,
               accessToken:   res.data!.accessToken,
+              nombre:        res.data!.nombre,
               rol:           res.data!.rol,
               clienteSlug:   res.data!.clienteSlug,
               mustChangePwd: res.data!.mustChangePassword,

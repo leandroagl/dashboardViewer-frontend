@@ -11,13 +11,13 @@
     <mat-divider></mat-divider>
 
     <nav class="admin-sidebar__nav">
-      <a routerLink="clients"  routerLinkActive="active" class="admin-sidebar__item">
+      <a routerLink="clients" routerLinkActive="active" class="admin-sidebar__item">
         <mat-icon>business</mat-icon><span>Clientes</span>
       </a>
-      <a routerLink="users"    routerLinkActive="active" class="admin-sidebar__item">
+      <a routerLink="users" routerLinkActive="active" class="admin-sidebar__item">
         <mat-icon>group</mat-icon><span>Usuarios</span>
       </a>
-      <a routerLink="logs"     routerLinkActive="active" class="admin-sidebar__item">
+      <a routerLink="logs" routerLinkActive="active" class="admin-sidebar__item">
         <mat-icon>history</mat-icon><span>Logs</span>
       </a>
 
@@ -31,10 +31,8 @@
         </mat-expansion-panel-header>
 
         <div class="sidebar-expand__body">
-          <a *ngFor="let c of activeClients()"
-             [routerLink]="'/' + c.slug + '/dashboards'"
-             routerLinkActive="active"
-             class="admin-sidebar__subitem">
+          <a *ngFor="let c of activeClients()" [routerLink]="'/' + c.slug + '/dashboards'" routerLinkActive="active"
+            class="admin-sidebar__subitem">
             <mat-icon>open_in_new</mat-icon>
             <span>{{ c.nombre }}</span>
           </a>
@@ -47,16 +45,24 @@
     <mat-divider></mat-divider>
 
     <div class="admin-sidebar__footer">
-      <a *ngIf="clienteSlug()" [routerLink]="'/' + clienteSlug() + '/dashboards'" class="admin-sidebar__item">
-        <mat-icon>dashboard</mat-icon><span>Ver dashboards</span>
-      </a>
       <button class="admin-sidebar__item" (click)="logout()">
         <mat-icon>logout</mat-icon><span>Salir</span>
       </button>
     </div>
   </aside>
 
-  <main class="admin-content">
-    <router-outlet></router-outlet>
-  </main>
+  <div class="admin-right">
+    <header class="admin-topbar">
+      <div class="admin-topbar__user">
+        <div class="admin-topbar__avatar">
+          <mat-icon>person</mat-icon>
+        </div>
+        <span class="admin-topbar__name">{{ currentNombre() }}</span>
+      </div>
+    </header>
+
+    <main class="admin-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>
