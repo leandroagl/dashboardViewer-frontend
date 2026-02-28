@@ -176,3 +176,30 @@
   background:      var(--bg-base);
   z-index:         200;
 }
+
+// ─── Botón volver a admin (top-left) ──────────────────────────────────────────
+
+.dash-admin-back {
+  display:         flex;
+  align-items:     center;
+  gap:             5px;
+  color:           rgba(255,255,255,0.45) !important;
+  font-size:       12px;
+  font-weight:     500;
+  letter-spacing:  0.04em;
+  text-decoration: none;
+  padding:         4px 10px 4px 6px;
+  border-radius:   var(--radius-sm);
+  transition:      color var(--transition), background var(--transition);
+
+  mat-icon {
+    font-size: 16px;
+    width:     16px;
+    height:    16px;
+  }
+
+  &:hover {
+    color:      rgba(255,255,255,0.9) !important;
+    background: rgba(255,255,255,0.06);
+  }
+}

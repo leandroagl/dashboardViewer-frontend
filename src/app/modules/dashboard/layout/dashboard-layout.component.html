@@ -8,7 +8,16 @@
   <!-- ─── Barra superior: logo + cliente + nav dots ─────────────────────────── -->
   <div class="dash-topbar controls-layer">
 
-    <div class="dash-topbar__brand"></div>
+    <div class="dash-topbar__brand">
+      <a *ngIf="isAdmin()"
+         routerLink="/admin/clients"
+         class="dash-admin-back"
+         matTooltip="Volver a Administración"
+         aria-label="Volver a Administración">
+        <mat-icon>arrow_back</mat-icon>
+        <span>Admin</span>
+      </a>
+    </div>
 
     <!-- Dots de navegación -->
     <div class="dash-dots" *ngIf="!loading() && totalDashes() > 1">
