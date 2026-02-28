@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, throwError } from 'rxjs';
 import { environment } from '@env/environment';
-import { AuthState, LoginResponse, ApiResponse } from '../models';
+import { AuthState, LoginResponse, RefreshResponse, ApiResponse } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -56,13 +56,19 @@ export class AuthService {
 
   // ─── Refresh ─────────────────────────────────────────────────────────────────
 
-  refresh(): Observable<ApiResponse<{ accessToken: string }>> {
+  refresh(): Observable<ApiResponse<RefreshResponse>> {
     return this.http
-      .post<ApiResponse<{ accessToken: string }>>(`${environment.apiUrl}/auth/refresh`, {}, { withCredentials: true })
+      .post<ApiResponse<RefreshResponse>>(`${environment.apiUrl}/auth/refresh`, {}, { withCredentials: true })
       .pipe(
         tap(res => {
           if (res.ok && res.data) {
-            this._state.update(s => ({ ...s, accessToken: res.data!.accessToken }));
+            this._state.update(s => ({
+              ...s,
+              accessToken:   res.data!.accessToken,
+              rol:           res.data!.rol,
+              clienteSlug:   res.data!.clienteSlug,
+              mustChangePwd: res.data!.mustChangePassword,
+            }));
           }
         }),
         catchError(err => {
