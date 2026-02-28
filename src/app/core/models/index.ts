@@ -15,6 +15,13 @@ export interface LoginResponse {
   dashboardsDisponibles: DashboardType[];
 }
 
+export interface RefreshResponse {
+  accessToken:        string;
+  rol:                UserRole;
+  clienteSlug:        string | null;
+  mustChangePassword: boolean;
+}
+
 export interface AuthState {
   accessToken:   string | null;
   rol:           UserRole | null;
