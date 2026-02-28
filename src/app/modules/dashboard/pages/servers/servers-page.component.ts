@@ -18,23 +18,28 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
     return this.service.getServers(slug);
   }
 
+  // ── Todos los estados sensor del host (CPU, RAM, disco, VMs, snapshots, datastores) ──
+  private hostAllStatuses(h: VmwareHost): SensorStatus[] {
+    return [
+      h.cpu.status, h.memory.status, h.disk.read.status, h.disk.write.status,
+      ...h.vms.map(v => v.status),
+      ...h.snapshots.map(s => s.status),
+      ...h.datastores.map(ds => ds.status),
+    ];
+  }
+
   // ── Summary counts (sobre todos los hosts) ────────────────────────────────
   protected okCount(d: VmwareDashboard): number {
-    return d.hosts.reduce((acc, h) =>
-      acc + h.vms.filter(v => v.status === 'ok').length
-          + h.datastores.filter(ds => ds.status === 'ok').length, 0);
+    return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'ok').length, 0);
   }
   protected warnCount(d: VmwareDashboard): number {
-    return d.hosts.reduce((acc, h) =>
-      acc + h.vms.filter(v => v.status === 'warning').length
-          + h.datastores.filter(ds => ds.status === 'warning').length, 0);
+    return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'warning').length, 0);
   }
   protected errorCount(d: VmwareDashboard): number {
-    return d.alerts.filter(a => a.status === 'error').length;
+    return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'error').length, 0);
   }
   protected unusualCount(d: VmwareDashboard): number {
-    return d.hosts.reduce((acc, h) =>
-      acc + h.vms.filter(v => v.status === 'unusual').length, 0);
+    return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'unusual').length, 0);
   }
 
   // ── Donut SVG math (r=38, circunferencia ≈ 238.8) ─────────────────────────
@@ -52,12 +57,12 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
     return offset.toFixed(1);
   }
 
-  // ── Contadores por host ───────────────────────────────────────────────────
-  protected hostSensorTotal(h: VmwareHost): number { return h.vms.length + h.datastores.length; }
-  protected hostSensorOk(h: VmwareHost):    number { return h.vms.filter(v => v.status === 'ok').length    + h.datastores.filter(d => d.status === 'ok').length; }
-  protected hostSensorWarn(h: VmwareHost):  number { return h.vms.filter(v => v.status === 'warning').length + h.datastores.filter(d => d.status === 'warning').length; }
-  protected hostSensorError(h: VmwareHost): number { return h.vms.filter(v => v.status === 'error').length  + h.datastores.filter(d => d.status === 'error').length; }
-  protected hostSensorUnusual(h: VmwareHost): number { return h.vms.filter(v => v.status === 'unusual').length; }
+  // ── Contadores por host (donut) ───────────────────────────────────────────
+  protected hostSensorTotal(h: VmwareHost):   number { return this.hostAllStatuses(h).length; }
+  protected hostSensorOk(h: VmwareHost):      number { return this.hostAllStatuses(h).filter(s => s === 'ok').length; }
+  protected hostSensorWarn(h: VmwareHost):    number { return this.hostAllStatuses(h).filter(s => s === 'warning').length; }
+  protected hostSensorError(h: VmwareHost):   number { return this.hostAllStatuses(h).filter(s => s === 'error').length; }
+  protected hostSensorUnusual(h: VmwareHost): number { return this.hostAllStatuses(h).filter(s => s === 'unusual').length; }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   protected datastoreBarColor(status: SensorStatus): string {
