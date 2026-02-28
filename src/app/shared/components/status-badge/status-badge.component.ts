@@ -7,7 +7,7 @@ import { SensorStatus } from '@core/models';
 
 const STATUS_LABELS: Record<SensorStatus, string> = {
   ok:      'OK',
-  warning: 'Alerta',
+  warning: 'Warning',
   error:   'Error',
   unusual: 'Inusual',
   paused:  'Pausado',

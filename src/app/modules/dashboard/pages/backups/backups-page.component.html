@@ -36,10 +36,12 @@
             <div class="jobs-table">
               <div class="jobs-table__header">
                 <span>Job</span>
+                <span>Resultado</span>
                 <span>Estado</span>
               </div>
               <div *ngFor="let job of dev.jobs" class="jobs-table__row">
                 <span class="jobs-table__name">{{ job.name }}</span>
+                <span class="jobs-table__value mono">{{ job.lastValue || '—' }}</span>
                 <app-status-badge [status]="job.lastStatus"></app-status-badge>
               </div>
               <div *ngIf="dev.jobs.length === 0" class="empty-state" style="padding:16px;">
@@ -69,10 +71,12 @@
               <div class="jobs-table">
                 <div class="jobs-table__header">
                   <span>Job</span>
+                  <span>Resultado</span>
                   <span>Estado</span>
                 </div>
                 <div *ngFor="let job of dev.jobs" class="jobs-table__row">
                   <span class="jobs-table__name">{{ job.name }}</span>
+                  <span class="jobs-table__value mono">{{ job.lastValue || '—' }}</span>
                   <app-status-badge [status]="job.lastStatus"></app-status-badge>
                 </div>
                 <div *ngIf="dev.jobs.length === 0" class="empty-state" style="padding:16px;">
