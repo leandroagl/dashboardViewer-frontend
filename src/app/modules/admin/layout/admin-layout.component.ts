@@ -17,6 +17,7 @@ export class AdminLayoutComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly clienteSlug   = this.auth.clienteSlug;
+  protected readonly currentNombre = this.auth.nombre;
   protected readonly activeClients = signal<Client[]>([]);
 
   ngOnInit(): void {

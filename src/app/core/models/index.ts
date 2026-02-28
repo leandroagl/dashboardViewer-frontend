@@ -10,6 +10,7 @@ export type AuditResult = 'ok' | 'error' | 'unauthorized';
 export interface LoginResponse {
   accessToken:           string;
   mustChangePassword:    boolean;
+  nombre:                string;
   rol:                   UserRole;
   clienteSlug:           string | null;
   dashboardsDisponibles: DashboardType[];
@@ -17,6 +18,7 @@ export interface LoginResponse {
 
 export interface RefreshResponse {
   accessToken:        string;
+  nombre:             string;
   rol:                UserRole;
   clienteSlug:        string | null;
   mustChangePassword: boolean;
@@ -24,6 +26,7 @@ export interface RefreshResponse {
 
 export interface AuthState {
   accessToken:   string | null;
+  nombre:        string | null;
   rol:           UserRole | null;
   clienteSlug:   string | null;
   dashboards:    DashboardType[];
