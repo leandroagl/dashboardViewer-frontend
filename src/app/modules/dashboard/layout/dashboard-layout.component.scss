@@ -46,21 +46,17 @@
   z-index:         100;
 
   &__brand {
+    flex:        1;
     display:     flex;
     align-items: center;
-    gap:         8px;
-    font-size:   13px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color:       rgba(255,255,255,0.6);
-
-    mat-icon { color: var(--color-primary); font-size: 18px; width: 18px; height: 18px; }
   }
 
   &__actions {
-    display:     flex;
-    align-items: center;
-    gap:         4px;
+    flex:            1;
+    display:         flex;
+    align-items:     center;
+    justify-content: flex-end;
+    gap:             4px;
 
     button, a {
       color:      rgba(255,255,255,0.5) !important;
