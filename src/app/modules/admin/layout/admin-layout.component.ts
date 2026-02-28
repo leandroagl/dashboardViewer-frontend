@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '@core/services/auth.service';
 import { ClientsService } from '@core/services/clients.service';
 import { Client } from '@core/models';
@@ -11,13 +12,22 @@ import { Client } from '@core/models';
   styleUrls:   ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent implements OnInit {
-  private readonly auth    = inject(AuthService);
-  private readonly clients = inject(ClientsService);
+  private readonly auth       = inject(AuthService);
+  private readonly clients    = inject(ClientsService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly clienteSlug   = this.auth.clienteSlug;
   protected readonly activeClients = signal<Client[]>([]);
 
   ngOnInit(): void {
+    this.loadActiveClients();
+
+    this.clients.clientsModified$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadActiveClients());
+  }
+
+  private loadActiveClients(): void {
     this.clients.getAll().subscribe(list =>
       this.activeClients.set(list.filter(c => c.activo))
     );
