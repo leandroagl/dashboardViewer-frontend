@@ -20,6 +20,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { SharedModule } from '@shared/shared.module';
 import { authGuard, adminGuard, passwordChangeGuard } from '@core/guards/auth.guard';
@@ -52,6 +53,7 @@ const MATERIAL = [
   MatSlideToggleModule, MatMenuModule, MatChipsModule, MatDividerModule,
   MatSnackBarModule, MatProgressSpinnerModule, MatDatepickerModule, MatNativeDateModule,
   MatButtonModule, MatIconModule, MatTooltipModule,
+  MatExpansionModule,
 ];
 
 @NgModule({
