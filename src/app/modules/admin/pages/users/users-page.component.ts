@@ -4,8 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { UsersService } from '@core/services/users.service';
 import { User } from '@core/models';
 import { UserDialogComponent } from './user-dialog.component';
+import { PasswordDisplayDialogComponent } from './password-display-dialog.component';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
-import { SNACKBAR_SHORT, SNACKBAR_LONG, SNACKBAR_PASSWORD } from '@core/constants/app.constants';
+import { SNACKBAR_SHORT, SNACKBAR_LONG } from '@core/constants/app.constants';
 
 @Component({
   selector:        'app-users-page',
@@ -37,10 +38,10 @@ export class UsersPageComponent implements OnInit {
     ref.afterClosed().subscribe(result => {
       if (!result) return;
       this.users.update(list => [...list, result]);
-      this.snackbar.open(
-        `Usuario creado. Contraseña: ${result.plainPassword} — copiala ahora`,
-        'OK', { duration: SNACKBAR_PASSWORD, panelClass: 'snack-password' }
-      );
+      this.dialog.open(PasswordDisplayDialogComponent, {
+        data: { password: result.plainPassword, title: 'Usuario creado' },
+        disableClose: true,
+      });
     });
   }
 
@@ -69,10 +70,10 @@ export class UsersPageComponent implements OnInit {
   protected resetPassword(user: User): void {
     this.service.resetPassword(user.id).subscribe({
       next: res => {
-        this.snackbar.open(
-          `Nueva contraseña: ${res.plainPassword} — copiala ahora`,
-          'OK', { duration: SNACKBAR_PASSWORD }
-        );
+        this.dialog.open(PasswordDisplayDialogComponent, {
+          data: { password: res.plainPassword, title: 'Nueva contraseña' },
+          disableClose: true,
+        });
       },
     });
   }

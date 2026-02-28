@@ -30,8 +30,9 @@ import { ClientsPageComponent }  from './pages/clients/clients-page.component';
 import { UsersPageComponent }    from './pages/users/users-page.component';
 import { LogsPageComponent }     from './pages/logs/logs-page.component';
 // Standalone — van en imports, no en declarations
-import { ClientDialogComponent } from './pages/clients/client-dialog.component';
-import { UserDialogComponent }   from './pages/users/user-dialog.component';
+import { ClientDialogComponent }          from './pages/clients/client-dialog.component';
+import { UserDialogComponent }            from './pages/users/user-dialog.component';
+import { PasswordDisplayDialogComponent } from './pages/users/password-display-dialog.component';
 
 const routes: Routes = [
   {
@@ -73,6 +74,7 @@ const MATERIAL = [
     // Standalone components se importan aquí
     ClientDialogComponent,
     UserDialogComponent,
+    PasswordDisplayDialogComponent,
   ],
 })
 export class AdminModule {}
