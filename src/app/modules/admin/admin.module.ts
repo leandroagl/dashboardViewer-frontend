@@ -20,6 +20,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { SharedModule } from '@shared/shared.module';
 import { authGuard, adminGuard, passwordChangeGuard } from '@core/guards/auth.guard';
@@ -29,8 +30,9 @@ import { ClientsPageComponent }  from './pages/clients/clients-page.component';
 import { UsersPageComponent }    from './pages/users/users-page.component';
 import { LogsPageComponent }     from './pages/logs/logs-page.component';
 // Standalone — van en imports, no en declarations
-import { ClientDialogComponent } from './pages/clients/client-dialog.component';
-import { UserDialogComponent }   from './pages/users/user-dialog.component';
+import { ClientDialogComponent }          from './pages/clients/client-dialog.component';
+import { UserDialogComponent }            from './pages/users/user-dialog.component';
+import { PasswordDisplayDialogComponent } from './pages/users/password-display-dialog.component';
 
 const routes: Routes = [
   {
@@ -52,6 +54,7 @@ const MATERIAL = [
   MatSlideToggleModule, MatMenuModule, MatChipsModule, MatDividerModule,
   MatSnackBarModule, MatProgressSpinnerModule, MatDatepickerModule, MatNativeDateModule,
   MatButtonModule, MatIconModule, MatTooltipModule,
+  MatExpansionModule,
 ];
 
 @NgModule({
@@ -71,6 +74,7 @@ const MATERIAL = [
     // Standalone components se importan aquí
     ClientDialogComponent,
     UserDialogComponent,
+    PasswordDisplayDialogComponent,
   ],
 })
 export class AdminModule {}
