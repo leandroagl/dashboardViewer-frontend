@@ -20,6 +20,26 @@
       <a routerLink="logs"     routerLinkActive="active" class="admin-sidebar__item">
         <mat-icon>history</mat-icon><span>Logs</span>
       </a>
+
+      <!-- Submenú de dashboards por cliente -->
+      <mat-expansion-panel class="sidebar-expand" *ngIf="activeClients().length > 0">
+        <mat-expansion-panel-header class="sidebar-expand__header">
+          <mat-panel-title>
+            <mat-icon>dashboard</mat-icon>
+            <span>Dashboards</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="sidebar-expand__body">
+          <a *ngFor="let c of activeClients()"
+             [routerLink]="'/' + c.slug + '/dashboards'"
+             routerLinkActive="active"
+             class="admin-sidebar__subitem">
+            <mat-icon>open_in_new</mat-icon>
+            <span>{{ c.nombre }}</span>
+          </a>
+        </div>
+      </mat-expansion-panel>
     </nav>
 
     <div class="admin-sidebar__spacer"></div>
