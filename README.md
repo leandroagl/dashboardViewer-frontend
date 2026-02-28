@@ -89,16 +89,22 @@ Genera los archivos estáticos en `dist/ondra-monitor/browser/`:
 
 ## Despliegue en Windows Server
 
-El frontend es un conjunto de archivos estáticos servido por **nginx**. El mismo servidor
-corre el backend Node.js (ver README del backend). nginx actúa como:
+El frontend es un conjunto de archivos estáticos. El servidor web elegido cumple dos roles:
 
-- Servidor de archivos estáticos del frontend (SPA Angular)
-- Reverse proxy hacia el backend en `localhost:3000`
+- Servir los archivos estáticos de Angular (SPA)
+- Hacer de reverse proxy hacia el backend Node.js en `localhost:3000`
 
 ```
-Navegador  →  nginx :443  →  /api/*  →  Node.js :3000
-                          →  /*      →  dist/ (Angular SPA)
+Navegador  →  servidor web :443  →  /api/*  →  Node.js :3000
+                                 →  /*      →  dist/ (Angular SPA)
 ```
+
+El prefijo `/api` en la URL (configurado en `environment.prod.ts`) permite al servidor web
+separar el tráfico de la API del frontend sin ambigüedad.
+
+---
+
+## Opción A — nginx (recomendado si no hay IIS)
 
 ### Requisitos previos
 
@@ -248,21 +254,112 @@ nssm restart nginx  # reiniciar (tras cambios en nginx.conf)
 nssm status nginx   # estado
 ```
 
-### 6. Verificar el sistema completo
+---
 
-Con ambos servicios corriendo (PM2 para el backend, nginx para el frontend):
+## Opción B — IIS (si ya está habilitado en el servidor)
 
-1. Abrir `https://monitor.ondra.com.ar` en el navegador
-2. Verificar que carga la pantalla de login
-3. Iniciar sesión con el usuario admin creado en el seed
-4. Confirmar que los dashboards cargan datos de PRTG
+### Requisitos previos
 
-Health check del backend:
+Instalar los siguientes módulos de IIS (descargables desde el Web Platform Installer o directo):
+
+| Módulo | Descarga |
+|--------|----------|
+| URL Rewrite | https://www.iis.net/downloads/microsoft/url-rewrite |
+| Application Request Routing (ARR) | https://www.iis.net/downloads/microsoft/application-request-routing |
+
+Después de instalar ARR, habilitar el proxy a nivel servidor:
+1. Abrir IIS Manager
+2. Seleccionar el nodo raíz del servidor (no el sitio)
+3. Doble clic en **Application Request Routing Cache**
+4. En el panel derecho → **Server Proxy Settings**
+5. Tildar **Enable proxy** → Apply
+
+### 1. Crear el sitio en IIS
+
+1. Copiar el contenido de `dist/ondra-monitor/browser/` a la carpeta del sitio, por ejemplo:
+   ```
+   C:\apps\ondra-monitor\frontend\
+   ```
+
+2. En IIS Manager → **Add Website**:
+   - Physical path: `C:\apps\ondra-monitor\frontend`
+   - Binding: HTTPS, puerto 443, certificado SSL seleccionado
+   - Agregar también binding HTTP en puerto 80 (para redirigir a HTTPS con la regla de rewrite)
+
+### 2. Agregar `web.config`
+
+Crear el archivo `C:\apps\ondra-monitor\frontend\web.config`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <system.webServer>
+
+    <rewrite>
+      <rules>
+
+        <!-- Redirigir HTTP → HTTPS -->
+        <rule name="HTTPS Redirect" stopProcessing="true">
+          <match url="(.*)" />
+          <conditions>
+            <add input="{HTTPS}" pattern="^OFF$" />
+          </conditions>
+          <action type="Redirect" url="https://{HTTP_HOST}/{R:1}" redirectType="Permanent" />
+        </rule>
+
+        <!-- Proxy /api/* al backend Node.js (ARR strips el prefijo /api) -->
+        <!-- Ejemplo: GET /api/auth/login  →  GET /auth/login  en localhost:3000 -->
+        <rule name="API Proxy" stopProcessing="true">
+          <match url="^api/(.*)" />
+          <action type="Rewrite" url="http://localhost:3000/{R:1}" />
+        </rule>
+
+        <!-- Angular SPA: rutas no-archivo → index.html -->
+        <rule name="Angular SPA" stopProcessing="true">
+          <match url=".*" />
+          <conditions logicalGrouping="MatchAll">
+            <add input="{REQUEST_FILENAME}" matchType="IsFile"      negate="true" />
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+          </conditions>
+          <action type="Rewrite" url="/index.html" />
+        </rule>
+
+      </rules>
+    </rewrite>
+
+    <staticContent>
+      <mimeMap fileExtension=".woff2" mimeType="font/woff2" />
+      <mimeMap fileExtension=".webmanifest" mimeType="application/manifest+json" />
+    </staticContent>
+
+  </system.webServer>
+</configuration>
+```
+
+> **Orden de las reglas:** El proxy de `/api/` debe ir antes de la regla de Angular SPA,
+> de lo contrario todas las llamadas a la API recibirían `index.html`.
+
+### 3. Verificar
+
+Reiniciar el sitio en IIS Manager y verificar:
 
 ```
 GET https://monitor.ondra.com.ar/api/health
 → { "ok": true, "version": "1.0.0", "timestamp": "..." }
 ```
+
+IIS arranca automáticamente con Windows — no requiere configuración adicional de servicio.
+
+---
+
+## Verificación del sistema completo (ambas opciones)
+
+Con el backend corriendo en PM2 y el servidor web configurado:
+
+1. Abrir `https://monitor.ondra.com.ar` en el navegador
+2. Verificar que carga la pantalla de login
+3. Iniciar sesión con el usuario admin creado en el seed
+4. Confirmar que los dashboards cargan datos de PRTG
 
 ---
 
@@ -277,7 +374,7 @@ Copy-Item -Path "dist\ondra-monitor\browser\*" `
           -Destination "C:\apps\ondra-monitor\frontend\" `
           -Recurse -Force
 
-# No es necesario reiniciar nginx para cambios de frontend
+# No es necesario reiniciar nginx ni IIS para cambios de frontend
 # (los hashes de archivos evitan problemas de caché del navegador)
 ```
 
