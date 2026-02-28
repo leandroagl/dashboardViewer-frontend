@@ -41,6 +41,27 @@ export const adminGuard: CanActivateFn = () => {
   return true;
 };
 
+/**
+ * Verifica que el slug de la ruta coincida con el cliente del usuario.
+ * admin_ondra puede acceder a cualquier slug; los demás son redirigidos
+ * silenciosamente a su propio slug si intentan acceder a otro.
+ */
+export const clientAccessGuard: CanActivateFn = (route) => {
+  const auth   = inject(AuthService);
+  const router = inject(Router);
+
+  if (auth.isAdmin()) return true;
+
+  const routeSlug = route.paramMap.get('slug');
+  const userSlug  = auth.clienteSlug();
+
+  if (!userSlug) { router.navigate(['/login']); return false; }
+  if (routeSlug === userSlug) return true;
+
+  router.navigate([`/${userSlug}/dashboards`]);
+  return false;
+};
+
 /** Si ya está autenticado, redirige fuera de /login. */
 export const noAuthGuard: CanActivateFn = () => {
   const auth   = inject(AuthService);

@@ -8,7 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 
 import { SharedModule } from '@shared/shared.module';
-import { authGuard, passwordChangeGuard } from '@core/guards/auth.guard';
+import { authGuard, passwordChangeGuard, clientAccessGuard } from '@core/guards/auth.guard';
 
 import { DashboardLayoutComponent }  from './layout/dashboard-layout.component';
 import { SelectClientComponent }     from './pages/select-client/select-client.component';
@@ -27,7 +27,7 @@ const routes: Routes = [
   {
     path: ':slug',
     component: DashboardLayoutComponent,
-    canActivate: [authGuard, passwordChangeGuard],
+    canActivate: [authGuard, passwordChangeGuard, clientAccessGuard],
     children: [
       { path: 'dashboards',            redirectTo: 'dashboards/servers', pathMatch: 'full' },
       { path: 'dashboards/servers',    component: ServersPageComponent },
