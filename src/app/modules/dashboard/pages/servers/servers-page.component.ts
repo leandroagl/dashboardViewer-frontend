@@ -38,10 +38,6 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   protected errorCount(d: VmwareDashboard): number {
     return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'error').length, 0);
   }
-  protected unusualCount(d: VmwareDashboard): number {
-    return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'unusual').length, 0);
-  }
-
   // ── Donut SVG math (r=38, circunferencia ≈ 238.8) ─────────────────────────
   protected donutArc(count: number, total: number): string {
     if (total === 0) return '0 239';
@@ -62,7 +58,6 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   protected hostSensorOk(h: VmwareHost):      number { return this.hostAllStatuses(h).filter(s => s === 'ok').length; }
   protected hostSensorWarn(h: VmwareHost):    number { return this.hostAllStatuses(h).filter(s => s === 'warning').length; }
   protected hostSensorError(h: VmwareHost):   number { return this.hostAllStatuses(h).filter(s => s === 'error').length; }
-  protected hostSensorUnusual(h: VmwareHost): number { return this.hostAllStatuses(h).filter(s => s === 'unusual').length; }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   protected datastoreBarColor(status: SensorStatus): string {

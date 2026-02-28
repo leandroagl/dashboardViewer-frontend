@@ -32,13 +32,6 @@
           <div class="summary-value sv-error">{{ errorCount(d) }}</div>
         </div>
       </div>
-      <div class="summary-card">
-        <div class="summary-icon si-unusual"><mat-icon>info</mat-icon></div>
-        <div>
-          <div class="summary-label">Inusuales</div>
-          <div class="summary-value sv-unusual">{{ unusualCount(d) }}</div>
-        </div>
-      </div>
     </div>
 
     <!-- HOSTS -->
@@ -84,7 +77,6 @@
         <div class="legend-item"><span class="legend-dot ok"></span>OK<span class="legend-num sv-ok">{{ hostSensorOk(host) }}</span></div>
         <div class="legend-item"><span class="legend-dot warn"></span>Warn<span class="legend-num sv-warn">{{ hostSensorWarn(host) }}</span></div>
         <div class="legend-item"><span class="legend-dot error"></span>Down<span class="legend-num sv-error">{{ hostSensorError(host) }}</span></div>
-        <div class="legend-item"><span class="legend-dot unusual"></span>Inusual<span class="legend-num sv-unusual">{{ hostSensorUnusual(host) }}</span></div>
       </div>
     </div>
 
