@@ -8,16 +8,7 @@
   <!-- ─── Barra superior: logo + cliente + nav dots ─────────────────────────── -->
   <div class="dash-topbar controls-layer">
 
-    <div class="dash-topbar__brand">
-      <a *ngIf="isAdmin()"
-         routerLink="/admin/clients"
-         class="dash-admin-back"
-         matTooltip="Volver a Administración"
-         aria-label="Volver a Administración">
-        <mat-icon>arrow_back</mat-icon>
-        <span>Admin</span>
-      </a>
-    </div>
+    <div class="dash-topbar__brand"></div>
 
     <!-- Dots de navegación -->
     <div class="dash-dots" *ngIf="!loading() && totalDashes() > 1">
@@ -34,8 +25,13 @@
 
     <!-- Acciones top-right -->
     <div class="dash-topbar__actions">
-      <a *ngIf="isAdmin()" routerLink="/admin/clients" mat-icon-button matTooltip="Administración" aria-label="Administración">
-        <mat-icon>admin_panel_settings</mat-icon>
+      <a *ngIf="isAdmin()"
+         routerLink="/admin/clients"
+         class="dash-admin-back"
+         matTooltip="Volver a Administración"
+         aria-label="Volver a Administración">
+        <mat-icon>arrow_back</mat-icon>
+        <span>Admin</span>
       </a>
       <div class="dash-client-info">
         <mat-icon>monitoring</mat-icon>
