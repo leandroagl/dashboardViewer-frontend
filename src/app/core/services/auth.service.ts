@@ -114,7 +114,7 @@ export class AuthService {
   // ─── Utils ────────────────────────────────────────────────────────────────────
 
   private clearState(): void {
-    this._state.set({ accessToken: null, rol: null, clienteSlug: null, dashboards: [], mustChangePwd: false });
+    this._state.set({ accessToken: null, nombre: null, rol: null, clienteSlug: null, dashboards: [], mustChangePwd: false });
     this.router.navigate(['/login']);
   }
 }
