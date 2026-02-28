@@ -83,7 +83,7 @@
 .jobs-table {
   &__header {
     display: grid;
-    grid-template-columns: 1fr 80px;
+    grid-template-columns: 1fr 1fr 80px;
     gap: 12px;
     padding: 6px 8px 10px;
     font-size: 10px;
@@ -96,7 +96,7 @@
 
   &__row {
     display: grid;
-    grid-template-columns: 1fr 80px;
+    grid-template-columns: 1fr 1fr 80px;
     gap: 12px;
     align-items: center;
     padding: 10px 8px;
@@ -106,7 +106,8 @@
     &:hover      { background: var(--bg-hover); }
   }
 
-  &__name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  &__name  { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  &__value { font-size: 12px; color: var(--text-secondary); }
 }
 
 // ── NAS sensor cards ──────────────────────────────────────────────────────────

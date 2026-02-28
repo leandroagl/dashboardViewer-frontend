@@ -101,13 +101,13 @@ export interface BackupDevice {
   type:    'veeam' | 'acronis' | 'qnap' | 'other';
   status:  SensorStatus;
   jobs:    BackupJob[];
-  alerts:  { name: string; message: string }[];
+  alerts:  { name: string; message: string; status: SensorStatus }[];
 }
 
 export interface BackupsDashboard {
   successRate7d: number;
   devices:       BackupDevice[];
-  alerts:        { name: string; message: string }[];
+  alerts:        { name: string; message: string; status: SensorStatus }[];
 }
 
 // Networking
