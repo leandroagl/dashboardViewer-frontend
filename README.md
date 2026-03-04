@@ -352,6 +352,221 @@ IIS arranca automáticamente con Windows — no requiere configuración adiciona
 
 ---
 
+## Despliegue en Linux (Ubuntu 22.04 / Debian 12)
+
+En Linux, nginx es nativo del sistema operativo y se gestiona con systemd.
+No es necesario NSSM ni ninguna herramienta adicional para que arranque automáticamente.
+
+### Requisitos previos
+
+```bash
+# Instalar nginx
+sudo apt install -y nginx
+
+# Instalar certbot para SSL gratuito con Let's Encrypt
+sudo apt install -y certbot python3-certbot-nginx
+
+# Verificar nginx
+nginx -v
+sudo systemctl status nginx
+```
+
+### 1. Ubicar los archivos del frontend
+
+```bash
+# Crear el directorio donde vivirán los archivos estáticos
+sudo mkdir -p /var/www/ondra-monitor
+
+# Copiar el contenido de dist/ondra-monitor/browser/ al servidor
+# Desde la máquina de desarrollo, usando scp:
+scp -r dist/ondra-monitor/browser/* usuario@ip-servidor:/var/www/ondra-monitor/
+
+# Asignar los permisos correctos (www-data es el usuario de nginx en Debian/Ubuntu)
+sudo chown -R www-data:www-data /var/www/ondra-monitor
+sudo chmod -R 755 /var/www/ondra-monitor
+```
+
+Estructura resultante en el servidor:
+
+```
+/var/www/ondra-monitor/
+├── index.html
+├── main.<hash>.js
+├── styles.<hash>.css
+└── ...
+```
+
+### 2. Crear la configuración de nginx
+
+En Linux, cada sitio tiene su propio archivo en `/etc/nginx/sites-available/`.
+Se "activa" creando un enlace simbólico en `sites-enabled/`.
+
+```bash
+sudo nano /etc/nginx/sites-available/ondra-monitor
+```
+
+Contenido del archivo:
+
+```nginx
+server {
+    listen 80;
+    server_name monitor.ondra.com.ar;
+    # Redirigir todo el tráfico HTTP a HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name monitor.ondra.com.ar;
+
+    # Certbot agrega automáticamente las líneas ssl_certificate aquí.
+    # Si se configuran certificados manualmente, usar:
+    # ssl_certificate     /etc/letsencrypt/live/monitor.ondra.com.ar/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/monitor.ondra.com.ar/privkey.pem;
+
+    root  /var/www/ondra-monitor;
+    index index.html;
+
+    # ── Backend API (proxy al proceso Node.js) ─────────────────────────────
+    # nginx strip el prefijo /api antes de enviar al backend.
+    # Ejemplo: GET /api/auth/login  →  GET /auth/login  en localhost:3000
+    location /api/ {
+        proxy_pass         http://127.0.0.1:3000/;
+        proxy_http_version 1.1;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_read_timeout 30s;
+    }
+
+    # ── Assets estáticos con caché largo ──────────────────────────────────
+    location ~* \.(js|css|woff2|woff|ttf|ico|png|svg|webp)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # ── Angular SPA: todo lo demás devuelve index.html ─────────────────────
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+### 3. Activar el sitio
+
+```bash
+# Crear el enlace simbólico para activar el sitio
+sudo ln -s /etc/nginx/sites-available/ondra-monitor /etc/nginx/sites-enabled/
+
+# Eliminar el sitio por defecto de nginx si está activo (evita conflictos)
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Verificar que la configuración no tiene errores de sintaxis
+sudo nginx -t
+# Debe mostrar: configuration file ... syntax is ok / test is successful
+
+# Recargar nginx para aplicar la configuración
+sudo systemctl reload nginx
+```
+
+### 4. Configurar SSL con Let's Encrypt (certbot)
+
+Certbot obtiene un certificado gratuito de Let's Encrypt y modifica automáticamente
+el archivo de nginx para agregar las líneas SSL correspondientes.
+
+```bash
+# Obtener el certificado e integrar con nginx automáticamente
+sudo certbot --nginx -d monitor.ondra.com.ar
+
+# Durante el proceso certbot pregunta:
+# - Email de contacto para notificaciones de renovación
+# - Si aceptas los términos de servicio → Y
+# - Si querés compartir tu email con EFF → opcional
+# - Si querés redirigir HTTP → HTTPS → elegir opción 2 (Redirect)
+```
+
+Certbot configura la renovación automática del certificado. Para verificar:
+
+```bash
+# Simular una renovación (no renueva realmente, solo verifica que funciona)
+sudo certbot renew --dry-run
+```
+
+> **Si el dominio no apunta todavía a este servidor**, certbot fallará porque necesita
+> verificar el dominio por HTTP. En ese caso, primero configurar el DNS y luego correr certbot.
+> Alternativamente, usar un certificado corporativo copiando los archivos `.pem` al servidor
+> y ajustando manualmente las líneas `ssl_certificate` en el archivo de nginx.
+
+### 5. Habilitar nginx como servicio automático
+
+En Ubuntu/Debian, nginx ya viene configurado para arrancar automáticamente.
+Verificar y habilitar si no está activo:
+
+```bash
+# Verificar estado
+sudo systemctl status nginx
+
+# Habilitar inicio automático (normalmente ya viene habilitado)
+sudo systemctl enable nginx
+
+# Estado de todos los servicios relevantes
+sudo systemctl status nginx
+sudo systemctl status ondra-monitor   # el backend Node.js
+sudo systemctl status postgresql
+```
+
+### 6. Verificar el sistema completo
+
+```bash
+# Verificar que nginx responde
+curl -I https://monitor.ondra.com.ar
+
+# Verificar el health check del backend a través del proxy
+curl https://monitor.ondra.com.ar/api/health
+# Respuesta esperada: {"ok":true,"version":"1.0.0","timestamp":"..."}
+```
+
+Luego en el navegador:
+1. Abrir `https://monitor.ondra.com.ar`
+2. Verificar que carga la pantalla de login
+3. Iniciar sesión con el usuario admin creado en el seed
+4. Confirmar que los dashboards cargan datos de PRTG
+
+### Comandos de operación nginx en Linux
+
+```bash
+sudo systemctl status nginx          # Estado del servicio
+sudo systemctl reload nginx          # Recargar config sin cortar conexiones activas
+sudo systemctl restart nginx         # Reiniciar completamente
+sudo nginx -t                        # Verificar sintaxis de la configuración
+
+# Ver logs de nginx
+sudo tail -f /var/log/nginx/access.log    # Requests entrantes
+sudo tail -f /var/log/nginx/error.log     # Errores
+```
+
+### Actualización del frontend en Linux
+
+```bash
+# 1. Compilar la nueva versión (en la máquina de desarrollo)
+npm run build:prod
+
+# 2. Copiar los archivos al servidor (reemplaza los anteriores)
+scp -r dist/ondra-monitor/browser/* usuario@ip-servidor:/tmp/frontend-update/
+
+# 3. En el servidor: reemplazar los archivos
+ssh usuario@ip-servidor
+sudo cp -r /tmp/frontend-update/* /var/www/ondra-monitor/
+sudo chown -R www-data:www-data /var/www/ondra-monitor
+
+# No es necesario reiniciar nginx — nginx sirve los archivos directamente del disco
+# Los hashes en los nombres de archivo evitan problemas de caché del navegador
+```
+
+---
+
 ## Verificación del sistema completo (ambas opciones)
 
 Con el backend corriendo en PM2 y el servidor web configurado:
