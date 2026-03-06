@@ -2,43 +2,10 @@
 
 // ── Summary strip ──────────────────────────────────────────────────────────────
 .summary-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.summary-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 16px 20px;
   display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: box-shadow var(--transition);
-
-  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,.4); }
+  gap: 16px;
+  flex-wrap: wrap;
 }
-
-.summary-icon {
-  width: 44px; height: 44px;
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  mat-icon { font-size: 22px; width: 22px; height: 22px; }
-}
-.si-ok      { background: var(--status-ok-dim);      color: var(--status-ok); }
-.si-warn    { background: var(--status-warning-dim);  color: var(--status-warning); }
-.si-error   { background: var(--status-error-dim);    color: var(--status-error); }
-.si-unusual { background: var(--status-unusual-dim);  color: var(--status-unusual); }
-
-.summary-label { font-size: 11px; color: var(--text-muted); font-weight: 400; letter-spacing: .3px; }
-.summary-value { font-size: 28px; font-weight: 300; line-height: 1.1; }
-
-.sv-ok      { color: var(--status-ok); }
-.sv-warn    { color: var(--status-warning); }
-.sv-error   { color: var(--status-error); }
-.sv-unusual { color: var(--status-unusual); }
 
 // ── Section label ──────────────────────────────────────────────────────────────
 .section-label {
@@ -491,14 +458,6 @@
 // ── Responsive: smartphones (≤ 600px) ─────────────────────────────────────────
 @media (max-width: 600px) {
   .servers-page { gap: 12px; }
-
-  // Summary: 2×2
-  .summary-strip {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-  .summary-card  { padding: 12px 14px; }
-  .summary-value { font-size: 22px; }
 
   // Una card por fila, sin overflow horizontal
   .hosts-grid {

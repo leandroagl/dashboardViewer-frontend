@@ -11,27 +11,9 @@
 
     <!-- SUMMARY STRIP -->
     <div class="summary-strip">
-      <div class="summary-card">
-        <div class="summary-icon si-ok"><mat-icon>check_circle</mat-icon></div>
-        <div>
-          <div class="summary-label">Sensores OK</div>
-          <div class="summary-value sv-ok">{{ okCount(d) }}</div>
-        </div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-icon si-warn"><mat-icon>warning</mat-icon></div>
-        <div>
-          <div class="summary-label">Warning</div>
-          <div class="summary-value sv-warn">{{ warnCount(d) }}</div>
-        </div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-icon si-error"><mat-icon>error</mat-icon></div>
-        <div>
-          <div class="summary-label">Down</div>
-          <div class="summary-value sv-error">{{ errorCount(d) }}</div>
-        </div>
-      </div>
+      <app-kpi-card label="Sensores OK" [value]="okCount(d)"    status="ok"      sublabel="sensores"></app-kpi-card>
+      <app-kpi-card label="Warning"     [value]="warnCount(d)"  status="warning" sublabel="sensores"></app-kpi-card>
+      <app-kpi-card label="Down"        [value]="errorCount(d)" status="error"   sublabel="sensores"></app-kpi-card>
     </div>
 
     <!-- HOSTS -->
