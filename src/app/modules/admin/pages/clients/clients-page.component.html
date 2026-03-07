@@ -60,22 +60,29 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let c">
-          <button mat-icon-button [matMenuTriggerFor]="menu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="openEditClientDialog(c)">
-              <mat-icon>edit</mat-icon> Editar
+          <ng-container *ngIf="c.slug !== 'ondra'; else systemBadge">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
             </button>
-            <button mat-menu-item (click)="toggleStatus(c)">
-              <mat-icon>{{ c.activo ? 'block' : 'check_circle' }}</mat-icon>
-              {{ c.activo ? 'Desactivar' : 'Activar' }}
-            </button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item class="menu-item--danger" (click)="deleteClient(c)">
-              <mat-icon>delete</mat-icon> Eliminar
-            </button>
-          </mat-menu>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="openEditClientDialog(c)">
+                <mat-icon>edit</mat-icon> Editar
+              </button>
+              <button mat-menu-item (click)="toggleStatus(c)">
+                <mat-icon>{{ c.activo ? 'block' : 'check_circle' }}</mat-icon>
+                {{ c.activo ? 'Desactivar' : 'Activar' }}
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item class="menu-item--danger" (click)="deleteClient(c)">
+                <mat-icon>delete</mat-icon> Eliminar
+              </button>
+            </mat-menu>
+          </ng-container>
+          <ng-template #systemBadge>
+            <span class="system-badge">
+              <mat-icon>lock</mat-icon> Sistema
+            </span>
+          </ng-template>
         </td>
       </ng-container>
 
