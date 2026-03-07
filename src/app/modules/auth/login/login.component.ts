@@ -19,6 +19,8 @@ export class LoginComponent {
   protected readonly error          = signal('');
   protected readonly showPwd        = signal(false);
   protected readonly showForgotMsg  = signal(false);
+  protected readonly lockoutUntil   = signal<Date | null>(null);
+  protected readonly attemptsLeft   = signal<number | null>(null);
 
   protected readonly form = this.fb.group({
     email:    ['', [Validators.required, Validators.email]],
@@ -26,8 +28,9 @@ export class LoginComponent {
   });
 
   protected submit(): void {
-    if (this.form.invalid || this.loading()) return;
+    if (this.form.invalid || this.loading() || !!this.lockoutUntil()) return;
     this.error.set('');
+    this.attemptsLeft.set(null);
     this.loading.set(true);
 
     const { email, password } = this.form.getRawValue();
@@ -41,9 +44,18 @@ export class LoginComponent {
         const slug = res.data?.clienteSlug;
         if (slug) this.router.navigate([`/${slug}/dashboards`]);
       },
-      error: () => {
+      error: (err) => {
         this.loading.set(false);
-        this.error.set('Email o contraseña incorrectos.');
+        if (err.status === 423) {
+          this.lockoutUntil.set(new Date(err.error?.bloqueado_hasta));
+          this.error.set('');
+          this.attemptsLeft.set(null);
+        } else {
+          this.lockoutUntil.set(null);
+          const restantes = err?.error?.intentos_restantes ?? null;
+          this.attemptsLeft.set(typeof restantes === 'number' ? restantes : null);
+          this.error.set('Email o contraseña incorrectos.');
+        }
       },
     });
   }
