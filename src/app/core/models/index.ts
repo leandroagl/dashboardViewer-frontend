@@ -62,6 +62,9 @@ export interface User {
   es_superadmin:         boolean;
   ultimo_acceso?:        string;
   creado_en:             string;
+  intentos_fallidos?:    number;
+  bloqueado_hasta?:      string | null;   // ISO string (JSON serializa Date como string)
+  cantidad_bloqueos?:    number;
 }
 
 export interface CreateUserPayload {

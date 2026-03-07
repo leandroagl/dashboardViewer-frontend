@@ -42,4 +42,10 @@ export class UsersService {
   revokeKiosk(id: string): Observable<void> {
     return this.http.post<void>(`${this.base}/${id}/revoke-kiosk`, {});
   }
+
+  unlock(id: string): Observable<User> {
+    return this.http
+      .post<ApiResponse<User>>(`${this.base}/${id}/unlock`, {})
+      .pipe(map(requireData));
+  }
 }

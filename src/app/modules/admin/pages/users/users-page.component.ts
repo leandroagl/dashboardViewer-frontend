@@ -105,6 +105,22 @@ export class UsersPageComponent implements OnInit {
     });
   }
 
+  protected isLocked(user: User): boolean {
+    return !!user.bloqueado_hasta && new Date(user.bloqueado_hasta) > new Date();
+  }
+
+  protected unlockUser(user: User): void {
+    this.service.unlock(user.id).subscribe({
+      next: updated => {
+        this.users.update(list => list.map(u => u.id === updated.id ? { ...u, ...updated } : u));
+        this.snackbar.open(`Cuenta de ${user.nombre} desbloqueada.`, 'OK', { duration: SNACKBAR_SHORT });
+      },
+      error: () => {
+        this.snackbar.open('Error al desbloquear la cuenta.', 'OK', { duration: SNACKBAR_LONG });
+      },
+    });
+  }
+
   protected getRolLabel(rol: string): string {
     const labels: Record<string, string> = {
       admin_ondra:  'Admin',

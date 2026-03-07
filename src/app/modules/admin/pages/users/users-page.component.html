@@ -21,6 +21,9 @@
                 <mat-icon *ngIf="u.es_superadmin"
                   style="font-size: 14px; width: 14px; height: 14px; color: rgba(77,208,225,0.7);"
                   matTooltip="Usuario inmutable del sistema">lock</mat-icon>
+                <mat-icon *ngIf="isLocked(u)"
+                  style="font-size: 14px; width: 14px; height: 14px; color: #ef9a9a;"
+                  matTooltip="Cuenta bloqueada temporalmente">lock</mat-icon>
               </div>
               <div class="text-muted" style="font-size: 11px;">{{ u.email }}</div>
             </div>
@@ -78,6 +81,9 @@
             </button>
             <button *ngIf="u.es_kiosk" mat-menu-item (click)="revokeKiosk(u)">
               <mat-icon>tv_off</mat-icon> Revocar sesión kiosk
+            </button>
+            <button mat-menu-item (click)="unlockUser(u)" *ngIf="isLocked(u)">
+              <mat-icon>lock_open</mat-icon> Desbloquear cuenta
             </button>
             <ng-container *ngIf="!u.es_superadmin">
               <mat-divider></mat-divider>
