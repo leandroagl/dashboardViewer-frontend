@@ -6,12 +6,13 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormBuilder, Validators, ReactiveFormsModule } from "@angular/forms";
-import { MatDialogRef, MatDialogModule } from "@angular/material/dialog";
+import { MatDialogRef, MatDialogModule, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { ClientsService } from "@core/services/clients.service";
+import { Client } from "@core/models";
 
 @Component({
   selector: "app-client-dialog",
@@ -27,7 +28,7 @@ import { ClientsService } from "@core/services/clients.service";
     MatIconModule,
   ],
   template: `
-    <h2 mat-dialog-title>Nuevo cliente</h2>
+    <h2 mat-dialog-title>{{ editMode ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
 
     <mat-dialog-content>
       <form [formGroup]="form" class="dialog-form">
@@ -46,10 +47,11 @@ import { ClientsService } from "@core/services/clients.service";
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Slug (URL)</mat-label>
           <input matInput formControlName="slug" placeholder="empresa-abc" />
-          <mat-hint
+          <mat-hint *ngIf="!editMode"
             >Solo minúsculas, números y guiones. No se puede cambiar
             después.</mat-hint
           >
+          <mat-hint *ngIf="editMode">El slug no se puede modificar.</mat-hint>
           <mat-error *ngIf="form.get('slug')?.hasError('required')"
             >Requerido</mat-error
           >
@@ -88,7 +90,7 @@ import { ClientsService } from "@core/services/clients.service";
         (click)="submit()"
         [disabled]="form.invalid || loading()"
       >
-        {{ loading() ? "Guardando..." : "Crear cliente" }}
+        {{ loading() ? 'Guardando...' : (editMode ? 'Guardar cambios' : 'Crear cliente') }}
       </button>
     </mat-dialog-actions>
   `,
@@ -122,32 +124,54 @@ import { ClientsService } from "@core/services/clients.service";
   ],
 })
 export class ClientDialogComponent {
-  private readonly fb = inject(FormBuilder);
-  private readonly service = inject(ClientsService);
+  private readonly fb        = inject(FormBuilder);
+  private readonly service   = inject(ClientsService);
   private readonly dialogRef = inject(MatDialogRef<ClientDialogComponent>);
+  private readonly data      = inject<{ client?: Client }>(MAT_DIALOG_DATA, { optional: true });
 
-  protected readonly loading = signal(false);
-  protected readonly error = signal("");
+  protected readonly editMode = !!this.data?.client;
+  protected readonly loading  = signal(false);
+  protected readonly error    = signal("");
 
   protected readonly form = this.fb.group({
-    nombre: ["", Validators.required],
-    slug: ["", [Validators.required, Validators.pattern(/^[a-z0-9-]+$/)]],
-    prtg_group: ["", Validators.required],
+    nombre:     [this.data?.client?.nombre     ?? "", Validators.required],
+    slug:       [this.data?.client?.slug       ?? "", [Validators.required, Validators.pattern(/^[a-z0-9-]+$/)]],
+    prtg_group: [this.data?.client?.prtg_group ?? "", Validators.required],
   });
+
+  constructor() {
+    if (this.editMode) {
+      this.form.get('slug')!.disable();
+    }
+  }
 
   protected submit(): void {
     if (this.form.invalid || this.loading()) return;
     this.error.set("");
     this.loading.set(true);
-    const { nombre, slug, prtg_group } = this.form.getRawValue();
-    this.service
-      .create({ nombre: nombre!, slug: slug!, prtg_group: prtg_group! })
-      .subscribe({
-        next: (c) => this.dialogRef.close(c),
-        error: (err) => {
-          this.loading.set(false);
-          this.error.set(err?.error?.error ?? "Error al crear el cliente.");
-        },
-      });
+
+    if (this.editMode) {
+      const { nombre, prtg_group } = this.form.getRawValue();
+      this.service
+        .update(this.data!.client!.id, { nombre: nombre!, prtg_group: prtg_group! })
+        .subscribe({
+          next:  (c) => this.dialogRef.close(c),
+          error: (err) => {
+            this.loading.set(false);
+            this.error.set(err?.error?.error ?? "Error al guardar los cambios.");
+          },
+        });
+    } else {
+      const { nombre, slug, prtg_group } = this.form.getRawValue();
+      this.service
+        .create({ nombre: nombre!, slug: slug!, prtg_group: prtg_group! })
+        .subscribe({
+          next:  (c) => this.dialogRef.close(c),
+          error: (err) => {
+            this.loading.set(false);
+            this.error.set(err?.error?.error ?? "Error al crear el cliente.");
+          },
+        });
+    }
   }
 }
