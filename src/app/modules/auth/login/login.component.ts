@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -27,8 +28,23 @@ export class LoginComponent {
     password: ['', Validators.required],
   });
 
+  constructor() {
+    // Limpiar estado de lockout al cambiar de email (evita bloquear a otro usuario)
+    this.form.get('email')!.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.lockoutUntil.set(null);
+      this.attemptsLeft.set(null);
+      this.error.set('');
+    });
+  }
+
+  /** Retorna true si la cuenta está bloqueada Y el bloqueo no expiró aún. */
+  protected isLockedOut(): boolean {
+    const until = this.lockoutUntil();
+    return until !== null && until > new Date();
+  }
+
   protected submit(): void {
-    if (this.form.invalid || this.loading() || !!this.lockoutUntil()) return;
+    if (this.form.invalid || this.loading() || this.isLockedOut()) return;
     this.error.set('');
     this.attemptsLeft.set(null);
     this.loading.set(true);

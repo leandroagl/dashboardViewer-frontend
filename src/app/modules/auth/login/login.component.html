@@ -53,18 +53,18 @@
         {{ error() }}
       </div>
 
-      <div class="login-card__lockout" *ngIf="lockoutUntil()">
+      <div class="login-card__lockout" *ngIf="isLockedOut()">
         <mat-icon>lock</mat-icon>
         Cuenta bloqueada hasta las {{ lockoutUntil() | date:'HH:mm' }} del {{ lockoutUntil() | date:'dd/MM' }}.
         Contactá al administrador para desbloquear antes.
       </div>
 
-      <div class="login-card__warning" *ngIf="attemptsLeft() !== null && !lockoutUntil()">
+      <div class="login-card__warning" *ngIf="attemptsLeft() !== null && !isLockedOut()">
         <mat-icon>warning_amber</mat-icon>
         {{ attemptsLeft() }} intento{{ attemptsLeft() !== 1 ? 's' : '' }} restante{{ attemptsLeft() !== 1 ? 's' : '' }} antes del bloqueo temporal.
       </div>
 
-      <button mat-flat-button type="submit" class="login-card__submit" [disabled]="form.invalid || loading() || !!lockoutUntil()">
+      <button mat-flat-button type="submit" class="login-card__submit" [disabled]="form.invalid || loading() || isLockedOut()">
         <mat-spinner *ngIf="loading()" diameter="18" class="inline-spinner"></mat-spinner>
         <span *ngIf="!loading()">Ingresar</span>
         <span *ngIf="loading()">Verificando...</span>
