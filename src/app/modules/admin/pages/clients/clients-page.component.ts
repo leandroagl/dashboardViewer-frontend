@@ -61,6 +61,7 @@ export class ClientsPageComponent implements OnInit {
         this.clients.update(list => list.map(c => c.id === updated.id ? updated : c));
         this.snackbar.open(`Cliente ${updated.activo ? 'activado' : 'desactivado'}`, 'OK', { duration: SNACKBAR_SHORT });
       },
+      error: () => this.snackbar.open('Error al actualizar el cliente', 'OK', { duration: SNACKBAR_SHORT }),
     });
   }
 

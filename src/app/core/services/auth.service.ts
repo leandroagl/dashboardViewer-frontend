@@ -5,7 +5,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, catchError, throwError } from 'rxjs';
+import { Observable, tap, catchError, throwError, shareReplay, finalize } from 'rxjs';
 import { environment } from '@env/environment';
 import { AuthState, LoginResponse, RefreshResponse, ApiResponse } from '../models';
 
@@ -59,6 +59,20 @@ export class AuthService {
 
   // ─── Refresh ─────────────────────────────────────────────────────────────────
 
+  // Observable compartido para evitar múltiples llamadas simultáneas a /auth/refresh
+  private _refreshInProgress$: Observable<ApiResponse<RefreshResponse>> | null = null;
+
+  // Deduplicar: si ya hay un refresh en curso, reusar el mismo observable
+  refreshOnce(): Observable<ApiResponse<RefreshResponse>> {
+    if (!this._refreshInProgress$) {
+      this._refreshInProgress$ = this.refresh().pipe(
+        shareReplay(1),
+        finalize(() => { this._refreshInProgress$ = null; }),
+      );
+    }
+    return this._refreshInProgress$;
+  }
+
   refresh(): Observable<ApiResponse<RefreshResponse>> {
     return this.http
       .post<ApiResponse<RefreshResponse>>(`${environment.apiUrl}/auth/refresh`, {}, { withCredentials: true })
@@ -87,7 +101,7 @@ export class AuthService {
   logout(): void {
     this.http
       .post(`${environment.apiUrl}/auth/logout`, {}, { withCredentials: true })
-      .subscribe({ complete: () => this.clearState() });
+      .subscribe({ complete: () => this.clearState(), error: () => this.clearState() });
   }
 
   // ─── Cambio de contraseña ────────────────────────────────────────────────────

@@ -159,9 +159,23 @@ export class PasswordDisplayDialogComponent {
   protected readonly copied = signal(false);
 
   protected copy(): void {
-    navigator.clipboard.writeText(this.data.password).then(() => {
-      this.copied.set(true);
-      setTimeout(() => this.copied.set(false), 2000);
-    });
+    navigator.clipboard.writeText(this.data.password)
+      .then(() => this.markCopied())
+      .catch(() => {
+        // Fallback para contextos sin Clipboard API (HTTP, permisos denegados)
+        const el = document.createElement('textarea');
+        el.value = this.data.password;
+        el.setAttribute('readonly', '');
+        el.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(el);
+        el.select();
+        try { document.execCommand('copy'); this.markCopied(); } catch { /* no-op */ }
+        document.body.removeChild(el);
+      });
+  }
+
+  private markCopied(): void {
+    this.copied.set(true);
+    setTimeout(() => this.copied.set(false), 2000);
   }
 }

@@ -64,6 +64,7 @@ export class UsersPageComponent implements OnInit {
         this.users.update(list => list.map(u => u.id === user.id ? { ...u, activo: !u.activo } : u));
         this.snackbar.open('Usuario actualizado', 'OK', { duration: SNACKBAR_SHORT });
       },
+      error: () => this.snackbar.open('Error al actualizar el usuario', 'OK', { duration: SNACKBAR_SHORT }),
     });
   }
 

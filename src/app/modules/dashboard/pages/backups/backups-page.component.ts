@@ -50,7 +50,7 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
 
   protected nasIcon(sensorName: string): string {
     if (/disk|storage|space|volume|drive/i.test(sensorName)) return 'storage';
-    if (/cpu|processor/i.test(sensorName))                   return 'memory';
+    if (/cpu|processor/i.test(sensorName))                   return 'developer_board';
     if (/mem|memory|ram/i.test(sensorName))                  return 'memory';
     if (/temp|thermal/i.test(sensorName))                    return 'thermostat';
     if (/fan/i.test(sensorName))                             return 'air';

@@ -21,7 +21,10 @@ export class DashboardService {
 
   getAvailable(slug: string): Observable<DashboardType[]> {
     return this.http.get<ApiResponse<{ dashboards: DashboardType[] }>>(this.url(slug))
-      .pipe(map(r => r.data?.dashboards ?? []));
+      .pipe(map(r => {
+        if (r.data == null) throw new Error('La respuesta del servidor no contiene datos.');
+        return r.data.dashboards ?? [];
+      }));
   }
 
   getServers(slug: string): Observable<VmwareDashboard> {

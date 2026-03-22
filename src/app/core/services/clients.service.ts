@@ -28,7 +28,10 @@ export class ClientsService {
   }
 
   update(id: string, payload: Partial<Client>): Observable<Client> {
-    return this.http.patch<ApiResponse<Client>>(`${this.base}/${id}`, payload).pipe(map(requireData));
+    return this.http.patch<ApiResponse<Client>>(`${this.base}/${id}`, payload).pipe(
+      map(requireData),
+      tap(() => this.clientsModified$.next()),
+    );
   }
 
   setStatus(id: string, activo: boolean): Observable<Client> {
