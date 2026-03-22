@@ -32,7 +32,7 @@ export const authInterceptor: HttpInterceptorFn = (
     catchError((err: HttpErrorResponse) => {
       // Si el token expiró, intentar renovarlo una sola vez
       if (err.status === 401 && token) {
-        return authService.refresh().pipe(
+        return authService.refreshOnce().pipe(
           switchMap(res => {
             if (res.ok && res.data) {
               return next(addToken(req, res.data.accessToken));

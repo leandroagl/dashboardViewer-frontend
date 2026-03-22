@@ -38,9 +38,8 @@ export class LogsService {
     return `${this.base}/export?${params.toString()}`;
   }
 
-  purgeLogs(antes_de?: string): Observable<{ deleted: number }> {
-    let params = new HttpParams();
-    if (antes_de) params = params.set('antes_de', antes_de);
+  purgeLogs(antes_de: string): Observable<{ deleted: number }> {
+    const params = new HttpParams().set('antes_de', antes_de);
     return this.http.delete<ApiResponse<{ deleted: number }>>(
       `${this.base}/purge`, { params }
     ).pipe(map(r => r.data ?? { deleted: 0 }));

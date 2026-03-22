@@ -79,6 +79,8 @@ export class LogsPageComponent implements OnInit {
     const url  = this.service.getExportUrl({
       accion:    vals.accion    || undefined,
       resultado: vals.resultado || undefined,
+      desde:     vals.desde ? (vals.desde as Date).toISOString() : undefined,
+      hasta:     vals.hasta ? (vals.hasta  as Date).toISOString() : undefined,
     });
     window.open(url, '_blank');
   }
@@ -94,10 +96,11 @@ export class LogsPageComponent implements OnInit {
       },
     }).afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
-      this.service.purgeLogs().subscribe({
+      this.service.purgeLogs(new Date().toISOString()).subscribe({
         next: ({ deleted }) => {
           this.logs.set([]);
           this.meta.set(null);
+          this.currentPage = 1;
           this.snackbar.open(`${deleted} registros eliminados`, 'OK', { duration: SNACKBAR_LONG });
         },
         error: () => this.snackbar.open('Error al depurar registros', 'OK', { duration: SNACKBAR_SHORT }),

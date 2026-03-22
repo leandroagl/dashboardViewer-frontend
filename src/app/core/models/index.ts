@@ -36,14 +36,15 @@ export interface AuthState {
 // ─── Cliente ──────────────────────────────────────────────────────────────────
 
 export interface Client {
-  id:               string;
-  nombre:           string;
-  slug:             string;
-  prtg_group:       string;
-  activo:           boolean;
-  logo_url?:        string;
-  color_marca?:     string;
-  total_usuarios?:  number;
+  id:                  string;
+  nombre:              string;
+  slug:                string;
+  prtg_group:          string;
+  prtg_extra_probes?:  string | null;
+  activo:              boolean;
+  logo_url?:           string;
+  color_marca?:        string;
+  total_usuarios?:     number;
   ultimo_acceso_usuario?: string;
 }
 
