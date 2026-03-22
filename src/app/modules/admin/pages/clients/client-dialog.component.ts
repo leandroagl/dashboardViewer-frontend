@@ -76,6 +76,35 @@ import { Client } from "@core/models";
           >
         </mat-form-field>
 
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Sondas extra PRTG (opcional)</mat-label>
+          <input
+            matInput
+            formControlName="prtg_extra_probes"
+            placeholder="Sonda1,Sonda2"
+          />
+          <mat-hint>Nombres de sondas adicionales, separados por comas.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>URL del logo (opcional)</mat-label>
+          <input
+            matInput
+            formControlName="logo_url"
+            placeholder="https://..."
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Color de marca (opcional)</mat-label>
+          <input
+            matInput
+            formControlName="color_marca"
+            placeholder="#4dd0e1"
+          />
+          <mat-hint>Color hexadecimal, ej: #4dd0e1</mat-hint>
+        </mat-form-field>
+
         <div class="dialog-error" *ngIf="error()">
           <mat-icon>error_outline</mat-icon> {{ error() }}
         </div>
@@ -134,9 +163,12 @@ export class ClientDialogComponent {
   protected readonly error    = signal("");
 
   protected readonly form = this.fb.group({
-    nombre:     [this.data?.client?.nombre     ?? "", Validators.required],
-    slug:       [this.data?.client?.slug       ?? "", [Validators.required, Validators.pattern(/^[a-z0-9-]+$/)]],
-    prtg_group: [this.data?.client?.prtg_group ?? "", Validators.required],
+    nombre:            [this.data?.client?.nombre            ?? "", Validators.required],
+    slug:              [this.data?.client?.slug              ?? "", [Validators.required, Validators.pattern(/^[a-z0-9-]+$/)]],
+    prtg_group:        [this.data?.client?.prtg_group        ?? "", Validators.required],
+    prtg_extra_probes: [this.data?.client?.prtg_extra_probes ?? ""],
+    logo_url:          [this.data?.client?.logo_url          ?? ""],
+    color_marca:       [this.data?.client?.color_marca       ?? ""],
   });
 
   constructor() {
@@ -151,9 +183,15 @@ export class ClientDialogComponent {
     this.loading.set(true);
 
     if (this.editMode) {
-      const { nombre, prtg_group } = this.form.getRawValue();
+      const v = this.form.getRawValue();
       this.service
-        .update(this.data!.client!.id, { nombre: nombre!, prtg_group: prtg_group! })
+        .update(this.data!.client!.id, {
+          nombre:            v.nombre!,
+          prtg_group:        v.prtg_group!,
+          prtg_extra_probes: v.prtg_extra_probes || null,
+          logo_url:          v.logo_url          || null,
+          color_marca:       v.color_marca        || null,
+        })
         .subscribe({
           next:  (c) => this.dialogRef.close(c),
           error: (err) => {
@@ -162,9 +200,16 @@ export class ClientDialogComponent {
           },
         });
     } else {
-      const { nombre, slug, prtg_group } = this.form.getRawValue();
+      const v = this.form.getRawValue();
       this.service
-        .create({ nombre: nombre!, slug: slug!, prtg_group: prtg_group! })
+        .create({
+          nombre:            v.nombre!,
+          slug:              v.slug!,
+          prtg_group:        v.prtg_group!,
+          prtg_extra_probes: v.prtg_extra_probes || null,
+          logo_url:          v.logo_url          || null,
+          color_marca:       v.color_marca        || null,
+        })
         .subscribe({
           next:  (c) => this.dialogRef.close(c),
           error: (err) => {

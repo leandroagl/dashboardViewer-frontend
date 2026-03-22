@@ -1,7 +1,13 @@
 <div class="backups-page fade-in-up" *ngIf="!loading(); else loadingTpl">
 
   <app-page-header title="Backups" icon="backup" subtitle="Estado de los jobs de respaldo y almacenamiento NAS">
+    <span class="last-updated" *ngIf="lastUpdated()">{{ lastUpdated() | date:'HH:mm:ss' }}</span>
   </app-page-header>
+
+  <div class="error-banner" *ngIf="error()">
+    <mat-icon>error_outline</mat-icon> {{ error() }}
+    <button mat-button (click)="retry()">Reintentar</button>
+  </div>
 
   <ng-container *ngIf="data() as d">
 
