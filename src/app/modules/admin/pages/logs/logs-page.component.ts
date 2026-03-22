@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { LogsService, LogFilters } from '@core/services/logs.service';
@@ -17,6 +18,8 @@ import { SNACKBAR_SHORT, SNACKBAR_LONG } from '@core/constants/app.constants';
 export class LogsPageComponent implements OnInit {
   private readonly service  = inject(LogsService);
   private readonly fb       = inject(FormBuilder);
+  private readonly router   = inject(Router);
+  private readonly route    = inject(ActivatedRoute);
   private readonly snackbar = inject(MatSnackBar);
   private readonly dialog   = inject(MatDialog);
 
@@ -36,7 +39,15 @@ export class LogsPageComponent implements OnInit {
   protected currentPage = 1;
 
   ngOnInit(): void {
-    this.loadLogs();
+    const p = this.route.snapshot.queryParams;
+    this.filters.patchValue({
+      accion:    p['accion']    || '',
+      resultado: p['resultado'] || '',
+      desde:     p['desde']     ? new Date(p['desde'])     : null,
+      hasta:     p['hasta']     ? new Date(p['hasta'])     : null,
+    });
+    const initialPage = p['page'] ? +p['page'] : 1;
+    this.loadLogs(initialPage);
     this.loadSuspiciousIps();
   }
 
@@ -45,11 +56,26 @@ export class LogsPageComponent implements OnInit {
     this.currentPage = page;
 
     const vals = this.filters.getRawValue();
+    const desde = vals.desde ? (vals.desde as Date).toISOString() : undefined;
+    const hasta  = vals.hasta  ? (vals.hasta  as Date).toISOString()  : undefined;
+
+    this.router.navigate([], {
+      relativeTo:  this.route,
+      replaceUrl:  true,
+      queryParams: {
+        accion:    vals.accion    || null,
+        resultado: vals.resultado || null,
+        desde:     desde          || null,
+        hasta:     hasta          || null,
+        page:      page > 1 ? page : null,
+      },
+    });
+
     const filters: LogFilters = {
       accion:    vals.accion    || undefined,
       resultado: vals.resultado || undefined,
-      desde:     vals.desde  ? (vals.desde as Date).toISOString()  : undefined,
-      hasta:     vals.hasta  ? (vals.hasta  as Date).toISOString()  : undefined,
+      desde,
+      hasta,
       page,
     };
 

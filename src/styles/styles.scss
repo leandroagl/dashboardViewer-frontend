@@ -301,3 +301,25 @@ h1, h2, h3, h4, h5, h6 {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+// ─── Componentes de dashboard compartidos ────────────────────────────────────
+
+.error-banner {
+  display:       flex;
+  align-items:   center;
+  gap:           8px;
+  padding:       12px 16px;
+  background:    var(--status-error-dim);
+  border:        1px solid rgba(244,67,54,.2);
+  border-radius: var(--radius-md);
+  color:         var(--status-error);
+  font-size:     13px;
+  button { margin-left: auto; }
+}
+
+.last-updated {
+  font-size:  11px;
+  color:      var(--text-muted);
+  font-family: var(--font-mono, monospace);
+  white-space: nowrap;
+}

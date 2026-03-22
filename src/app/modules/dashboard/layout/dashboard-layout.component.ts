@@ -62,9 +62,18 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
   private urlSub?: Subscription;
   protected readonly isFullscreen = signal(false);
 
+  private readonly onVisibilityChange = (): void => {
+    if (document.hidden) {
+      clearInterval(this.advanceInterval);
+    } else if (!this.paused() && this.totalDashes() > 1) {
+      this.startAutoAdvance();
+    }
+  };
+
   ngOnInit(): void {
     this.loadDashboards();
     this.scheduleHideControls();
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
 
     // Sincronizar activeIndex con la URL actual
     this.urlSub = this.route.firstChild?.url.subscribe(segments => {
@@ -78,6 +87,7 @@ export class DashboardLayoutComponent implements OnInit, OnDestroy {
     clearInterval(this.advanceInterval);
     clearTimeout(this.hideControlsTimer);
     this.urlSub?.unsubscribe();
+    document.removeEventListener('visibilitychange', this.onVisibilityChange);
   }
 
   // ─── Carga de dashboards disponibles ─────────────────────────────────────────

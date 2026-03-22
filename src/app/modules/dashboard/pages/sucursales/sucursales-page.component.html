@@ -3,7 +3,13 @@
     title="Sucursales"
     icon="location_city"
     subtitle="Conectividad VPN de puntos de venta">
+    <span class="last-updated" *ngIf="lastUpdated()">{{ lastUpdated() | date:'HH:mm:ss' }}</span>
   </app-page-header>
+
+  <div class="error-banner" *ngIf="error()">
+    <mat-icon>error_outline</mat-icon> {{ error() }}
+    <button mat-button (click)="retry()">Reintentar</button>
+  </div>
 
   <ng-container *ngIf="data() as d">
     <!-- KPI Strip -->
