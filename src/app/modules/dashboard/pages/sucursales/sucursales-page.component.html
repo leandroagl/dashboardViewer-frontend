@@ -18,12 +18,6 @@
       <app-kpi-card label="En línea"     [value]="d.onlineCount"             status="ok"></app-kpi-card>
       <app-kpi-card label="Sin conexión" [value]="d.offlineCount"            [status]="offlineStatus(d)"></app-kpi-card>
       <app-kpi-card label="Conectividad" [value]="connectivityPct(d) + '%'"  [status]="connectivityStatus(d)"></app-kpi-card>
-      <app-kpi-card
-        label="Latencia promedio"
-        [value]="avgLatency(d)"
-        status="ok"
-        sublabel="—"
-      ></app-kpi-card>
     </div>
 
     <!-- Grid de sucursales -->

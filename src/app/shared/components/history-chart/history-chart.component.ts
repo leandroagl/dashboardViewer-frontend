@@ -139,11 +139,8 @@ export class HistoryChartComponent {
           ? pts.map(p => parseFloat((p.value / BYTES_TO_MB).toFixed(3)))
           : pts.map(p => p.value);
 
-        const yFormatter = isDisk
-          ? (v: number) => v.toFixed(2) + ' MB'
-          : isCpuRam
-            ? (v: number) => v.toFixed(1) + '%'
-            : (v: number) => v.toFixed(1);
+        const yUnit      = isDisk ? 'MB' : isCpuRam ? '%' : 'ms';
+        const yFormatter = (v: number) => v.toFixed(2) + ' ' + yUnit;
 
         const annotations: ApexAnnotations = {};
         if (this.warningThreshold != null) {
@@ -181,6 +178,10 @@ export class HistoryChartComponent {
             axisTicks: { show: false },
           },
           yaxis: {
+            title: {
+              text: yUnit,
+              style: { fontSize: '10px', color: 'var(--text-muted)', fontWeight: 400 },
+            },
             labels: {
               style: { fontSize: '10px', colors: 'var(--text-muted)' },
               formatter: yFormatter,
