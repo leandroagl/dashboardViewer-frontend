@@ -18,12 +18,34 @@
       <app-kpi-card label="Uptime promedio" [value]="formatUptimeAvg(d.uptimeAvgHours ?? 0)" status="ok"></app-kpi-card>
     </div>
 
-    <!-- Server Cards -->
-    <div class="server-cards">
-      <div
-        *ngFor="let srv of d.servers"
-        class="server-card server-card--{{ srv.status }}"
-      >
+    <!-- Server Cards: flat grid when all OK, split layout when there are alerts -->
+    <ng-container *ngIf="alertingServers(d).length === 0; else splitView">
+      <div class="server-cards">
+        <ng-container *ngFor="let srv of d.servers">
+          <ng-container *ngTemplateOutlet="serverCardTpl; context: { $implicit: srv, d: d }"></ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <ng-template #splitView>
+      <div class="server-cards-split">
+        <div class="server-group server-group--ok" *ngIf="okServersOf(d).length > 0">
+          <ng-container *ngFor="let srv of okServersOf(d)">
+            <ng-container *ngTemplateOutlet="serverCardTpl; context: { $implicit: srv, d: d }"></ng-container>
+          </ng-container>
+        </div>
+        <div class="server-group server-group--alerts">
+          <ng-container *ngFor="let srv of alertingServers(d)">
+            <ng-container *ngTemplateOutlet="serverCardTpl; context: { $implicit: srv, d: d }"></ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Reusable card template -->
+    <ng-template #serverCardTpl let-srv let-d="d">
+      <div class="server-card server-card--{{ srv.status }}">
+
         <!-- Header -->
         <div class="server-card__header">
           <app-status-badge [status]="srv.status"></app-status-badge>
@@ -67,8 +89,7 @@
             <app-sparkline [values]="diskSparkValues(d, srv)" [color]="statusColor(srv.disk.status)"></app-sparkline>
           </div>
 
-
-</div>
+        </div>
 
         <!-- Per-server alerts -->
         <app-alert-list
@@ -77,7 +98,7 @@
         ></app-alert-list>
 
       </div>
-    </div>
+    </ng-template>
 
   </ng-container>
 </div>
