@@ -14,6 +14,10 @@ import { BaseDashboardPage } from '../base-dashboard-page';
 export class WindowsPageComponent extends BaseDashboardPage<WindowsDashboard> {
   private readonly service = inject(DashboardService);
 
+  protected clientSlug(): string {
+    return this.slug();
+  }
+
   protected fetchData(slug: string): Observable<WindowsDashboard> {
     return this.service.getWindows(slug);
   }

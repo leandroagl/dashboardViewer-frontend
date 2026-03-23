@@ -14,6 +14,10 @@ import { BaseDashboardPage } from '../base-dashboard-page';
 export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   private readonly service = inject(DashboardService);
 
+  protected clientSlug(): string {
+    return this.slug();
+  }
+
   protected fetchData(slug: string): Observable<VmwareDashboard> {
     return this.service.getServers(slug);
   }

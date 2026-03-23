@@ -14,6 +14,10 @@ import { BaseDashboardPage } from '../base-dashboard-page';
 export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   private readonly service = inject(DashboardService);
 
+  protected clientSlug(): string {
+    return this.slug();
+  }
+
   protected fetchData(slug: string): Observable<BackupsDashboard> {
     return this.service.getBackups(slug);
   }

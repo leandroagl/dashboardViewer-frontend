@@ -14,6 +14,10 @@ import { BaseDashboardPage } from '../base-dashboard-page';
 export class SucursalesPageComponent extends BaseDashboardPage<SucursalesDashboard> {
   private readonly service = inject(DashboardService);
 
+  protected clientSlug(): string {
+    return this.slug();
+  }
+
   protected fetchData(slug: string): Observable<SucursalesDashboard> {
     return this.service.getSucursales(slug);
   }

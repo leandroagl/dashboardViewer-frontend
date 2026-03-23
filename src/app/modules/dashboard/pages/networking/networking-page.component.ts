@@ -14,6 +14,10 @@ import { BaseDashboardPage } from '../base-dashboard-page';
 export class NetworkingPageComponent extends BaseDashboardPage<NetworkingDashboard> {
   private readonly service = inject(DashboardService);
 
+  protected clientSlug(): string {
+    return this.slug();
+  }
+
   protected fetchData(slug: string): Observable<NetworkingDashboard> {
     return this.service.getNetworking(slug);
   }
