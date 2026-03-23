@@ -6,7 +6,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
 import type { HistoryRange, HistoryPoint } from '../../../core/models';
 import type { Subscription } from 'rxjs';
 import type { ApexAxisChartSeries, ApexChart, ApexXAxis, ApexTooltip, ApexStroke,
-              ApexFill, ApexYAxis, ApexAnnotations } from 'ng-apexcharts';
+              ApexFill, ApexYAxis, ApexAnnotations, ApexMarkers } from 'ng-apexcharts';
 
 export type ChartOptions = {
   series:      ApexAxisChartSeries;
@@ -17,6 +17,7 @@ export type ChartOptions = {
   fill:        ApexFill;
   tooltip:     ApexTooltip;
   annotations: ApexAnnotations;
+  markers:     ApexMarkers;
   colors:      string[];
   grid:        object;
   theme:       object;
@@ -58,6 +59,7 @@ export type ChartOptions = {
         [fill]="opts.fill"
         [tooltip]="opts.tooltip"
         [annotations]="opts.annotations"
+        [markers]="opts.markers"
         [colors]="opts.colors"
         [grid]="opts.grid"
         [theme]="opts.theme"
@@ -183,11 +185,15 @@ export class HistoryChartComponent {
               text: yUnit,
               style: { fontSize: '10px', color: 'var(--text-muted)', fontWeight: 400 },
             },
-            labels: {
-              style: { fontSize: '10px', colors: 'var(--text-muted)' },
-              formatter: yFormatter,
-            },
+            labels: { show: false },
             ...(isCpuRam ? { min: 0, max: 100 } : {}),
+          },
+          markers: {
+            size: 3,
+            colors: ['#4dd0e1'],
+            strokeColors: 'transparent',
+            strokeWidth: 0,
+            hover: { size: 5, sizeOffset: 0 },
           },
           stroke: { curve: 'smooth', width: 2 },
           fill: {
