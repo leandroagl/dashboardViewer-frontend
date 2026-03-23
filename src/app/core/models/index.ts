@@ -209,6 +209,13 @@ export interface LogsMeta {
   };
 }
 
+// ─── History ──────────────────────────────────────────────────────────────────
+
+export type HistoryRange = '1h' | '24h' | '7d' | '30d';
+export interface HistoryPoint { datetime: string; value: number; }
+export interface HistoryStats { max: number; avg: number; min: number; prevMax?: number; prevAvg?: number; prevMin?: number; }
+export interface HistoryData  { current: HistoryStats; previous: HistoryStats; points: HistoryPoint[]; }
+
 // ─── API Response genérico ───────────────────────────────────────────────────
 
 export interface ApiResponse<T> {

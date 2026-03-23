@@ -1,12 +1,26 @@
-// ─── HistoryChartComponent ────────────────────────────────────────────────────
-// Gráfico completo de serie temporal con selector de rango (1h/24h/7d/30d).
-// Usa ng-apexcharts. Carga datos al inicializar y al cambiar el rango.
-
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit, inject, signal, effect,
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, Input, OnChanges, signal
 } from '@angular/core';
-import { DashboardService } from '@core/services/dashboard.service';
-import { HistoryRange, HistoryData } from '@core/models';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DashboardService } from '../../../core/services/dashboard.service';
+import type { HistoryRange, HistoryPoint } from '../../../core/models';
+import type { Subscription } from 'rxjs';
+import type { ApexAxisChartSeries, ApexChart, ApexXAxis, ApexTooltip, ApexStroke,
+              ApexFill, ApexYAxis, ApexAnnotations } from 'ng-apexcharts';
+
+export type ChartOptions = {
+  series:      ApexAxisChartSeries;
+  chart:       ApexChart;
+  xaxis:       ApexXAxis;
+  yaxis:       ApexYAxis;
+  stroke:      ApexStroke;
+  fill:        ApexFill;
+  tooltip:     ApexTooltip;
+  annotations: ApexAnnotations;
+  colors:      string[];
+  grid:        object;
+  theme:       object;
+};
 
 @Component({
   selector:   'app-history-chart',
@@ -16,164 +30,172 @@ import { HistoryRange, HistoryData } from '@core/models';
     <div class="hchart">
       <!-- Range selector -->
       <div class="hchart__ranges">
-        <button
-          *ngFor="let r of ranges"
+        <button *ngFor="let r of ranges"
           class="hchart__range-btn"
-          [class.hchart__range-btn--active]="selectedRange() === r"
-          (click)="selectRange(r)"
-        >{{ r }}</button>
+          [class.active]="range() === r"
+          (click)="setRange(r)">
+          {{ r }}
+        </button>
       </div>
 
       <!-- Loading -->
       <div class="hchart__loading" *ngIf="loading()">
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <div class="skeleton" style="height:160px; border-radius:var(--radius-sm)"></div>
+      </div>
+
+      <!-- Error -->
+      <div class="hchart__error" *ngIf="error() && !loading()">
+        <span>No se pudieron cargar los datos.</span>
       </div>
 
       <!-- Chart -->
-      <apx-chart
-        *ngIf="!loading() && chartSeries().length > 0"
-        [series]="chartSeries()"
-        [chart]="chartConfig"
-        [xaxis]="xaxis()"
-        [yaxis]="yaxis"
-        [tooltip]="tooltip"
-        [stroke]="stroke"
-        [fill]="fill"
-        [grid]="grid"
-        [theme]="theme"
-        [annotations]="annotations()"
+      <apx-chart *ngIf="!loading() && !error() && chartOptions() as opts"
+        [series]="opts.series"
+        [chart]="opts.chart"
+        [xaxis]="opts.xaxis"
+        [yaxis]="opts.yaxis"
+        [stroke]="opts.stroke"
+        [fill]="opts.fill"
+        [tooltip]="opts.tooltip"
+        [annotations]="opts.annotations"
+        [colors]="opts.colors"
+        [grid]="opts.grid"
+        [theme]="opts.theme"
       ></apx-chart>
-
-      <!-- Stats row -->
-      <div class="hchart__stats" *ngIf="historyData() as d">
-        <div class="hchart__stat">
-          <span class="hchart__stat-lbl">Máx</span>
-          <span class="hchart__stat-val mono">{{ d.stats.max | number:'1.1-1' }}</span>
-        </div>
-        <div class="hchart__stat">
-          <span class="hchart__stat-lbl">Prom</span>
-          <span class="hchart__stat-val mono">{{ d.stats.avg | number:'1.1-1' }}</span>
-        </div>
-        <div class="hchart__stat">
-          <span class="hchart__stat-lbl">Mín</span>
-          <span class="hchart__stat-val mono">{{ d.stats.min | number:'1.1-1' }}</span>
-        </div>
-      </div>
-
-      <div class="hchart__empty" *ngIf="!loading() && chartSeries().length === 0">
-        Sin datos para el rango seleccionado.
-      </div>
     </div>
   `,
   styles: [`
-    .hchart { display: flex; flex-direction: column; gap: 10px; }
-    .hchart__ranges { display: flex; gap: 4px; }
-    .hchart__range-btn { padding: 3px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: transparent; color: var(--text-muted); font-size: 11px; cursor: pointer; transition: all var(--transition); }
-    .hchart__range-btn--active { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .hchart__loading { height: 4px; }
-    .hchart__stats { display: flex; gap: 24px; padding-top: 4px; }
-    .hchart__stat  { display: flex; flex-direction: column; }
-    .hchart__stat-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
-    .hchart__stat-val { font-size: 14px; color: var(--text-primary); }
-    .hchart__empty { font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px 0; }
-  `],
+    .hchart { display: flex; flex-direction: column; gap: 8px; }
+    .hchart__ranges {
+      display: flex; gap: 4px;
+    }
+    .hchart__range-btn {
+      font-size: 11px; padding: 2px 8px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .hchart__range-btn.active {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .hchart__loading, .hchart__error {
+      padding: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  `]
 })
-export class HistoryChartComponent implements OnInit {
+export class HistoryChartComponent implements OnChanges {
   @Input({ required: true }) objid!: number;
   @Input({ required: true }) slug!:  string;
-  @Input() label?: string;
-  /** Threshold line shown as dashed orange annotation (e.g., 80 ms for Sucursales latency). */
+  @Input() label = '';
   @Input() warningThreshold?: number;
 
-  private readonly svc = inject(DashboardService);
+  private readonly dashboard  = inject(DashboardService);
+  private readonly destroyRef = inject(DestroyRef);
+  private loadSub?: Subscription;
 
   readonly ranges: HistoryRange[] = ['1h', '24h', '7d', '30d'];
-  readonly selectedRange = signal<HistoryRange>('24h');
-  readonly loading       = signal(false);
-  readonly historyData   = signal<HistoryData | null>(null);
-
-  // ApexCharts config (static parts)
-  readonly chartConfig = {
-    type:    'area' as const,
-    height:  180,
-    toolbar: { show: false },
-    zoom:    { enabled: false },
-    background: 'transparent',
-    fontFamily: 'DM Sans, sans-serif',
-  };
-  readonly yaxis   = { labels: { style: { colors: ['var(--text-muted)'] } } };
-  readonly tooltip = { theme: 'dark' as const, x: { format: 'dd/MM HH:mm' } };
-  readonly stroke  = { curve: 'smooth' as const, width: 2 };
-  readonly fill    = { type: 'gradient', gradient: { opacityFrom: 0.35, opacityTo: 0 } };
-  readonly grid    = { borderColor: 'var(--border-subtle)', strokeDashArray: 3 };
-  readonly theme   = { mode: 'dark' as const };
-
-  readonly chartSeries  = signal<{ name: string; data: [number, number][] }[]>([]);
-  readonly annotations  = signal<object>({});
-
-  xaxis = signal<object>({ type: 'datetime', labels: { style: { colors: 'var(--text-muted)' } } });
+  readonly range        = signal<HistoryRange>('24h');
+  readonly loading      = signal(false);
+  readonly error        = signal(false);
+  readonly chartOptions = signal<ChartOptions | null>(null);
 
   constructor() {
-    // effect() must be in constructor (not ngOnInit) in Angular 19
+    // effect() must be in constructor in Angular 19
     effect(() => {
-      this.selectedRange(); // track signal — re-runs loadData on range change
-      this.loadData();
-    }, { allowSignalWrites: true });
+      const r = this.range(); // track signal
+      if (this.objid && this.slug) this.loadData(this.objid, this.slug, r);
+    });
   }
 
-  ngOnInit(): void {
-    // Initial load is handled by the constructor effect above
+  ngOnChanges(): void {
+    if (this.objid && this.slug) this.loadData(this.objid, this.slug, this.range());
   }
 
-  selectRange(range: HistoryRange): void {
-    this.selectedRange.set(range);
+  setRange(r: HistoryRange): void {
+    this.range.set(r);
   }
 
-  private getDateFormat(range: HistoryRange): string {
-    switch (range) {
-      case '1h':  return 'HH:mm';
-      case '24h': return 'dd/MM HH:mm';
-      default:    return 'dd/MM';
-    }
-  }
-
-  private loadData(): void {
+  private loadData(objid: number, slug: string, range: HistoryRange): void {
+    this.loadSub?.unsubscribe();
     this.loading.set(true);
-    this.svc.getHistory(this.slug, this.objid, this.selectedRange()).subscribe({
-      next: data => {
-        this.historyData.set(data);
-        this.chartSeries.set([{
-          name: data.sensorName,
-          data: data.points.map(p => [new Date(p.timestamp).getTime(), p.value]),
-        }]);
-        this.xaxis.set({
-          type: 'datetime',
-          labels: {
-            style:  { colors: 'var(--text-muted)' },
-            format: this.getDateFormat(this.selectedRange()),
-          },
-        });
-        // Warning threshold annotation (used by Sucursales for the 80ms latency line)
+    this.error.set(false);
+    this.loadSub = this.dashboard.getHistory(slug, objid, range).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (data) => {
+        const pts: HistoryPoint[] = data.points ?? [];
+        const xVals = pts.map(p => new Date(p.datetime).getTime());
+        const yVals = pts.map(p => p.value);
+
+        const annotations: ApexAnnotations = {};
         if (this.warningThreshold != null) {
-          this.annotations.set({
-            yaxis: [{
-              y:           this.warningThreshold,
-              borderColor: 'var(--status-warning)',
-              borderWidth: 1,
-              strokeDashArray: 4,
-              label: {
-                text:  `${this.warningThreshold} ms`,
-                style: { color: 'var(--status-warning)', background: 'transparent' },
-              },
-            }],
-          });
+          annotations.yaxis = [{
+            y:            this.warningThreshold,
+            borderColor:  'var(--status-warning)',
+            strokeDashArray: 4,
+            label: {
+              text:  `${this.warningThreshold} ms`,
+              style: { color: 'var(--status-warning)', background: 'transparent', fontSize: '10px' }
+            }
+          }];
         }
+
+        const dateFormat = range === '1h' || range === '24h' ? 'HH:mm' : 'dd/MM';
+
+        this.chartOptions.set({
+          series: [{ name: this.label || 'Valor', data: yVals }],
+          chart: {
+            type: 'area',
+            height: 160,
+            toolbar: { show: false },
+            sparkline: { enabled: false },
+            background: 'transparent',
+            animations: { enabled: false },
+          },
+          xaxis: {
+            type: 'datetime',
+            categories: xVals,
+            labels: {
+              datetimeFormatter: { hour: 'HH:mm', day: 'dd MMM' },
+              style: { fontSize: '10px', colors: 'var(--text-muted)' },
+            },
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+          },
+          yaxis: {
+            labels: {
+              style: { fontSize: '10px', colors: 'var(--text-muted)' },
+              formatter: (v: number) => v.toFixed(1),
+            },
+          },
+          stroke: { curve: 'smooth', width: 2 },
+          fill: {
+            type: 'gradient',
+            gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 100] }
+          },
+          tooltip: {
+            theme: 'dark',
+            x: { format: dateFormat === 'HH:mm' ? 'HH:mm' : 'dd MMM' },
+          },
+          annotations,
+          colors:  ['#4dd0e1'],
+          grid: {
+            borderColor: 'rgba(255,255,255,0.06)',
+            strokeDashArray: 3,
+          },
+          theme: { mode: 'dark' },
+        });
         this.loading.set(false);
       },
       error: () => {
+        this.error.set(true);
         this.loading.set(false);
-        this.chartSeries.set([]);
-      },
+      }
     });
   }
 }

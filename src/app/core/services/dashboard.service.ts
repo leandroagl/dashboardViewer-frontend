@@ -54,7 +54,7 @@ export class DashboardService {
 
   getHistory(slug: string, objid: number, range: HistoryRange): Observable<HistoryData> {
     return this.http.get<ApiResponse<HistoryData>>(
-      this.url(slug, `/history`),
+      `${environment.apiUrl}/${slug}/history`,
       { params: { objid: String(objid), range } }
     ).pipe(map(requireData));
   }
