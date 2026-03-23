@@ -67,13 +67,5 @@ export class SucursalesPageComponent extends BaseDashboardPage<SucursalesDashboa
     return d.sparklines?.[`${name}/latency`]?.objid ?? 0;
   }
 
-  // Average latency across online sucursales (parses "23.4 ms" style strings)
-  protected avgLatency(d: SucursalesDashboard): string {
-    const online = d.sucursales.filter(s => s.latency);
-    if (!online.length) return 'N/A';
-    const avg = online.reduce((sum, s) => {
-      return sum + (parseFloat(s.latency ?? '0') || 0);
-    }, 0) / online.length;
-    return avg.toFixed(1) + ' ms';
-  }
+
 }
