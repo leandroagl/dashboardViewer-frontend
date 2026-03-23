@@ -42,8 +42,8 @@ export interface Client {
   prtg_group:          string;
   prtg_extra_probes?:  string | null;
   activo:              boolean;
-  logo_url?:           string;
-  color_marca?:        string;
+  logo_url?:           string | null;
+  color_marca?:        string | null;
   total_usuarios?:     number;
   ultimo_acceso_usuario?: string;
 }
@@ -157,8 +157,10 @@ export interface WindowsServer {
   uptime: StatusValue;
 }
 export interface WindowsDashboard {
-  servers: WindowsServer[];
-  alerts:  { name: string; message: string; status: SensorStatus }[];
+  servers:         WindowsServer[];
+  alerts:          { name: string; message: string; status: SensorStatus }[];
+  sparklines?:     SparklineMap;
+  uptimeAvgHours?: number;
 }
 
 // Sucursales
