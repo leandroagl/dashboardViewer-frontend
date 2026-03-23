@@ -51,15 +51,60 @@
 .metric-row__val--warning { color: var(--status-warning); }
 .metric-row__val--error   { color: var(--status-error);   }
 
-.metric-row--ds {
-  grid-template-columns: 80px 1fr 56px auto;
+// ── Datastore cards ───────────────────────────────────────────────────────────
+.ds-section { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+
+.ds-row {
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-.metric-row__storage {
+
+.ds-row__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ds-row__name {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.ds-row__icon { font-size: 14px; width: 14px; height: 14px; color: var(--text-muted); }
+
+.ds-row__free-pct          { font-size: 12px; font-weight: 600; color: var(--status-ok); }
+.ds-row__free-pct--warning { color: var(--status-warning); }
+.ds-row__free-pct--error   { color: var(--status-error); }
+
+.ds-row__bar-wrap {
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.ds-row__bar          { height: 100%; border-radius: 2px; background: var(--color-primary); transition: width 0.3s; }
+.ds-row__bar--warning { background: var(--status-warning); }
+.ds-row__bar--error   { background: var(--status-error); }
+
+.ds-row__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 11px;
   color: var(--text-muted);
-  white-space: nowrap;
-  text-align: right;
 }
+
+.ds-row__status          { color: var(--status-ok); }
+.ds-row__status--warning { color: var(--status-warning); }
+.ds-row__status--error   { color: var(--status-error); }
 
 // ── Host Cards ───────────────────────────────────────────────────────────────
 .host-cards {

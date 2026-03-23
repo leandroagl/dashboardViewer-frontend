@@ -100,16 +100,30 @@
             ></app-sparkline>
           </div>
 
-          <!-- Datastores (one row per datastore) -->
-          <div class="metric-row metric-row--ds" *ngFor="let ds of host.datastores">
-            <span class="metric-row__name">{{ ds.name }}</span>
-            <div class="metric-row__bar-wrap">
-              <div class="metric-row__bar metric-row__bar--{{ ds.status }}" [style.width.%]="ds.usedPct"></div>
-            </div>
-            <span class="metric-row__val mono metric-row__val--{{ ds.status }}">{{ ds.usedPct | number:'1.0-0' }}%</span>
-            <span class="metric-row__storage mono">{{ formatGb(ds.freeGb) }} libre / {{ formatGb(ds.totalGb) }}</span>
-          </div>
 
+        </div>
+
+        <!-- Datastores -->
+        <div class="ds-section" *ngIf="host.datastores.length > 0">
+          <div class="ds-row ds-row--{{ ds.status }}" *ngFor="let ds of host.datastores">
+            <div class="ds-row__header">
+              <span class="ds-row__name">
+                <mat-icon class="ds-row__icon">storage</mat-icon>
+                {{ ds.name }}
+              </span>
+              <span class="ds-row__free-pct ds-row__free-pct--{{ ds.status }}">
+                {{ ds.freePct | number:'1.1-1' }}% libre
+              </span>
+            </div>
+            <div class="ds-row__bar-wrap">
+              <div class="ds-row__bar ds-row__bar--{{ ds.status }}" [style.width.%]="ds.freePct"></div>
+            </div>
+            <div class="ds-row__footer">
+              <span class="ds-row__used">Usado: {{ ds.usedPct | number:'1.1-1' }}%</span>
+              <span class="ds-row__sizes mono">{{ formatGb(ds.freeGb) }} libre / {{ formatGb(ds.totalGb) }}</span>
+              <span class="ds-row__status ds-row__status--{{ ds.status }}">{{ dsStatusLabel(ds.status) }}</span>
+            </div>
+          </div>
         </div>
 
         <!-- History Panel (in-place, below metric rows) -->
