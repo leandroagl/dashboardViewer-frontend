@@ -8,12 +8,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
-import { StatusBadgeComponent } from './components/status-badge/status-badge.component';
-import { KpiCardComponent }     from './components/kpi-card/kpi-card.component';
-import { GaugeComponent }       from './components/gauge/gauge.component';
-import { AlertListComponent }   from './components/alert-list/alert-list.component';
-import { PageHeaderComponent }  from './components/page-header/page-header.component';
+import { StatusBadgeComponent }       from './components/status-badge/status-badge.component';
+import { KpiCardComponent }           from './components/kpi-card/kpi-card.component';
+import { GaugeComponent }             from './components/gauge/gauge.component';
+import { AlertListComponent }         from './components/alert-list/alert-list.component';
+import { PageHeaderComponent }        from './components/page-header/page-header.component';
+import { SparklineComponent }         from './components/sparkline/sparkline.component';
+import { HealthBarComponent }         from './components/health-bar/health-bar.component';
+import { HistoryChartComponent }      from './components/history-chart/history-chart.component';
+import { DeviceDetailPanelComponent } from './components/device-detail-panel/device-detail-panel.component';
 import { StripHtmlPipe } from './pipes/strip-html.pipe';
 
 const COMPONENTS = [
@@ -22,7 +27,11 @@ const COMPONENTS = [
   GaugeComponent,
   AlertListComponent,
   PageHeaderComponent,
-  StripHtmlPipe
+  SparklineComponent,
+  HealthBarComponent,
+  HistoryChartComponent,
+  DeviceDetailPanelComponent,
+  StripHtmlPipe,
 ];
 
 const MATERIAL = [
@@ -34,7 +43,7 @@ const MATERIAL = [
 
 @NgModule({
   declarations: [...COMPONENTS],
-  imports:      [CommonModule, RouterModule, ...MATERIAL],
-  exports:      [...COMPONENTS, CommonModule, RouterModule, ...MATERIAL],
+  imports:      [CommonModule, RouterModule, ...MATERIAL, NgApexchartsModule],
+  exports:      [...COMPONENTS, CommonModule, RouterModule, ...MATERIAL, NgApexchartsModule],
 })
 export class SharedModule {}
