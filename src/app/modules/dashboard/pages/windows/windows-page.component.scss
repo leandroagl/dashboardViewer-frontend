@@ -15,9 +15,11 @@
   align-items: start;
 }
 
-// Split layout: OK servers left (flex:1, 2-col grid) | alerting servers right (2-col)
+// Split layout: 4-column grid, ok group in cols 1-2, alerting group in cols 3-4.
+// Cards are always the same width as the flat grid (1/4 of container).
 .server-cards-split {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   align-items: start;
 }
@@ -29,8 +31,8 @@
   align-items: start;
 }
 
-.server-group--ok     { flex: 1; min-width: 0; }
-.server-group--alerts { flex: 1; min-width: 0; }
+.server-group--ok     { grid-column: 1 / 3; }
+.server-group--alerts { grid-column: 3 / 5; }
 
 .server-card {
   background: var(--bg-elevated);
@@ -93,13 +95,15 @@
   .server-cards { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 900px) {
-  .server-cards         { grid-template-columns: repeat(2, 1fr); }
-  .server-cards-split   { flex-direction: column; }
-  .server-group         { grid-template-columns: repeat(2, 1fr); }
+  .server-cards                         { grid-template-columns: repeat(2, 1fr); }
+  // Split: stack groups vertically, each occupies full width with 2 cols
+  .server-cards-split                   { grid-template-columns: repeat(2, 1fr); }
+  .server-group--ok, .server-group--alerts { grid-column: 1 / -1; }
 }
 @media (max-width: 600px) {
   .windows-page         { gap: 10px; }
   .server-cards         { grid-template-columns: 1fr; }
+  .server-cards-split   { grid-template-columns: 1fr; }
   .server-group         { grid-template-columns: 1fr; }
   .kpi-strip            { display: grid; grid-template-columns: 1fr 1fr; }
   .metric-row           { grid-template-columns: 60px 1fr 60px 48px; gap: 6px; }
