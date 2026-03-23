@@ -75,4 +75,8 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   protected totalSnapshots(d: VmwareDashboard): number {
     return d.hosts.reduce((s, h) => s + h.snapshots.length, 0);
   }
+
+  protected hostAlerts(d: VmwareDashboard, host: VmwareHost) {
+    return d.alerts.filter(a => a.name.startsWith(host.name + ' — '));
+  }
 }

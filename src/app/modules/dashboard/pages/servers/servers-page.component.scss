@@ -53,9 +53,10 @@
 
 // ── Host Cards ───────────────────────────────────────────────────────────────
 .host-cards {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  align-items: start;
 }
 
 .host-card {
@@ -64,8 +65,9 @@
   border-radius: var(--radius-md);
   padding: 14px 16px;
 }
-.host-card--warning { background: rgba(255, 167, 38, 0.04); }
-.host-card--error   { background: rgba(239, 83, 80, 0.04);  }
+.host-card--warning  { background: rgba(255, 167, 38, 0.04); }
+.host-card--error    { background: rgba(239, 83, 80, 0.04);  }
+.host-card--expanded { grid-column: 1 / -1; }
 
 .host-card__header {
   display: flex;
@@ -95,7 +97,11 @@
 
 .loading-state { padding: 8px; }
 
-// ── Responsive: smartphones (≤ 600px) ─────────────────────────────────────────
+// ── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .host-cards { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 600px) {
   .servers-page { gap: 12px; }
+  .host-cards { grid-template-columns: 1fr; }
 }
