@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, Input, input, signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DashboardService } from '../../../core/services/dashboard.service';
