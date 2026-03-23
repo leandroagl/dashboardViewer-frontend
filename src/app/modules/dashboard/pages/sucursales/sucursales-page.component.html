@@ -57,17 +57,19 @@
       </div>
     </div>
 
-    <div class="sucursal-detail" *ngIf="selectedSucursal() as name">
-      <div class="sucursal-detail__header">
-        <span class="sucursal-detail__title">{{ name }}</span>
-        <button mat-icon-button (click)="selectSucursal(name)"><mat-icon>close</mat-icon></button>
+    <ng-container *ngFor="let name of selectedSucursalArr(); trackBy: trackBySucursal">
+      <div class="sucursal-detail">
+        <div class="sucursal-detail__header">
+          <span class="sucursal-detail__title">{{ name }}</span>
+          <button mat-icon-button (click)="selectSucursal(name)"><mat-icon>close</mat-icon></button>
+        </div>
+        <app-device-detail-panel
+          [objid]="latencyObjid(d, name)"
+          [slug]="clientSlug()"
+          [label]="name + ' — Latencia'"
+        ></app-device-detail-panel>
       </div>
-      <app-device-detail-panel
-        [objid]="latencyObjid(d, name)"
-        [slug]="clientSlug()"
-        [label]="name + ' — Latencia'"
-      ></app-device-detail-panel>
-    </div>
+    </ng-container>
 
     <ng-template #emptyState>
       <div class="empty-state">

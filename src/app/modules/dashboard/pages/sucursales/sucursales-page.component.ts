@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
 import { SucursalesDashboard, SensorStatus } from '@core/models';
@@ -45,6 +45,15 @@ export class SucursalesPageComponent extends BaseDashboardPage<SucursalesDashboa
   }
 
   protected readonly selectedSucursal = signal<string | null>(null);
+
+  // Array of 0 or 1 items — used with *ngFor+trackBy to force component
+  // recreation when switching between sucursales.
+  protected readonly selectedSucursalArr = computed(() => {
+    const name = this.selectedSucursal();
+    return name ? [name] : [];
+  });
+
+  protected trackBySucursal(_i: number, name: string): string { return name; }
 
   protected selectSucursal(name: string): void {
     this.selectedSucursal.update(curr => curr === name ? null : name);
