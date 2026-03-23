@@ -112,12 +112,6 @@
 
         </div>
 
-        <!-- Per-host alerts -->
-        <app-alert-list
-          *ngIf="hostAlerts(d, host).length > 0"
-          [alerts]="hostAlerts(d, host)"
-        ></app-alert-list>
-
         <!-- History Panel (in-place, below metric rows) -->
         <app-device-detail-panel
           *ngIf="expandedHost() === host.name"
@@ -131,6 +125,12 @@
             { key: 'diskW', label: 'Disco W' }
           ]"
         ></app-device-detail-panel>
+
+        <!-- Per-host alerts -->
+        <app-alert-list
+          *ngIf="hostAlerts(d, host).length > 0"
+          [alerts]="hostAlerts(d, host)"
+        ></app-alert-list>
 
       </div>
     </div>
