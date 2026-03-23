@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 import { StatusBadgeComponent }      from './components/status-badge/status-badge.component';
 import { KpiCardComponent }           from './components/kpi-card/kpi-card.component';
@@ -17,6 +18,7 @@ import { PageHeaderComponent }        from './components/page-header/page-header
 import { SparklineComponent }         from './components/sparkline/sparkline.component';
 import { HealthBarComponent }         from './components/health-bar/health-bar.component';
 import { DeviceDetailPanelComponent } from './components/device-detail-panel/device-detail-panel.component';
+import { HistoryChartComponent }      from './components/history-chart/history-chart.component';
 import { StripHtmlPipe } from './pipes/strip-html.pipe';
 
 const COMPONENTS = [
@@ -28,6 +30,7 @@ const COMPONENTS = [
   SparklineComponent,
   HealthBarComponent,
   DeviceDetailPanelComponent,
+  HistoryChartComponent,
   StripHtmlPipe
 ];
 
@@ -40,7 +43,7 @@ const MATERIAL = [
 
 @NgModule({
   declarations: [...COMPONENTS],
-  imports:      [CommonModule, RouterModule, ...MATERIAL],
-  exports:      [...COMPONENTS, CommonModule, RouterModule, ...MATERIAL],
+  imports:      [CommonModule, RouterModule, NgApexchartsModule, ...MATERIAL],
+  exports:      [...COMPONENTS, CommonModule, RouterModule, NgApexchartsModule, ...MATERIAL],
 })
 export class SharedModule {}

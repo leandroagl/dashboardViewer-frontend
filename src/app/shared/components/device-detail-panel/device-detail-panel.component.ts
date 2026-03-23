@@ -15,8 +15,12 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
         <span class="ddp__label">{{ label }}</span>
       </div>
       <div class="ddp__body" *ngIf="objid > 0; else noSensor">
-        <!-- TODO: wire up HistoryChartComponent when available -->
-        <p class="ddp__hint">Historial del sensor PRTG #{{ objid }}</p>
+        <app-history-chart
+          [objid]="objid"
+          [slug]="slug"
+          [label]="label"
+          [warningThreshold]="warningThreshold"
+        ></app-history-chart>
       </div>
       <ng-template #noSensor>
         <p class="ddp__hint ddp__hint--muted">Sin sensor de historial disponible para este host.</p>
@@ -40,14 +44,15 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
       display: flex; align-items: center; gap: 8px;
       margin-bottom: 8px;
     }
-    .ddp__icon { font-size: 16px; width: 16px; height: 16px; color: var(--primary, var(--color-primary)); }
+    .ddp__icon  { font-size: 16px; width: 16px; height: 16px; color: var(--primary, var(--color-primary)); }
     .ddp__label { font-size: 12px; font-weight: 600; color: var(--text-primary); }
     .ddp__hint  { font-size: 11px; color: var(--text-secondary); margin: 0; }
     .ddp__hint--muted { color: var(--text-muted); }
   `]
 })
 export class DeviceDetailPanelComponent {
-  @Input({ required: true }) objid!: number;
-  @Input() slug = '';
+  @Input({ required: true }) objid!:   number;
+  @Input({ required: true }) slug!:    string;
   @Input() label = '';
+  @Input() warningThreshold?: number;
 }
