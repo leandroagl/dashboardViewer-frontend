@@ -2,7 +2,9 @@
 // Expandable history panel that shows a chart for a given sensor objid.
 // Fetches data from the dashboard service using the client slug.
 
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, Input, input, OnChanges, SimpleChanges, signal
+} from '@angular/core';
 
 export interface MetricChannel { key: string; label: string; }
 
@@ -27,10 +29,10 @@ export interface MetricChannel { key: string; label: string; }
         >{{ ch.label }}</button>
       </div>
 
-      <div class="ddp__body" *ngIf="objid > 0; else noSensor">
+      <div class="ddp__body" *ngIf="resolvedObjid() > 0; else noSensor">
         <app-history-chart
-          [objid]="objid"
-          [slug]="slug"
+          [objid]="resolvedObjid()"
+          [slug]="slug()"
           [label]="label"
           [channel]="selectedChannel()"
           [warningThreshold]="warningThreshold"
@@ -80,13 +82,20 @@ export interface MetricChannel { key: string; label: string; }
   `]
 })
 export class DeviceDetailPanelComponent implements OnChanges {
-  @Input({ required: true }) objid!:   number;
-  @Input({ required: true }) slug!:    string;
+  readonly objid = input.required<number>();
+  readonly slug  = input.required<string>();
   @Input() label = '';
   @Input() warningThreshold?: number;
   @Input() channels: MetricChannel[] = [];
+  /** Per-channel objids: when set, overrides the base objid for the active channel. */
+  @Input() channelObjids?: Record<string, number>;
 
   protected readonly selectedChannel = signal('');
+
+  protected readonly resolvedObjid = computed(() => {
+    const ch = this.selectedChannel();
+    return this.channelObjids?.[ch] ?? this.objid();
+  });
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['channels'] && this.channels.length > 0 && !this.selectedChannel()) {

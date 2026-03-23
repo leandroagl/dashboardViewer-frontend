@@ -47,36 +47,23 @@
             </div>
           </div>
 
-          <!-- History panel -->
-          <div class="device-history" *ngIf="expandedDevice() === device.name">
-            <div class="device-history__tabs" *ngIf="device.sensors.length > 1">
-              <button
-                *ngFor="let s of device.sensors"
-                class="device-history__tab"
-                [class.active]="expandedSensor() === s.name"
-                (click)="expandedSensor.set(s.name)">
-                {{ s.name }}
-              </button>
-            </div>
-            <app-history-chart
-              *ngIf="sparklineObjid(d, device, expandedSensor()) > 0"
-              [objid]="sparklineObjid(d, device, expandedSensor())"
-              [slug]="clientSlug()"
-              [label]="expandedSensor()"
-            ></app-history-chart>
-            <p class="device-history__empty"
-              *ngIf="sparklineObjid(d, device, expandedSensor()) === 0">
-              Sin datos históricos disponibles para este sensor.
-            </p>
-          </div>
+          <!-- History panel (reutiliza DeviceDetailPanel con channelObjids por sensor) -->
+          <app-device-detail-panel
+            *ngIf="expandedDevices().has(device.name)"
+            [objid]="firstSensorObjid(d, device)"
+            [slug]="clientSlug()"
+            [label]="device.name"
+            [channels]="sensorsAsChannels(device)"
+            [channelObjids]="sensorObjids(d, device)"
+          ></app-device-detail-panel>
 
           <!-- Toggle button -->
           <button
             class="device-card__toggle"
-            [class.active]="expandedDevice() === device.name"
+            [class.active]="expandedDevices().has(device.name)"
             (click)="toggleHistory(device)">
-            <mat-icon>{{ expandedDevice() === device.name ? 'expand_less' : 'show_chart' }}</mat-icon>
-            {{ expandedDevice() === device.name ? 'Ocultar historial' : 'Ver historial' }}
+            <mat-icon>{{ expandedDevices().has(device.name) ? 'expand_less' : 'show_chart' }}</mat-icon>
+            {{ expandedDevices().has(device.name) ? 'Ocultar historial' : 'Ver historial' }}
           </button>
 
         </div>

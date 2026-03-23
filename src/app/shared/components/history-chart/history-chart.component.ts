@@ -135,16 +135,22 @@ export class HistoryChartComponent {
         const pts: HistoryPoint[] = data.points ?? [];
         const xVals = pts.map(p => new Date(p.datetime).getTime());
 
-        const isDisk   = channel === 'diskR' || channel === 'diskW';
-        const isCpuRam = channel === 'cpu'   || channel === 'ram';
-        const BYTES_TO_MB = 1_048_576;
+        const ch = channel.toLowerCase();
+        const isDisk    = channel === 'diskR' || channel === 'diskW';
+        const isCpuRam  = channel === 'cpu'   || channel === 'ram';
+        const isUptime  = ch.includes('uptime');
+        const isTraffic = ch.includes('traffic') || ch.includes('bandwidth');
+        const isBytes   = isDisk || isTraffic;
+
+        const BYTES_TO_MB  = 1_048_576;
+        const SECS_TO_DAYS = 86_400;
 
         const round2 = (n: number) => Math.round(n * 100) / 100;
-        const yVals = isDisk
-          ? pts.map(p => round2(p.value / BYTES_TO_MB))
-          : pts.map(p => round2(p.value));
+        const yVals = isUptime  ? pts.map(p => round2(p.value / SECS_TO_DAYS))
+                    : isBytes   ? pts.map(p => round2(p.value / BYTES_TO_MB))
+                    :             pts.map(p => round2(p.value));
 
-        const yUnit      = isDisk ? 'MB' : isCpuRam ? '%' : 'ms';
+        const yUnit      = isUptime ? 'd' : isBytes ? 'MB' : isCpuRam ? '%' : 'ms';
         const yFormatter = (v: number) => v.toFixed(2) + ' ' + yUnit;
 
         const annotations: ApexAnnotations = {};

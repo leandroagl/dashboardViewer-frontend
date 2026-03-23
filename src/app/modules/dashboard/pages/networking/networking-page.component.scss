@@ -113,41 +113,6 @@
   }
 }
 
-// ── History panel ───────────────────────────────────────────────────────────────
-.device-history {
-  margin-top: 10px;
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-page);
-  border: 1px solid var(--border-subtle);
-
-  &__tabs {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
-
-  &__tab {
-    font-size: 11px;
-    padding: 2px 8px;
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-
-    &.active { border-color: var(--color-primary); color: var(--color-primary); }
-  }
-
-  &__empty {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin: 0;
-    padding: 4px 0;
-  }
-}
-
 // ── Ping cards (switches / antenas) ────────────────────────────────────────────
 .ping-grid {
   display: grid;

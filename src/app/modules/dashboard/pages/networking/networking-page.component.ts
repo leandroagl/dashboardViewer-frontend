@@ -20,19 +20,32 @@ export class NetworkingPageComponent extends BaseDashboardPage<NetworkingDashboa
     return this.service.getNetworking(slug);
   }
 
-  // ─── History panel state ──────────────────────────────────────────────────────
+  // ─── History panel state (multiple simultaneous) ─────────────────────────────
 
-  readonly expandedDevice = signal<string | null>(null);
-  readonly expandedSensor = signal<string>('');
+  readonly expandedDevices = signal<Set<string>>(new Set());
 
   protected toggleHistory(device: NetworkDevice): void {
-    if (this.expandedDevice() === device.name) {
-      this.expandedDevice.set(null);
-      this.expandedSensor.set('');
-    } else {
-      this.expandedDevice.set(device.name);
-      this.expandedSensor.set(device.sensors[0]?.name ?? '');
-    }
+    this.expandedDevices.update(set => {
+      const next = new Set(set);
+      if (next.has(device.name)) next.delete(device.name);
+      else next.add(device.name);
+      return next;
+    });
+  }
+
+  protected sensorsAsChannels(device: NetworkDevice): { key: string; label: string }[] {
+    return device.sensors.map(s => ({ key: s.name, label: s.name }));
+  }
+
+  protected sensorObjids(d: NetworkingDashboard, device: NetworkDevice): Record<string, number> {
+    return Object.fromEntries(
+      device.sensors.map(s => [s.name, d.sparklines?.[device.name + '/' + s.name]?.objid ?? 0])
+    );
+  }
+
+  protected firstSensorObjid(d: NetworkingDashboard, device: NetworkDevice): number {
+    const first = device.sensors[0]?.name ?? '';
+    return d.sparklines?.[device.name + '/' + first]?.objid ?? 0;
   }
 
   // ─── Helpers para el template ────────────────────────────────────────────────
@@ -61,7 +74,4 @@ export class NetworkingPageComponent extends BaseDashboardPage<NetworkingDashboa
     return d.alerts.find(a => a.name === device.name + ' — ' + sensorName) ?? null;
   }
 
-  protected sparklineObjid(d: NetworkingDashboard, device: NetworkDevice, sensorName: string): number {
-    return d.sparklines?.[device.name + '/' + sensorName]?.objid ?? 0;
-  }
 }
