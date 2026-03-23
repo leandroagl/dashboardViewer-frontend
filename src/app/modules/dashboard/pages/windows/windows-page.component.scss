@@ -32,7 +32,9 @@
 }
 
 .server-group--ok     { grid-column: 1 / 3; }
-.server-group--alerts { grid-column: 3 / 5; }
+.server-group--alerts { grid-column: 3 / 5; display: flex; gap: 12px; }
+
+.server-col { flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 
 .server-card {
   background: var(--bg-elevated);
