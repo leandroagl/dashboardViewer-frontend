@@ -11,174 +11,120 @@
 
   <ng-container *ngIf="data() as d">
 
-    <!-- SUMMARY STRIP -->
-    <div class="summary-strip">
-      <app-kpi-card label="Sensores OK" [value]="okCount(d)"    status="ok"      sublabel="sensores"></app-kpi-card>
-      <app-kpi-card label="Warning"     [value]="warnCount(d)"  status="warning" sublabel="sensores"></app-kpi-card>
-      <app-kpi-card label="Down"        [value]="errorCount(d)" status="error"   sublabel="sensores"></app-kpi-card>
+    <!-- KPI Strip -->
+    <div class="kpi-strip">
+      <app-kpi-card label="Hosts OK"           [value]="hostsOk(d)"          status="ok"></app-kpi-card>
+      <app-kpi-card label="Hosts Warning"      [value]="hostsWarn(d)"        status="warning"></app-kpi-card>
+      <app-kpi-card label="VMs activas"        [value]="totalVms(d)"         status="ok"></app-kpi-card>
+      <app-kpi-card label="Snapshots activos"  [value]="totalSnapshots(d)"   status="unknown"
+        [sublabel]="hasOldSnapshots(d) ? '⚠ snapshot mayor a 7 días' : undefined"></app-kpi-card>
     </div>
 
-    <!-- HOSTS -->
-    <div class="section-label">Hipervisores VMware</div>
+    <!-- Global Health Bar -->
+    <app-health-bar
+      [okCount]="hostsOk(d)"
+      [warnCount]="hostsWarn(d)"
+      [errorCount]="hostsError(d)"
+    ></app-health-bar>
 
-    <div class="hosts-grid">
-      <div class="card host-card" *ngFor="let host of d.hosts">
-
-        <div class="card__header">
-          <div class="host-icon"><mat-icon>dns</mat-icon></div>
-          <div class="host-header-text">
-            <div class="card__title">{{ host.name }}</div>
-            <div class="card__subtitle">Uptime: {{ host.uptime }}</div>
+    <!-- Host Cards -->
+    <div class="host-cards">
+      <div
+        *ngFor="let host of d.hosts"
+        class="host-card host-card--{{ host.status }}"
+      >
+        <!-- Card Header -->
+        <div class="host-card__header">
+          <div class="host-card__header-left">
+            <app-status-badge [status]="host.status"></app-status-badge>
+            <span class="host-card__name">{{ host.name }}</span>
+            <span class="host-card__uptime mono">{{ host.uptime }}</span>
           </div>
+          <button class="host-card__history-btn" mat-stroked-button
+            (click)="toggleHistory(host.name)"
+            [class.active]="expandedHost() === host.name"
+          >
+            {{ expandedHost() === host.name ? 'Ocultar historial ↑' : 'Ver historial ↓' }}
+          </button>
         </div>
 
-        <div class="card__body">
+        <!-- Metric Rows -->
+        <div class="metric-rows">
 
-          <!-- Donut + Gauges + VMs -->
-<div class="host-metrics">
+          <!-- CPU -->
+          <div class="metric-row">
+            <span class="metric-row__name">CPU</span>
+            <div class="metric-row__bar-wrap">
+              <div class="metric-row__bar metric-row__bar--{{ host.cpu.status }}" [style.width.%]="host.cpu.pct"></div>
+            </div>
+            <span class="metric-row__val mono metric-row__val--{{ host.cpu.status }}">{{ host.cpu.value }}</span>
+            <app-sparkline
+              [values]="cpuSparkline(d, host)?.values ?? []"
+              [color]="statusColor(host.cpu.status)"
+            ></app-sparkline>
+          </div>
 
-  <!-- Fila superior: donut + gauges -->
-  <div class="host-top-row">
-    <div class="donut-wrap">
-      <svg width="90" height="90" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--bg-elevated)" stroke-width="12"/>
-        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--status-ok)" stroke-width="12"
-          [attr.stroke-dasharray]="donutArc(hostSensorOk(host), hostSensorTotal(host))"
-          [attr.stroke-dashoffset]="donutOffset(0, hostSensorTotal(host))"
-          transform="rotate(-90 50 50)"/>
-        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--status-warning)" stroke-width="12"
-          [attr.stroke-dasharray]="donutArc(hostSensorWarn(host), hostSensorTotal(host))"
-          [attr.stroke-dashoffset]="donutOffset(hostSensorOk(host), hostSensorTotal(host))"
-          transform="rotate(-90 50 50)"/>
-        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--status-error)" stroke-width="12"
-          [attr.stroke-dasharray]="donutArc(hostSensorError(host), hostSensorTotal(host))"
-          [attr.stroke-dashoffset]="donutOffset(hostSensorOk(host) + hostSensorWarn(host), hostSensorTotal(host))"
-          transform="rotate(-90 50 50)"/>
-        <text x="50" y="46" text-anchor="middle" font-size="20" font-weight="300" fill="var(--text-primary)">{{ hostSensorTotal(host) }}</text>
-        <text x="50" y="58" text-anchor="middle" font-size="8" fill="var(--text-muted)">sensores</text>
-      </svg>
-      <div class="donut-legend">
-        <div class="legend-item"><span class="legend-dot ok"></span>OK<span class="legend-num sv-ok">{{ hostSensorOk(host) }}</span></div>
-        <div class="legend-item"><span class="legend-dot warn"></span>Warn<span class="legend-num sv-warn">{{ hostSensorWarn(host) }}</span></div>
-        <div class="legend-item"><span class="legend-dot error"></span>Down<span class="legend-num sv-error">{{ hostSensorError(host) }}</span></div>
-      </div>
-    </div>
+          <!-- RAM -->
+          <div class="metric-row">
+            <span class="metric-row__name">RAM</span>
+            <div class="metric-row__bar-wrap">
+              <div class="metric-row__bar metric-row__bar--{{ host.memory.status }}" [style.width.%]="host.memory.pct"></div>
+            </div>
+            <span class="metric-row__val mono metric-row__val--{{ host.memory.status }}">{{ host.memory.value }}</span>
+            <app-sparkline
+              [values]="ramSparkline(d, host)?.values ?? []"
+              [color]="statusColor(host.memory.status)"
+            ></app-sparkline>
+          </div>
 
-    <!-- Gauges CPU + RAM + Disco -->
-    <div class="host-gauge-card">
-      <div class="host-gauge-label">CPU HOST</div>
-      <app-gauge label="CPU" [value]="host.cpu.pct" [status]="host.cpu.status"></app-gauge>
-      <div class="host-gauge-val mono" [class]="'sv-' + host.cpu.status">{{ host.cpu.value }}</div>
-    </div>
-    <div class="host-gauge-card">
-      <div class="host-gauge-label">MEMORIA HOST</div>
-      <app-gauge label="Mem" [value]="host.memory.pct" [status]="host.memory.status"></app-gauge>
-      <div class="host-gauge-val mono" [class]="'sv-' + host.memory.status">{{ host.memory.value }}</div>
-    </div>
-    <div class="host-gauge-card host-disk-card">
-      <div class="host-gauge-label">DISCO HOST</div>
-      <svg viewBox="0 0 120 68" class="disk-svg">
-        <!-- Cilindro disco -->
-        <rect x="43" y="25" width="34" height="22" fill="var(--bg-surface)" stroke="var(--color-primary)" stroke-width="1.5" rx="2"/>
-        <ellipse cx="60" cy="25" rx="17" ry="6" fill="var(--bg-surface)" stroke="var(--color-primary)" stroke-width="1.5"/>
-        <ellipse cx="60" cy="47" rx="17" ry="6" fill="var(--bg-surface)" stroke="var(--color-primary)" stroke-width="1.5"/>
-        <line x1="50" y1="36" x2="70" y2="36" stroke="var(--color-primary)" stroke-width="1" stroke-opacity="0.3"/>
-        <!-- Flecha lectura (izquierda ↓) -->
-        <line x1="15" y1="10" x2="15" y2="45" [class]="'disk-arrow disk-arrow--' + host.disk.read.status"/>
-        <polyline points="9,39 15,47 21,39" fill="none" [class]="'disk-arrow disk-arrow--' + host.disk.read.status"/>
-        <!-- Flecha escritura (derecha ↑) -->
-        <line x1="105" y1="58" x2="105" y2="23" [class]="'disk-arrow disk-arrow--' + host.disk.write.status"/>
-        <polyline points="99,29 105,21 111,29" fill="none" [class]="'disk-arrow disk-arrow--' + host.disk.write.status"/>
-      </svg>
-      <div class="disk-io">
-        <div class="disk-io__row">
-          <span class="disk-io__label">Lectura</span>
-          <span class="disk-io__val mono" [class]="'sv-' + host.disk.read.status">{{ host.disk.read.value }}</span>
-        </div>
-        <div class="disk-io__row">
-          <span class="disk-io__label">Escritura</span>
-          <span class="disk-io__val mono" [class]="'sv-' + host.disk.write.status">{{ host.disk.write.value }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+          <!-- Disco Lectura -->
+          <div class="metric-row">
+            <span class="metric-row__name">Disco R</span>
+            <div class="metric-row__bar-wrap metric-row__bar-wrap--empty"></div>
+            <span class="metric-row__val mono metric-row__val--{{ host.disk.read.status }}">{{ host.disk.read.value }}</span>
+            <app-sparkline
+              [values]="diskRSparkline(d, host)?.values ?? []"
+              [color]="statusColor(host.disk.read.status)"
+            ></app-sparkline>
+          </div>
 
-  <!-- VMs -->
-  <div>
-    <div class="subsection-title">Máquinas Virtuales ({{ host.vms.length }})</div>
-    <div class="vm-chips">
-      <div *ngFor="let vm of host.vms" class="vm-chip vm-chip--{{ vm.status }}"
-        [matTooltip]="vm.name">
-        <mat-icon>{{ vmIcon(vm.status) }}</mat-icon>
-        <span>{{ vm.name | slice:0:14 }}</span>
-      </div>
-      <div *ngIf="host.vms.length === 0" class="empty-state">
-        <mat-icon>info</mat-icon> Sin VMs detectadas
-      </div>
-    </div>
-  </div>
+          <!-- Disco Escritura -->
+          <div class="metric-row">
+            <span class="metric-row__name">Disco W</span>
+            <div class="metric-row__bar-wrap metric-row__bar-wrap--empty"></div>
+            <span class="metric-row__val mono metric-row__val--{{ host.disk.write.status }}">{{ host.disk.write.value }}</span>
+            <app-sparkline
+              [values]="diskWSparkline(d, host)?.values ?? []"
+              [color]="statusColor(host.disk.write.status)"
+            ></app-sparkline>
+          </div>
 
-  <!-- Snapshots -->
-  <div *ngIf="host.snapshots.length > 0">
-    <div class="subsection-title">Snapshots ({{ host.snapshots.length }})</div>
-    <div class="snapshot-chips">
-      <div *ngFor="let snap of host.snapshots"
-        class="snapshot-chip snapshot-chip--{{ snap.status }}"
-        [matTooltip]="snap.name">
-        <mat-icon>history</mat-icon>
-        <span class="snapshot-chip__name">{{ snap.name | slice:0:20 }}</span>
-        <span class="snapshot-chip__value mono">{{ snap.value }}</span>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-          <!-- Datastores + Alertas en dos columnas -->
-<div class="ds-alerts-row" *ngIf="host.datastores.length > 0 || host.alerts.length > 0">
-
-  <!-- Datastores -->
-  <div class="ds-col" *ngIf="host.datastores.length > 0">
-    <div class="subsection-title">Almacenamiento</div>
-    <div class="datastore-list">
-      <div *ngFor="let ds of host.datastores" class="datastore-item">
-        <div class="datastore-item__header">
-          <span class="datastore-item__name">
-            <mat-icon>storage</mat-icon>{{ ds.name }}
-          </span>
-          <span class="mono datastore-item__pct datastore-item__pct--{{ ds.status }}">
-            {{ ds.freePct | number:'1.0-1' }}% libre
-          </span>
-        </div>
-        <mat-progress-bar mode="determinate" [value]="ds.usedPct"
-          [color]="datastoreBarColor(ds.status)" class="datastore-item__bar">
-        </mat-progress-bar>
-        <div class="datastore-meta">
-          <span>Usado: {{ ds.usedPct | number:'1.0-1' }}%</span>
-          <span *ngIf="ds.freeGb != null" class="mono datastore-meta__gb">
-            {{ formatGb(ds.freeGb) }} libre{{ ds.totalGb != null ? ' / ' + formatGb(ds.totalGb) : '' }}
-          </span>
-          <span [class]="'sv-' + ds.status">
-            {{ ds.status === 'ok' ? '✔ OK' : ds.status === 'warning' ? '⚠ Revisar' : '✘ Crítico' }}
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Alertas -->
-  <div class="alerts-col">
-    <div class="subsection-title">Alertas activas</div>
-    <div *ngIf="host.alerts.length === 0" class="no-alerts">
-      <mat-icon>check_circle</mat-icon> Sin alertas activas
-    </div>
-    <app-alert-list *ngIf="host.alerts.length > 0" [alerts]="host.alerts"></app-alert-list>
-  </div>
-
-</div>
+          <!-- Datastores (one row per datastore) -->
+          <div class="metric-row" *ngFor="let ds of host.datastores">
+            <span class="metric-row__name">{{ ds.name }}</span>
+            <div class="metric-row__bar-wrap">
+              <div class="metric-row__bar metric-row__bar--{{ ds.status }}" [style.width.%]="ds.usedPct"></div>
+            </div>
+            <span class="metric-row__val mono metric-row__val--{{ ds.status }}">{{ ds.usedPct | number:'1.0-0' }}%</span>
+            <app-sparkline [values]="[]" color="var(--border-subtle)"></app-sparkline>
+          </div>
 
         </div>
+
+        <!-- History Panel (in-place, below metric rows) -->
+        <app-device-detail-panel
+          *ngIf="expandedHost() === host.name"
+          [objid]="cpuSparkline(d, host)?.objid ?? 0"
+          [slug]="clientSlug()"
+          [label]="host.name + ' — CPU'"
+        ></app-device-detail-panel>
+
       </div>
+    </div>
+
+    <!-- Alerts Panel -->
+    <div class="alerts-section" *ngIf="d.alerts.length > 0">
+      <app-alert-list [alerts]="d.alerts"></app-alert-list>
     </div>
 
     <div *ngIf="d.hosts.length === 0" class="empty-state">

@@ -9,11 +9,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-import { StatusBadgeComponent } from './components/status-badge/status-badge.component';
-import { KpiCardComponent }     from './components/kpi-card/kpi-card.component';
-import { GaugeComponent }       from './components/gauge/gauge.component';
-import { AlertListComponent }   from './components/alert-list/alert-list.component';
-import { PageHeaderComponent }  from './components/page-header/page-header.component';
+import { StatusBadgeComponent }      from './components/status-badge/status-badge.component';
+import { KpiCardComponent }           from './components/kpi-card/kpi-card.component';
+import { GaugeComponent }             from './components/gauge/gauge.component';
+import { AlertListComponent }         from './components/alert-list/alert-list.component';
+import { PageHeaderComponent }        from './components/page-header/page-header.component';
+import { SparklineComponent }         from './components/sparkline/sparkline.component';
+import { HealthBarComponent }         from './components/health-bar/health-bar.component';
+import { DeviceDetailPanelComponent } from './components/device-detail-panel/device-detail-panel.component';
 import { StripHtmlPipe } from './pipes/strip-html.pipe';
 
 const COMPONENTS = [
@@ -22,6 +25,9 @@ const COMPONENTS = [
   GaugeComponent,
   AlertListComponent,
   PageHeaderComponent,
+  SparklineComponent,
+  HealthBarComponent,
+  DeviceDetailPanelComponent,
   StripHtmlPipe
 ];
 

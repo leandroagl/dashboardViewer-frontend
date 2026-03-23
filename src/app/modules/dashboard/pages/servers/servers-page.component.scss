@@ -1,5 +1,87 @@
 .servers-page { display: flex; flex-direction: column; gap: 20px; }
 
+// ── KPI strip ────────────────────────────────────────────────────────────────
+.kpi-strip {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+// ── Metric rows ──────────────────────────────────────────────────────────────
+.metric-rows { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; }
+
+.metric-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 80px 68px;
+  align-items: center;
+  gap: 8px;
+}
+
+.metric-row__name {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.metric-row__bar-wrap {
+  height: 3px;
+  background: var(--bg-page);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.metric-row__bar-wrap--empty { background: transparent; }
+
+.metric-row__bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+  background: var(--status-ok);
+}
+.metric-row__bar--warning { background: var(--status-warning); }
+.metric-row__bar--error   { background: var(--status-error);   }
+.metric-row__bar--unknown { background: var(--border-subtle);  }
+
+.metric-row__val {
+  font-size: 12px;
+  text-align: right;
+  color: var(--text-primary);
+}
+.metric-row__val--warning { color: var(--status-warning); }
+.metric-row__val--error   { color: var(--status-error);   }
+
+// ── Host Cards ───────────────────────────────────────────────────────────────
+.host-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.host-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+.host-card--warning { background: rgba(255, 167, 38, 0.04); }
+.host-card--error   { background: rgba(239, 83, 80, 0.04);  }
+
+.host-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.host-card__header-left { display: flex; align-items: center; gap: 8px; }
+.host-card__name   { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.host-card__uptime { font-size: 11px; color: var(--text-muted); }
+.host-card__history-btn { font-size: 11px; padding: 2px 10px; }
+.host-card__history-btn.active { color: var(--color-primary); border-color: var(--color-primary); }
+
+// ── Alerts section ───────────────────────────────────────────────────────────
+.alerts-section { margin-top: 4px; }
+
 // ── Summary strip ──────────────────────────────────────────────────────────────
 .summary-strip {
   display: flex;

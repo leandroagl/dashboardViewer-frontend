@@ -97,9 +97,17 @@ export interface VmwareHost {
   alerts:     { name: string; message: string; status: SensorStatus }[];
 }
 
+export interface SparklineEntry {
+  objid:  number;
+  values: number[];
+}
+
+export type SparklineMap = Record<string, SparklineEntry>;
+
 export interface VmwareDashboard {
-  hosts:  VmwareHost[];
-  alerts: { name: string; message: string; status: SensorStatus }[];
+  hosts:      VmwareHost[];
+  alerts:     { name: string; message: string; status: SensorStatus }[];
+  sparklines?: SparklineMap;
 }
 
 // Backups
