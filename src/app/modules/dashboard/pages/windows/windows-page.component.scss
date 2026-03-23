@@ -30,7 +30,7 @@
 }
 
 .server-group--ok     { flex: 1; min-width: 0; }
-.server-group--alerts { flex-shrink: 0; }
+.server-group--alerts { flex: 1; min-width: 0; }
 
 .server-card {
   background: var(--bg-elevated);
