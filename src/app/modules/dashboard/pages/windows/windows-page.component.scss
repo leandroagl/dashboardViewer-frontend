@@ -26,6 +26,7 @@
 
 .server-card__header  { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .server-card__name    { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.server-card__uptime  { margin-left: auto; font-size: 11px; color: var(--text-muted); white-space: nowrap; }
 
 // ── Metric Rows ────────────────────────────────────────────────────────────────
 .metric-rows { display: flex; flex-direction: column; gap: 6px; }

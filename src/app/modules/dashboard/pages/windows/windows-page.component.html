@@ -28,6 +28,7 @@
         <div class="server-card__header">
           <app-status-badge [status]="srv.status"></app-status-badge>
           <span class="server-card__name">{{ srv.name }}</span>
+          <span class="server-card__uptime mono">Uptime {{ srv.uptime.value }}</span>
         </div>
 
         <!-- Metric Rows -->
@@ -66,15 +67,8 @@
             <app-sparkline [values]="diskSparkValues(d, srv)" [color]="statusColor(srv.disk.status)"></app-sparkline>
           </div>
 
-          <!-- Uptime — sin barra ni sparkline -->
-          <div class="metric-row">
-            <span class="metric-row__name">Uptime</span>
-            <div class="metric-row__bar-wrap metric-row__bar-wrap--empty"></div>
-            <span class="metric-row__val mono">{{ srv.uptime.value }}</span>
-            <span></span>
-          </div>
 
-        </div>
+</div>
 
         <!-- Per-server alerts -->
         <app-alert-list
