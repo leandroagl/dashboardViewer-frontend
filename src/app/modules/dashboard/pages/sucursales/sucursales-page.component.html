@@ -62,10 +62,11 @@
         <span class="sucursal-detail__title">{{ name }}</span>
         <button mat-icon-button (click)="selectSucursal(name)"><mat-icon>close</mat-icon></button>
       </div>
-      <p class="sucursal-detail__hint">
-        Sensor PRTG #{{ latencyObjid(d, name) }} — Latencia ({{ name }})
-        <!-- TODO: wire up HistoryChartComponent when available -->
-      </p>
+      <app-device-detail-panel
+        [objid]="latencyObjid(d, name)"
+        [slug]="clientSlug()"
+        [label]="name + ' — Latencia'"
+      ></app-device-detail-panel>
     </div>
 
     <ng-template #emptyState>
