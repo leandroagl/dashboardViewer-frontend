@@ -128,7 +128,20 @@ export class HistoryChartComponent {
       next: (data) => {
         const pts: HistoryPoint[] = data.points ?? [];
         const xVals = pts.map(p => new Date(p.datetime).getTime());
-        const yVals = pts.map(p => p.value);
+
+        const isDisk   = channel === 'diskR' || channel === 'diskW';
+        const isCpuRam = channel === 'cpu'   || channel === 'ram';
+        const BYTES_TO_MB = 1_048_576;
+
+        const yVals = isDisk
+          ? pts.map(p => parseFloat((p.value / BYTES_TO_MB).toFixed(3)))
+          : pts.map(p => p.value);
+
+        const yFormatter = isDisk
+          ? (v: number) => v.toFixed(2) + ' MB'
+          : isCpuRam
+            ? (v: number) => v.toFixed(1) + '%'
+            : (v: number) => v.toFixed(1);
 
         const annotations: ApexAnnotations = {};
         if (this.warningThreshold != null) {
@@ -168,8 +181,9 @@ export class HistoryChartComponent {
           yaxis: {
             labels: {
               style: { fontSize: '10px', colors: 'var(--text-muted)' },
-              formatter: (v: number) => v.toFixed(1),
+              formatter: yFormatter,
             },
+            ...(isCpuRam ? { min: 0, max: 100 } : {}),
           },
           stroke: { curve: 'smooth', width: 2 },
           fill: {
@@ -179,6 +193,7 @@ export class HistoryChartComponent {
           tooltip: {
             theme: 'dark',
             x: { format: dateFormat === 'HH:mm' ? 'HH:mm' : 'dd MMM' },
+            y: { formatter: yFormatter },
           },
           annotations,
           colors:  ['#4dd0e1'],
