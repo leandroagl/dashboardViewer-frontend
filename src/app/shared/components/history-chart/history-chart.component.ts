@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, Input, OnChanges, signal
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, Input, signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DashboardService } from '../../../core/services/dashboard.service';
@@ -88,11 +88,11 @@ export type ChartOptions = {
     }
   `]
 })
-export class HistoryChartComponent implements OnChanges {
+export class HistoryChartComponent {
   @Input({ required: true }) objid!: number;
   @Input({ required: true }) slug!:  string;
   @Input() label = '';
-  @Input() channel = '';
+  readonly channel = input('');
   @Input() warningThreshold?: number;
 
   private readonly dashboard  = inject(DashboardService);
@@ -108,24 +108,21 @@ export class HistoryChartComponent implements OnChanges {
   constructor() {
     // effect() must be in constructor in Angular 19
     effect(() => {
-      const r = this.range(); // track signal
-      if (this.objid && this.slug) this.loadData(this.objid, this.slug, r);
+      const r  = this.range();
+      const ch = this.channel(); // track both signals
+      if (this.objid && this.slug) this.loadData(this.objid, this.slug, r, ch);
     });
-  }
-
-  ngOnChanges(): void {
-    if (this.objid && this.slug) this.loadData(this.objid, this.slug, this.range());
   }
 
   setRange(r: HistoryRange): void {
     this.range.set(r);
   }
 
-  private loadData(objid: number, slug: string, range: HistoryRange): void {
+  private loadData(objid: number, slug: string, range: HistoryRange, channel = ''): void {
     this.loadSub?.unsubscribe();
     this.loading.set(true);
     this.error.set(false);
-    this.loadSub = this.dashboard.getHistory(slug, objid, range, this.channel).pipe(
+    this.loadSub = this.dashboard.getHistory(slug, objid, range, channel).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (data) => {
