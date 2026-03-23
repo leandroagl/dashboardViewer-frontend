@@ -32,21 +32,12 @@
       <div
         *ngFor="let host of d.hosts"
         class="host-card host-card--{{ host.status }}"
-        [class.host-card--expanded]="expandedHost() === host.name"
       >
         <!-- Card Header -->
         <div class="host-card__header">
-          <div class="host-card__header-left">
-            <app-status-badge [status]="host.status"></app-status-badge>
-            <span class="host-card__name">{{ host.name }}</span>
-            <span class="host-card__uptime mono">{{ host.uptime }}</span>
-          </div>
-          <button class="host-card__history-btn" mat-stroked-button
-            (click)="toggleHistory(host.name)"
-            [class.active]="expandedHost() === host.name"
-          >
-            {{ expandedHost() === host.name ? 'Ocultar historial ↑' : 'Ver historial ↓' }}
-          </button>
+          <app-status-badge [status]="host.status"></app-status-badge>
+          <span class="host-card__name">{{ host.name }}</span>
+          <span class="host-card__uptime mono">{{ host.uptime }}</span>
         </div>
 
         <!-- Metric Rows -->
@@ -145,6 +136,16 @@
           *ngIf="hostAlerts(d, host).length > 0"
           [alerts]="hostAlerts(d, host)"
         ></app-alert-list>
+
+        <!-- History toggle -->
+        <button
+          class="host-card__toggle"
+          [class.active]="expandedHost() === host.name"
+          (click)="toggleHistory(host.name)"
+        >
+          <mat-icon>{{ expandedHost() === host.name ? 'expand_less' : 'show_chart' }}</mat-icon>
+          {{ expandedHost() === host.name ? 'Ocultar historial' : 'Ver historial' }}
+        </button>
 
       </div>
     </div>
