@@ -2,8 +2,7 @@
 // Expandable history panel that shows a chart for a given sensor objid.
 // Fetches data from the dashboard service using the client slug.
 
-import { ChangeDetectionStrategy, Component, Input, OnChanges, inject } from '@angular/core';
-import { DashboardService } from '@core/services/dashboard.service';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector:   'app-device-detail-panel',
@@ -16,6 +15,7 @@ import { DashboardService } from '@core/services/dashboard.service';
         <span class="ddp__label">{{ label }}</span>
       </div>
       <div class="ddp__body" *ngIf="objid > 0; else noSensor">
+        <!-- TODO: wire up HistoryChartComponent when available -->
         <p class="ddp__hint">Historial del sensor PRTG #{{ objid }}</p>
       </div>
       <ng-template #noSensor>
@@ -48,6 +48,6 @@ import { DashboardService } from '@core/services/dashboard.service';
 })
 export class DeviceDetailPanelComponent {
   @Input({ required: true }) objid!: number;
-  @Input({ required: true }) slug!:  string;
-  @Input()                   label = '';
+  @Input() slug = '';
+  @Input() label = '';
 }

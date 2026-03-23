@@ -62,7 +62,10 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   }
 
   protected hasOldSnapshots(d: VmwareDashboard): boolean {
-    return d.hosts.some(h => h.snapshots.some((s: any) => /[7-9]\d|[1-9]\d{2,}/.test(s.value)));
+    return d.hosts.some(h => h.snapshots.some((s: any) => {
+      const n = parseInt(s.value, 10);
+      return !isNaN(n) && n >= 7;
+    }));
   }
 
   protected totalVms(d: VmwareDashboard): number {
