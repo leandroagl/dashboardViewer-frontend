@@ -75,12 +75,14 @@
           </div>
 
         </div>
-      </div>
-    </div>
 
-    <!-- Alerts -->
-    <div class="alerts-section" *ngIf="d.alerts.length > 0">
-      <app-alert-list [alerts]="d.alerts"></app-alert-list>
+        <!-- Per-server alerts -->
+        <app-alert-list
+          *ngIf="serverAlerts(d, srv).length > 0"
+          [alerts]="serverAlerts(d, srv)"
+        ></app-alert-list>
+
+      </div>
     </div>
 
   </ng-container>

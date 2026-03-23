@@ -69,4 +69,8 @@ export class WindowsPageComponent extends BaseDashboardPage<WindowsDashboard> {
   protected parseValue(val: string): number {
     return parseFloat(val) || 0;
   }
+
+  protected serverAlerts(d: WindowsDashboard, srv: WindowsServer) {
+    return d.alerts.filter(a => a.name.startsWith(srv.name + ' — '));
+  }
 }
