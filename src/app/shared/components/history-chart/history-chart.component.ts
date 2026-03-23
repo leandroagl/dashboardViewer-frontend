@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, Input, signal
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DashboardService } from '../../../core/services/dashboard.service';
@@ -89,10 +89,10 @@ export type ChartOptions = {
   `]
 })
 export class HistoryChartComponent {
-  @Input({ required: true }) objid!: number;
-  @Input({ required: true }) slug!:  string;
-  @Input() label = '';
+  readonly objid   = input.required<number>();
+  readonly slug    = input.required<string>();
   readonly channel = input('');
+  @Input() label = '';
   @Input() warningThreshold?: number;
 
   private readonly dashboard  = inject(DashboardService);
@@ -108,9 +108,11 @@ export class HistoryChartComponent {
   constructor() {
     // effect() must be in constructor in Angular 19
     effect(() => {
-      const r  = this.range();
-      const ch = this.channel(); // track both signals
-      if (this.objid && this.slug) this.loadData(this.objid, this.slug, r, ch);
+      const objid = this.objid();
+      const slug  = this.slug();
+      const r     = this.range();
+      const ch    = this.channel();
+      if (objid && slug) this.loadData(objid, slug, r, ch);
     });
   }
 
