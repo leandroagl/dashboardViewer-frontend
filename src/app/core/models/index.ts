@@ -132,6 +132,7 @@ export interface BackupsDashboard {
   successRate7d: number;
   devices:       BackupDevice[];
   alerts:        { name: string; message: string; status: SensorStatus }[];
+  sparklines?:   SparklineMap;
 }
 
 // Networking
@@ -145,6 +146,7 @@ export interface NetworkingDashboard {
   switches:    NetworkDevice[];
   ptpAntennas: NetworkDevice[];
   alerts:      { name: string; message: string; status: SensorStatus }[];
+  sparklines?: SparklineMap;
 }
 
 // Windows

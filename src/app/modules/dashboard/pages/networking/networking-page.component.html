@@ -37,6 +37,10 @@
                     <span class="sensor-row__name">{{ sensor.name }}</span>
                     <span class="mono sensor-row__value">{{ sensor.value }}</span>
                     <app-status-badge [status]="sensor.status"></app-status-badge>
+                    <app-sparkline
+                      [values]="d.sparklines?.[ device.name + '/' + sensor.name ]?.values ?? []"
+                      [color]="sensor.status === 'ok' ? 'var(--status-ok)' : 'var(--status-warning)'"
+                    ></app-sparkline>
                   </div>
                 </div>
               </div>
