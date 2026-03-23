@@ -92,6 +92,7 @@ export class HistoryChartComponent implements OnChanges {
   @Input({ required: true }) objid!: number;
   @Input({ required: true }) slug!:  string;
   @Input() label = '';
+  @Input() channel = '';
   @Input() warningThreshold?: number;
 
   private readonly dashboard  = inject(DashboardService);
@@ -124,7 +125,7 @@ export class HistoryChartComponent implements OnChanges {
     this.loadSub?.unsubscribe();
     this.loading.set(true);
     this.error.set(false);
-    this.loadSub = this.dashboard.getHistory(slug, objid, range).pipe(
+    this.loadSub = this.dashboard.getHistory(slug, objid, range, this.channel).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (data) => {

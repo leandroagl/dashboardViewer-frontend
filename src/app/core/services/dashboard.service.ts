@@ -52,10 +52,12 @@ export class DashboardService {
       .pipe(map(requireData));
   }
 
-  getHistory(slug: string, objid: number, range: HistoryRange): Observable<HistoryData> {
+  getHistory(slug: string, objid: number, range: HistoryRange, channel = ''): Observable<HistoryData> {
+    const params: Record<string, string> = { objid: String(objid), range };
+    if (channel) params['channel'] = channel;
     return this.http.get<ApiResponse<HistoryData>>(
-      `${environment.apiUrl}/${slug}/history`,
-      { params: { objid: String(objid), range } }
+      this.url(slug, '/history'),
+      { params }
     ).pipe(map(requireData));
   }
 }

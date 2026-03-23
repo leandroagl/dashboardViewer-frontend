@@ -2,7 +2,9 @@
 // Expandable history panel that shows a chart for a given sensor objid.
 // Fetches data from the dashboard service using the client slug.
 
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, signal } from '@angular/core';
+
+export interface MetricChannel { key: string; label: string; }
 
 @Component({
   selector:   'app-device-detail-panel',
@@ -14,11 +16,23 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
         <mat-icon class="ddp__icon">show_chart</mat-icon>
         <span class="ddp__label">{{ label }}</span>
       </div>
+
+      <!-- Channel selector (only shown when multiple channels available) -->
+      <div class="ddp__channels" *ngIf="channels.length > 1">
+        <button
+          *ngFor="let ch of channels"
+          class="ddp__ch-btn"
+          [class.active]="selectedChannel() === ch.key"
+          (click)="selectedChannel.set(ch.key)"
+        >{{ ch.label }}</button>
+      </div>
+
       <div class="ddp__body" *ngIf="objid > 0; else noSensor">
         <app-history-chart
           [objid]="objid"
           [slug]="slug"
           [label]="label"
+          [channel]="selectedChannel()"
           [warningThreshold]="warningThreshold"
         ></app-history-chart>
       </div>
@@ -48,11 +62,35 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
     .ddp__label { font-size: 12px; font-weight: 600; color: var(--text-primary); }
     .ddp__hint  { font-size: 11px; color: var(--text-secondary); margin: 0; }
     .ddp__hint--muted { color: var(--text-muted); }
+    .ddp__channels {
+      display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap;
+    }
+    .ddp__ch-btn {
+      font-size: 11px; padding: 2px 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .ddp__ch-btn.active {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
   `]
 })
-export class DeviceDetailPanelComponent {
+export class DeviceDetailPanelComponent implements OnChanges {
   @Input({ required: true }) objid!:   number;
   @Input({ required: true }) slug!:    string;
   @Input() label = '';
   @Input() warningThreshold?: number;
+  @Input() channels: MetricChannel[] = [];
+
+  protected readonly selectedChannel = signal('');
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['channels'] && this.channels.length > 0 && !this.selectedChannel()) {
+      this.selectedChannel.set(this.channels[0].key);
+    }
+  }
 }
