@@ -2,26 +2,7 @@
 
 .net-kpis { display: flex; gap: 16px; flex-wrap: wrap; }
 
-// Layout principal: dispositivos (izq) + alertas (der)
-.net-body {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  align-items: start;
-
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-// Columna izquierda: secciones apiladas
-.net-devices-col {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-// Etiqueta de sección
+// ── Section label ───────────────────────────────────────────────────────────────
 .section-label {
   font-size: 11px;
   font-weight: 500;
@@ -41,26 +22,133 @@
   }
 }
 
-// Grid de dispositivos: 2 por fila dentro de su mitad
+// ── Device cards grid ───────────────────────────────────────────────────────────
 .devices-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  align-items: start;
 
-  @media (max-width: 1200px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 700px)  { grid-template-columns: 1fr; }
+}
+
+.device-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+
+  &--warning { background: rgba(255, 167, 38, 0.04); }
+  &--error   { background: rgba(239, 83, 80, 0.04); }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  &__icon   { color: var(--color-primary); font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
+  &__name   { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  &__uptime { margin-left: auto; font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: calc(100% + 32px);
+    margin: 12px -16px -14px;
+    padding: 8px 16px;
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+
+    mat-icon { font-size: 14px; width: 14px; height: 14px; }
+    &:hover  { background: var(--bg-hover); color: var(--text-secondary); }
+    &.active { color: var(--color-primary); }
   }
 }
 
-.alerts-panel { }
+// ── Sensor rows ─────────────────────────────────────────────────────────────────
+.sensor-grid { display: flex; flex-direction: column; }
 
-.device-header {
-  display: flex; align-items: center; gap: 10px;
-  &__icon { color: var(--color-primary); font-size: 20px; width: 20px; height: 20px; }
-  &__name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.sensor-row {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-subtle);
+
+  &:last-child { border-bottom: none; }
+
+  &__main {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 4px;
+  }
+
+  &:hover &__main { background: var(--bg-hover); }
+
+  &__name  { font-size: 13px; color: var(--text-secondary); }
+  &__value { font-size: 12px; color: var(--text-primary); }
+  &__value--warning { color: var(--status-warning); }
+  &__value--error   { color: var(--status-error); }
+
+  &__alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 2px 4px 8px;
+    font-size: 11px;
+
+    mat-icon { font-size: 14px; width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+
+    &--error   { color: var(--status-error); }
+    &--warning { color: var(--status-warning); }
+  }
 }
 
-// Grid compacto para switches y antenas (más columnas, sin body)
+// ── History panel ───────────────────────────────────────────────────────────────
+.device-history {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+
+  &__tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  &__tab {
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+
+    &.active { border-color: var(--color-primary); color: var(--color-primary); }
+  }
+
+  &__empty {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0;
+    padding: 4px 0;
+  }
+}
+
+// ── Ping cards (switches / antenas) ────────────────────────────────────────────
 .ping-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -74,7 +162,12 @@
   padding: 12px 14px;
 }
 
-// Dot de estado de disponibilidad
+.device-header {
+  display: flex; align-items: center; gap: 10px;
+  &__icon { color: var(--color-primary); font-size: 20px; width: 20px; height: 20px; }
+  &__name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+}
+
 .ping-dot {
   width: 10px;
   height: 10px;
@@ -82,28 +175,14 @@
   flex-shrink: 0;
   margin-left: auto;
 
-  &--ok      { background: var(--status-ok);      box-shadow: 0 0 6px var(--status-ok); }
-  &--warning { background: var(--status-warning);  box-shadow: 0 0 6px var(--status-warning); }
-  &--error   { background: var(--status-error);    box-shadow: 0 0 6px var(--status-error); }
+  &--ok      { background: var(--status-ok);     box-shadow: 0 0 6px var(--status-ok); }
+  &--warning { background: var(--status-warning); box-shadow: 0 0 6px var(--status-warning); }
+  &--error   { background: var(--status-error);   box-shadow: 0 0 6px var(--status-error); }
   &--paused  { background: var(--status-paused); }
   &--unknown { background: var(--text-muted); }
 }
 
-.sensor-grid { display: flex; flex-direction: column; gap: 0; }
-
-.sensor-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 110px;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 4px;
-  border-bottom: 1px solid var(--border-subtle);
-  &:last-child { border-bottom: none; }
-  &:hover      { background: var(--bg-hover); }
-  &__name  { font-size: 13px; color: var(--text-secondary); }
-  &__value { font-size: 12px; color: var(--text-primary); }
-}
-
+// ── Empty state ─────────────────────────────────────────────────────────────────
 .empty-state {
   display: flex; align-items: center; gap: 8px;
   color: var(--text-muted); font-size: 13px;
