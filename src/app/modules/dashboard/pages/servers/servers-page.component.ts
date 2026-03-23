@@ -85,4 +85,13 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
     if (gb >= 1024) return (gb / 1024).toFixed(2) + ' TB';
     return gb.toFixed(2) + ' GB';
   }
+
+  protected dsStatusLabel(status: SensorStatus): string {
+    switch (status) {
+      case 'ok':      return '✓ OK';
+      case 'warning': return '⚠ Aviso';
+      case 'error':   return '✕ Error';
+      default:        return '— N/A';
+    }
+  }
 }
