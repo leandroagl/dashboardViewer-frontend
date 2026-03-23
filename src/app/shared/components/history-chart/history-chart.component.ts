@@ -1,8 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, effect, inject, Input, OnChanges, signal
+  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, Input, OnChanges, signal
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import type { HistoryRange, HistoryPoint } from '../../../core/models';
+import type { Subscription } from 'rxjs';
 import type { ApexAxisChartSeries, ApexChart, ApexXAxis, ApexTooltip, ApexStroke,
               ApexFill, ApexYAxis, ApexAnnotations } from 'ng-apexcharts';
 
@@ -92,7 +94,9 @@ export class HistoryChartComponent implements OnChanges {
   @Input() label = '';
   @Input() warningThreshold?: number;
 
-  private readonly dashboard = inject(DashboardService);
+  private readonly dashboard  = inject(DashboardService);
+  private readonly destroyRef = inject(DestroyRef);
+  private loadSub?: Subscription;
 
   readonly ranges: HistoryRange[] = ['1h', '24h', '7d', '30d'];
   readonly range        = signal<HistoryRange>('24h');
@@ -117,9 +121,12 @@ export class HistoryChartComponent implements OnChanges {
   }
 
   private loadData(objid: number, slug: string, range: HistoryRange): void {
+    this.loadSub?.unsubscribe();
     this.loading.set(true);
     this.error.set(false);
-    this.dashboard.getHistory(slug, objid, range).subscribe({
+    this.loadSub = this.dashboard.getHistory(slug, objid, range).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (data) => {
         const pts: HistoryPoint[] = data.points ?? [];
         const xVals = pts.map(p => new Date(p.datetime).getTime());
