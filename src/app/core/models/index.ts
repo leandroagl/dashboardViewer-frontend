@@ -42,8 +42,8 @@ export interface Client {
   prtg_group:          string;
   prtg_extra_probes?:  string | null;
   activo:              boolean;
-  logo_url?:           string;
-  color_marca?:        string;
+  logo_url?:           string | null;
+  color_marca?:        string | null;
   total_usuarios?:     number;
   ultimo_acceso_usuario?: string;
 }
@@ -98,8 +98,9 @@ export interface VmwareHost {
 }
 
 export interface VmwareDashboard {
-  hosts:  VmwareHost[];
-  alerts: { name: string; message: string; status: SensorStatus }[];
+  hosts:      VmwareHost[];
+  alerts:     { name: string; message: string; status: SensorStatus }[];
+  sparklines?: SparklineMap;
 }
 
 // Backups
@@ -124,6 +125,7 @@ export interface BackupsDashboard {
   successRate7d: number;
   devices:       BackupDevice[];
   alerts:        { name: string; message: string; status: SensorStatus }[];
+  sparklines?:   SparklineMap;
 }
 
 // Networking
@@ -137,6 +139,7 @@ export interface NetworkingDashboard {
   switches:    NetworkDevice[];
   ptpAntennas: NetworkDevice[];
   alerts:      { name: string; message: string; status: SensorStatus }[];
+  sparklines?: SparklineMap;
 }
 
 // Windows
@@ -149,8 +152,10 @@ export interface WindowsServer {
   uptime: StatusValue;
 }
 export interface WindowsDashboard {
-  servers: WindowsServer[];
-  alerts:  { name: string; message: string; status: SensorStatus }[];
+  servers:         WindowsServer[];
+  alerts:          { name: string; message: string; status: SensorStatus }[];
+  sparklines?:     SparklineMap;
+  uptimeAvgHours?: number;
 }
 
 // Sucursales
@@ -165,6 +170,39 @@ export interface SucursalesDashboard {
   onlineCount:  number;
   offlineCount: number;
   alerts:       { name: string; message: string; status: SensorStatus }[];
+  sparklines?:  SparklineMap;
+}
+
+// ─── Sparklines y datos históricos ────────────────────────────────────────────
+
+export interface SparklineEntry {
+  objid:  number;
+  values: number[];
+}
+
+export type SparklineMap = Record<string, SparklineEntry>;
+export type HistoryRange = '1h' | '24h' | '7d' | '30d';
+
+export interface HistoryPoint {
+  timestamp: string; // ISO 8601
+  value:     number;
+}
+
+export interface HistoryStats {
+  max:     number;
+  avg:     number;
+  min:     number;
+  prevMax: number;
+  prevAvg: number;
+  prevMin: number;
+}
+
+export interface HistoryData {
+  objid:      number;
+  sensorName: string;
+  range:      HistoryRange;
+  points:     HistoryPoint[];
+  stats:      HistoryStats;
 }
 
 // ─── Logs ─────────────────────────────────────────────────────────────────────

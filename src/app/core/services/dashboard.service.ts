@@ -7,7 +7,7 @@ import { environment } from '@env/environment';
 import {
   ApiResponse, DashboardType,
   VmwareDashboard, BackupsDashboard, NetworkingDashboard, WindowsDashboard,
-  SucursalesDashboard
+  SucursalesDashboard, HistoryData, HistoryRange
 } from '../models';
 import { requireData } from '../utils/api.utils';
 
@@ -50,5 +50,12 @@ export class DashboardService {
   getSucursales(slug: string): Observable<SucursalesDashboard> {
     return this.http.get<ApiResponse<SucursalesDashboard>>(this.url(slug, '/sucursales'))
       .pipe(map(requireData));
+  }
+
+  getHistory(slug: string, objid: number, range: HistoryRange): Observable<HistoryData> {
+    return this.http.get<ApiResponse<HistoryData>>(
+      this.url(slug, `/history`),
+      { params: { objid: String(objid), range } }
+    ).pipe(map(requireData));
   }
 }
