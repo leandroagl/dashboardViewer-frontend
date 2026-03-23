@@ -32,6 +32,7 @@
       <div
         *ngFor="let host of d.hosts"
         class="host-card host-card--{{ host.status }}"
+        [class.host-card--expanded]="expandedHost() === host.name"
       >
         <!-- Card Header -->
         <div class="host-card__header">
@@ -111,6 +112,12 @@
 
         </div>
 
+        <!-- Per-host alerts -->
+        <app-alert-list
+          *ngIf="hostAlerts(d, host).length > 0"
+          [alerts]="hostAlerts(d, host)"
+        ></app-alert-list>
+
         <!-- History Panel (in-place, below metric rows) -->
         <app-device-detail-panel
           *ngIf="expandedHost() === host.name"
@@ -126,11 +133,6 @@
         ></app-device-detail-panel>
 
       </div>
-    </div>
-
-    <!-- Alerts Panel -->
-    <div class="alerts-section" *ngIf="d.alerts.length > 0">
-      <app-alert-list [alerts]="d.alerts"></app-alert-list>
     </div>
 
     <div *ngIf="d.hosts.length === 0" class="empty-state">
