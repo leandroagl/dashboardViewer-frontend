@@ -135,9 +135,10 @@ export class HistoryChartComponent {
         const isCpuRam = channel === 'cpu'   || channel === 'ram';
         const BYTES_TO_MB = 1_048_576;
 
+        const round2 = (n: number) => Math.round(n * 100) / 100;
         const yVals = isDisk
-          ? pts.map(p => parseFloat((p.value / BYTES_TO_MB).toFixed(3)))
-          : pts.map(p => p.value);
+          ? pts.map(p => round2(p.value / BYTES_TO_MB))
+          : pts.map(p => round2(p.value));
 
         const yUnit      = isDisk ? 'MB' : isCpuRam ? '%' : 'ms';
         const yFormatter = (v: number) => v.toFixed(2) + ' ' + yUnit;
