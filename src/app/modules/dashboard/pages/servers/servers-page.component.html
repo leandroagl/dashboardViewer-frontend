@@ -101,13 +101,13 @@
           </div>
 
           <!-- Datastores (one row per datastore) -->
-          <div class="metric-row" *ngFor="let ds of host.datastores">
+          <div class="metric-row metric-row--ds" *ngFor="let ds of host.datastores">
             <span class="metric-row__name">{{ ds.name }}</span>
             <div class="metric-row__bar-wrap">
               <div class="metric-row__bar metric-row__bar--{{ ds.status }}" [style.width.%]="ds.usedPct"></div>
             </div>
             <span class="metric-row__val mono metric-row__val--{{ ds.status }}">{{ ds.usedPct | number:'1.0-0' }}%</span>
-            <app-sparkline [values]="[]" color="var(--border-subtle)"></app-sparkline>
+            <span class="metric-row__storage mono">{{ formatGb(ds.freeGb) }} libre / {{ formatGb(ds.totalGb) }}</span>
           </div>
 
         </div>

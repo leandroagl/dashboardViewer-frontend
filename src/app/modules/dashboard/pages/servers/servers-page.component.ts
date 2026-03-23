@@ -79,4 +79,10 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   protected hostAlerts(d: VmwareDashboard, host: VmwareHost) {
     return d.alerts.filter(a => a.name.startsWith(host.name + ' — '));
   }
+
+  protected formatGb(gb: number | null): string {
+    if (gb == null) return 'N/A';
+    if (gb >= 1024) return (gb / 1024).toFixed(2) + ' TB';
+    return gb.toFixed(2) + ' GB';
+  }
 }

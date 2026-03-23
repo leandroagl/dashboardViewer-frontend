@@ -51,6 +51,16 @@
 .metric-row__val--warning { color: var(--status-warning); }
 .metric-row__val--error   { color: var(--status-error);   }
 
+.metric-row--ds {
+  grid-template-columns: 80px 1fr 56px auto;
+}
+.metric-row__storage {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-align: right;
+}
+
 // ── Host Cards ───────────────────────────────────────────────────────────────
 .host-cards {
   display: grid;
