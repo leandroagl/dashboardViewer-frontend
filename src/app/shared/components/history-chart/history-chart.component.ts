@@ -6,7 +6,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
 import type { HistoryRange, HistoryPoint } from '../../../core/models';
 import type { Subscription } from 'rxjs';
 import type { ApexAxisChartSeries, ApexChart, ApexXAxis, ApexTooltip, ApexStroke,
-              ApexFill, ApexYAxis, ApexAnnotations, ApexMarkers } from 'ng-apexcharts';
+              ApexFill, ApexYAxis, ApexAnnotations, ApexMarkers, ApexDataLabels } from 'ng-apexcharts';
 
 export type ChartOptions = {
   series:      ApexAxisChartSeries;
@@ -18,6 +18,7 @@ export type ChartOptions = {
   tooltip:     ApexTooltip;
   annotations: ApexAnnotations;
   markers:     ApexMarkers;
+  dataLabels:  ApexDataLabels;
   colors:      string[];
   grid:        object;
   theme:       object;
@@ -60,6 +61,7 @@ export type ChartOptions = {
         [tooltip]="opts.tooltip"
         [annotations]="opts.annotations"
         [markers]="opts.markers"
+        [dataLabels]="opts.dataLabels"
         [colors]="opts.colors"
         [grid]="opts.grid"
         [theme]="opts.theme"
@@ -185,9 +187,13 @@ export class HistoryChartComponent {
               text: yUnit,
               style: { fontSize: '10px', color: 'var(--text-muted)', fontWeight: 400 },
             },
-            labels: { show: false },
+            labels: {
+              style: { fontSize: '10px', colors: 'var(--text-muted)' },
+              formatter: yFormatter,
+            },
             ...(isCpuRam ? { min: 0, max: 100 } : {}),
           },
+          dataLabels: { enabled: false },
           markers: {
             size: 3,
             colors: ['#4dd0e1'],
