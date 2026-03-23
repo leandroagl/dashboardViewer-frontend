@@ -73,4 +73,15 @@ export class WindowsPageComponent extends BaseDashboardPage<WindowsDashboard> {
   protected serverAlerts(d: WindowsDashboard, srv: WindowsServer) {
     return d.alerts.filter(a => a.name.startsWith(srv.name + ' — '));
   }
+
+  protected okServersOf(d: WindowsDashboard): WindowsServer[] {
+    return d.servers.filter(s => s.status === 'ok');
+  }
+
+  protected alertingServers(d: WindowsDashboard): WindowsServer[] {
+    return [
+      ...d.servers.filter(s => s.status === 'error'),
+      ...d.servers.filter(s => s.status !== 'error' && s.status !== 'ok'),
+    ];
+  }
 }
