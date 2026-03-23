@@ -9,51 +9,80 @@
   </div>
 
   <ng-container *ngIf="data() as d">
-    <div class="win-body">
 
-      <!-- Servidores -->
-      <div class="servers-col">
-        <div class="servers-grid">
-          <div *ngFor="let srv of d.servers" class="card server-card server-card--{{ srv.status }}">
-            <div class="card__header">
-              <div class="server-card__name">
-                <mat-icon>computer</mat-icon>
-                {{ srv.name }}
-              </div>
-            </div>
-            <div class="card__body server-card__body">
-              <div class="server-card__metrics">
-                <app-gauge label="CPU"   [value]="parseValue(srv.cpu.value)"    [status]="srv.cpu.status"    unit="%"></app-gauge>
-                <app-gauge label="RAM"   [value]="parseValue(srv.memory.value)" [status]="srv.memory.status" unit="%"></app-gauge>
-                <app-gauge label="Disco" [value]="parseValue(srv.disk.value)"   [status]="srv.disk.status"   unit="%"></app-gauge>
-              </div>
-              <div class="server-card__uptime">
-                <mat-icon>schedule</mat-icon>
-                <span class="text-secondary" style="font-size:12px;">Uptime:</span>
-                <span class="mono" style="font-size:12px;">{{ srv.uptime.value }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" *ngIf="d.servers.length === 0">
-          <div class="card__body empty-state">
-            <mat-icon>info</mat-icon> Sin servidores Windows detectados
-          </div>
-        </div>
-      </div>
-
-      <!-- Alertas en media pantalla -->
-      <div class="alerts-panel">
-        <div class="card">
-          <div class="card__header"><span class="card__title">Alertas activas</span></div>
-          <div class="card__body">
-            <app-alert-list [alerts]="d.alerts"></app-alert-list>
-          </div>
-        </div>
-      </div>
-
+    <!-- KPI Strip -->
+    <div class="kpi-strip">
+      <app-kpi-card label="Servers OK"      [value]="serversOk(d)"                           status="ok"></app-kpi-card>
+      <app-kpi-card label="Servers Warning" [value]="serversWarn(d)"                         status="warning"></app-kpi-card>
+      <app-kpi-card label="Alertas activas" [value]="d.alerts.length" [status]="alertsStatus(d)"></app-kpi-card>
+      <app-kpi-card label="Uptime promedio" [value]="formatUptimeAvg(d.uptimeAvgHours ?? 0)" status="ok"></app-kpi-card>
     </div>
+
+    <!-- Server Cards -->
+    <div class="server-cards">
+      <div
+        *ngFor="let srv of d.servers"
+        class="server-card server-card--{{ srv.status }}"
+      >
+        <!-- Header -->
+        <div class="server-card__header">
+          <app-status-badge [status]="srv.status"></app-status-badge>
+          <span class="server-card__name">{{ srv.name }}</span>
+        </div>
+
+        <!-- Metric Rows -->
+        <div class="metric-rows">
+
+          <!-- CPU -->
+          <div class="metric-row">
+            <span class="metric-row__name">CPU</span>
+            <div class="metric-row__bar-wrap">
+              <div class="metric-row__bar metric-row__bar--{{ srv.cpu.status }}"
+                [style.width.%]="parseValue(srv.cpu.value)"></div>
+            </div>
+            <span class="metric-row__val mono metric-row__val--{{ srv.cpu.status }}">{{ srv.cpu.value }}</span>
+            <app-sparkline [values]="cpuSparkValues(d, srv)" [color]="statusColor(srv.cpu.status)"></app-sparkline>
+          </div>
+
+          <!-- RAM -->
+          <div class="metric-row">
+            <span class="metric-row__name">RAM</span>
+            <div class="metric-row__bar-wrap">
+              <div class="metric-row__bar metric-row__bar--{{ srv.memory.status }}"
+                [style.width.%]="parseValue(srv.memory.value)"></div>
+            </div>
+            <span class="metric-row__val mono metric-row__val--{{ srv.memory.status }}">{{ srv.memory.value }}</span>
+            <app-sparkline [values]="ramSparkValues(d, srv)" [color]="statusColor(srv.memory.status)"></app-sparkline>
+          </div>
+
+          <!-- Disco -->
+          <div class="metric-row">
+            <span class="metric-row__name">Disco</span>
+            <div class="metric-row__bar-wrap">
+              <div class="metric-row__bar metric-row__bar--{{ srv.disk.status }}"
+                [style.width.%]="parseValue(srv.disk.value)"></div>
+            </div>
+            <span class="metric-row__val mono metric-row__val--{{ srv.disk.status }}">{{ srv.disk.value }}</span>
+            <app-sparkline [values]="diskSparkValues(d, srv)" [color]="statusColor(srv.disk.status)"></app-sparkline>
+          </div>
+
+          <!-- Uptime — sin barra ni sparkline -->
+          <div class="metric-row">
+            <span class="metric-row__name">Uptime</span>
+            <div class="metric-row__bar-wrap metric-row__bar-wrap--empty"></div>
+            <span class="metric-row__val mono">{{ srv.uptime.value }}</span>
+            <span></span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alerts-section" *ngIf="d.alerts.length > 0">
+      <app-alert-list [alerts]="d.alerts"></app-alert-list>
+    </div>
+
   </ng-container>
 </div>
 

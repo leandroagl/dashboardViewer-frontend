@@ -97,6 +97,13 @@ export interface VmwareHost {
   alerts:     { name: string; message: string; status: SensorStatus }[];
 }
 
+export interface SparklineEntry {
+  objid:  number;
+  values: number[];
+}
+
+export type SparklineMap = Record<string, SparklineEntry>;
+
 export interface VmwareDashboard {
   hosts:      VmwareHost[];
   alerts:     { name: string; message: string; status: SensorStatus }[];
@@ -171,38 +178,6 @@ export interface SucursalesDashboard {
   offlineCount: number;
   alerts:       { name: string; message: string; status: SensorStatus }[];
   sparklines?:  SparklineMap;
-}
-
-// ─── Sparklines y datos históricos ────────────────────────────────────────────
-
-export interface SparklineEntry {
-  objid:  number;
-  values: number[];
-}
-
-export type SparklineMap = Record<string, SparklineEntry>;
-export type HistoryRange = '1h' | '24h' | '7d' | '30d';
-
-export interface HistoryPoint {
-  timestamp: string; // ISO 8601
-  value:     number;
-}
-
-export interface HistoryStats {
-  max:     number;
-  avg:     number;
-  min:     number;
-  prevMax: number;
-  prevAvg: number;
-  prevMin: number;
-}
-
-export interface HistoryData {
-  objid:      number;
-  sensorName: string;
-  range:      HistoryRange;
-  points:     HistoryPoint[];
-  stats:      HistoryStats;
 }
 
 // ─── Logs ─────────────────────────────────────────────────────────────────────

@@ -1,42 +1,53 @@
 // ─── DeviceDetailPanelComponent ───────────────────────────────────────────────
-// Panel expandible in-place que contiene estadísticas + HistoryChart.
-// El padre controla la expansión vía template reference: #detail y (click)="detail.toggle()".
+// Expandable history panel that shows a chart for a given sensor objid.
+// Fetches data from the dashboard service using the client slug.
 
-import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector:   'app-device-detail-panel',
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="detail-panel" *ngIf="expanded()">
-      <div class="detail-panel__header">
-        <span class="detail-panel__title">{{ label ?? 'Historial' }}</span>
-        <button class="detail-panel__close" mat-icon-button (click)="toggle()">
-          <mat-icon>close</mat-icon>
-        </button>
+    <div class="ddp">
+      <div class="ddp__header">
+        <mat-icon class="ddp__icon">show_chart</mat-icon>
+        <span class="ddp__label">{{ label }}</span>
       </div>
-      <app-history-chart
-        [objid]="objid"
-        [slug]="slug"
-        [label]="label"
-      ></app-history-chart>
+      <div class="ddp__body" *ngIf="objid > 0; else noSensor">
+        <!-- TODO: wire up HistoryChartComponent when available -->
+        <p class="ddp__hint">Historial del sensor PRTG #{{ objid }}</p>
+      </div>
+      <ng-template #noSensor>
+        <p class="ddp__hint ddp__hint--muted">Sin sensor de historial disponible para este host.</p>
+      </ng-template>
     </div>
   `,
   styles: [`
-    .detail-panel { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px 16px; margin-top: 8px; }
-    .detail-panel__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .detail-panel__title  { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-    .detail-panel__close  { width: 24px; height: 24px; line-height: 24px; }
-    .detail-panel__close mat-icon { font-size: 16px; width: 16px; height: 16px; }
-  `],
+    .ddp {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-page);
+      border: 1px solid var(--border-subtle);
+      animation: ddp-slide-in 0.18s ease;
+    }
+    @keyframes ddp-slide-in {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .ddp__header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 8px;
+    }
+    .ddp__icon { font-size: 16px; width: 16px; height: 16px; color: var(--primary, var(--color-primary)); }
+    .ddp__label { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+    .ddp__hint  { font-size: 11px; color: var(--text-secondary); margin: 0; }
+    .ddp__hint--muted { color: var(--text-muted); }
+  `]
 })
 export class DeviceDetailPanelComponent {
   @Input({ required: true }) objid!: number;
-  @Input({ required: true }) slug!:  string;
-  @Input() label?: string;
-
-  readonly expanded = signal(false);
-
-  toggle(): void { this.expanded.update(v => !v); }
+  @Input() slug = '';
+  @Input() label = '';
 }

@@ -14,6 +14,10 @@ import { BaseDashboardPage } from '../base-dashboard-page';
 export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   private readonly service = inject(DashboardService);
 
+  protected clientSlug(): string {
+    return this.slug();
+  }
+
   protected fetchData(slug: string): Observable<BackupsDashboard> {
     return this.service.getBackups(slug);
   }
@@ -85,5 +89,21 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   protected formatGb(gb: number): string {
     if (gb >= 1024) return (gb / 1024).toFixed(1) + ' TB';
     return Math.round(gb) + ' GB';
+  }
+
+  protected jobSparkValues(d: BackupsDashboard, device: BackupDevice, job: BackupJob): number[] {
+    return d.sparklines?.[`${device.name}/${job.name}`]?.values ?? [];
+  }
+
+  protected jobOkCount(d: BackupsDashboard): number {
+    return d.devices.flatMap(dev => dev.jobs).filter(j => j.lastStatus === 'ok').length;
+  }
+
+  protected jobWarnCount(d: BackupsDashboard): number {
+    return d.devices.flatMap(dev => dev.jobs).filter(j => j.lastStatus === 'warning').length;
+  }
+
+  protected jobErrorCount(d: BackupsDashboard): number {
+    return d.devices.flatMap(dev => dev.jobs).filter(j => j.lastStatus === 'error').length;
   }
 }

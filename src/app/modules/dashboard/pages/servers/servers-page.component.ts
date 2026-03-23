@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
 import { VmwareDashboard, VmwareHost, SensorStatus } from '@core/models';
@@ -14,62 +14,65 @@ import { BaseDashboardPage } from '../base-dashboard-page';
 export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
   private readonly service = inject(DashboardService);
 
+  protected clientSlug(): string {
+    return this.slug();
+  }
+
   protected fetchData(slug: string): Observable<VmwareDashboard> {
     return this.service.getServers(slug);
   }
 
-  // ── Todos los estados sensor del host (CPU, RAM, disco, VMs, snapshots, datastores) ──
-  private hostAllStatuses(h: VmwareHost): SensorStatus[] {
-    return [
-      h.cpu.status, h.memory.status, h.disk.read.status, h.disk.write.status,
-      ...h.vms.map(v => v.status),
-      ...h.snapshots.map(s => s.status),
-      ...h.datastores.map(ds => ds.status),
-    ];
+  // Tracks which host's history panel is expanded (only one at a time)
+  protected readonly expandedHost = signal<string | null>(null);
+
+  protected toggleHistory(hostName: string): void {
+    this.expandedHost.update(curr => curr === hostName ? null : hostName);
   }
 
-  // ── Summary counts (sobre todos los hosts) ────────────────────────────────
-  protected okCount(d: VmwareDashboard): number {
-    return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'ok').length, 0);
+  protected hostsOk(d: VmwareDashboard): number {
+    return d.hosts.filter(h => h.status === 'ok').length;
   }
-  protected warnCount(d: VmwareDashboard): number {
-    return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'warning').length, 0);
+  protected hostsWarn(d: VmwareDashboard): number {
+    return d.hosts.filter(h => h.status === 'warning').length;
   }
-  protected errorCount(d: VmwareDashboard): number {
-    return d.hosts.reduce((acc, h) => acc + this.hostAllStatuses(h).filter(s => s === 'error').length, 0);
-  }
-  // ── Donut SVG math (r=38, circunferencia ≈ 238.8) ─────────────────────────
-  protected donutArc(count: number, total: number): string {
-    if (total === 0) return '0 239';
-    const circ = 2 * Math.PI * 38;
-    const arc  = (count / total) * circ;
-    return `${arc.toFixed(1)} ${(circ - arc).toFixed(1)}`;
+  protected hostsError(d: VmwareDashboard): number {
+    return d.hosts.filter(h => h.status === 'error' || h.status === 'unknown').length;
   }
 
-  protected donutOffset(preceding: number, total: number): string {
-    if (total === 0) return '0';
-    const circ   = 2 * Math.PI * 38;
-    const offset = -(preceding / total) * circ;
-    return offset.toFixed(1);
+  protected cpuSparkline(d: VmwareDashboard, host: VmwareHost) {
+    return d.sparklines?.[`${host.name}/cpu`];
+  }
+  protected ramSparkline(d: VmwareDashboard, host: VmwareHost) {
+    return d.sparklines?.[`${host.name}/ram`];
+  }
+  protected diskRSparkline(d: VmwareDashboard, host: VmwareHost) {
+    return d.sparklines?.[`${host.name}/diskR`];
+  }
+  protected diskWSparkline(d: VmwareDashboard, host: VmwareHost) {
+    return d.sparklines?.[`${host.name}/diskW`];
   }
 
-  // ── Contadores por host (donut) ───────────────────────────────────────────
-  protected hostSensorTotal(h: VmwareHost):   number { return this.hostAllStatuses(h).length; }
-  protected hostSensorOk(h: VmwareHost):      number { return this.hostAllStatuses(h).filter(s => s === 'ok').length; }
-  protected hostSensorWarn(h: VmwareHost):    number { return this.hostAllStatuses(h).filter(s => s === 'warning').length; }
-  protected hostSensorError(h: VmwareHost):   number { return this.hostAllStatuses(h).filter(s => s === 'error').length; }
-
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  protected datastoreBarColor(status: SensorStatus): string {
-    return status === 'ok' ? 'primary' : 'warn';
+  protected statusColor(status: SensorStatus): string {
+    switch (status) {
+      case 'ok':      return 'var(--status-ok)';
+      case 'warning': return 'var(--status-warning)';
+      case 'error':   return 'var(--status-error)';
+      default:        return 'var(--border-subtle)';
+    }
   }
 
-  protected vmIcon(status: SensorStatus): string {
-    return status === 'ok' ? 'check' : status === 'warning' ? 'warning' : 'error';
+  protected hasOldSnapshots(d: VmwareDashboard): boolean {
+    return d.hosts.some(h => h.snapshots.some((s: any) => {
+      const n = parseInt(s.value, 10);
+      return !isNaN(n) && n >= 7;
+    }));
   }
 
-  protected formatGb(gb: number): string {
-    if (gb >= 1024) return (gb / 1024).toFixed(1) + ' TB';
-    return Math.round(gb) + ' GB';
+  protected totalVms(d: VmwareDashboard): number {
+    return d.hosts.reduce((s, h) => s + h.vms.length, 0);
+  }
+
+  protected totalSnapshots(d: VmwareDashboard): number {
+    return d.hosts.reduce((s, h) => s + h.snapshots.length, 0);
   }
 }
