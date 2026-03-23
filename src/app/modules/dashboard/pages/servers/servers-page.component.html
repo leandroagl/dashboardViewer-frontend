@@ -116,7 +116,13 @@
           *ngIf="expandedHost() === host.name"
           [objid]="cpuSparkline(d, host)?.objid ?? 0"
           [slug]="clientSlug()"
-          [label]="host.name + ' — CPU'"
+          [label]="host.name"
+          [channels]="[
+            { key: 'cpu',   label: 'CPU' },
+            { key: 'ram',   label: 'RAM' },
+            { key: 'diskR', label: 'Disco R' },
+            { key: 'diskW', label: 'Disco W' }
+          ]"
         ></app-device-detail-panel>
 
       </div>
