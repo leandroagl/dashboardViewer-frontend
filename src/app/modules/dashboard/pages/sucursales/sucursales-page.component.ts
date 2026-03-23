@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
 import { SucursalesDashboard, SensorStatus } from '@core/models';
@@ -42,5 +42,29 @@ export class SucursalesPageComponent extends BaseDashboardPage<SucursalesDashboa
     if (status === 'ok')      return 'location_on';
     if (status === 'warning') return 'wifi_find';
     return 'wifi_off';
+  }
+
+  protected readonly selectedSucursal = signal<string | null>(null);
+
+  protected selectSucursal(name: string): void {
+    this.selectedSucursal.update(curr => curr === name ? null : name);
+  }
+
+  protected latencySparkValues(d: SucursalesDashboard, name: string): number[] {
+    return d.sparklines?.[`${name}/latency`]?.values ?? [];
+  }
+
+  protected latencyObjid(d: SucursalesDashboard, name: string): number {
+    return d.sparklines?.[`${name}/latency`]?.objid ?? 0;
+  }
+
+  // Average latency across online sucursales (parses "23.4 ms" style strings)
+  protected avgLatency(d: SucursalesDashboard): string {
+    const online = d.sucursales.filter(s => s.latency);
+    if (!online.length) return 'N/A';
+    const avg = online.reduce((sum, s) => {
+      return sum + (parseFloat(s.latency ?? '0') || 0);
+    }, 0) / online.length;
+    return avg.toFixed(1) + ' ms';
   }
 }

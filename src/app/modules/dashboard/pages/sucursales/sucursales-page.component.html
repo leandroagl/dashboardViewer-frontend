@@ -18,13 +18,23 @@
       <app-kpi-card label="En línea"     [value]="d.onlineCount"             status="ok"></app-kpi-card>
       <app-kpi-card label="Sin conexión" [value]="d.offlineCount"            [status]="offlineStatus(d)"></app-kpi-card>
       <app-kpi-card label="Conectividad" [value]="connectivityPct(d) + '%'"  [status]="connectivityStatus(d)"></app-kpi-card>
+      <app-kpi-card
+        label="Latencia promedio"
+        [value]="avgLatency(d)"
+        status="ok"
+        sublabel="—"
+      ></app-kpi-card>
     </div>
 
     <!-- Grid de sucursales -->
     <div class="suc-grid" *ngIf="d.sucursales.length > 0; else emptyState">
       <div
         class="suc-card suc-card--{{ suc.status }}"
-        *ngFor="let suc of d.sucursales">
+        [class.tile--selected]="selectedSucursal() === suc.name"
+        *ngFor="let suc of d.sucursales"
+        (click)="selectSucursal(suc.name)"
+        role="button"
+        [attr.aria-label]="'Ver detalle de ' + suc.name">
 
         <span class="suc-card__dot suc-card__dot--{{ suc.status }}"></span>
 
@@ -38,8 +48,24 @@
           {{ suc.latency ?? '---' }}
         </div>
 
+        <app-sparkline
+          [values]="latencySparkValues(d, suc.name)"
+          [color]="suc.status === 'ok' ? 'var(--status-ok)' : 'var(--status-error)'"
+        ></app-sparkline>
+
         <div class="suc-card__msg suc-card__msg--{{ suc.status }}" [title]="suc.message">{{ suc.message }}</div>
       </div>
+    </div>
+
+    <div class="sucursal-detail" *ngIf="selectedSucursal() as name">
+      <div class="sucursal-detail__header">
+        <span class="sucursal-detail__title">{{ name }}</span>
+        <button mat-icon-button (click)="selectSucursal(name)"><mat-icon>close</mat-icon></button>
+      </div>
+      <p class="sucursal-detail__hint">
+        Sensor PRTG #{{ latencyObjid(d, name) }} — Latencia ({{ name }})
+        <!-- TODO: wire up HistoryChartComponent when available -->
+      </p>
     </div>
 
     <ng-template #emptyState>

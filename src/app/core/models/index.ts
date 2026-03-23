@@ -177,6 +177,7 @@ export interface SucursalesDashboard {
   onlineCount:  number;
   offlineCount: number;
   alerts:       { name: string; message: string; status: SensorStatus }[];
+  sparklines?:  SparklineMap;
 }
 
 // ─── Logs ─────────────────────────────────────────────────────────────────────

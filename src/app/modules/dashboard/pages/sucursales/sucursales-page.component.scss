@@ -138,6 +138,36 @@
   &--paused  { color: #4fc3f7; }  // azul suave para "Paused by ..."
 }
 
+// ─── Tile selected + cursor ───────────────────────────────────────────────────
+
+.tile--selected { outline: 2px solid var(--color-primary); }
+.suc-card       { cursor: pointer; }
+
+// ─── Detail panel ─────────────────────────────────────────────────────────────
+
+.sucursal-detail {
+  background: var(--bg-elevated);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-top: 12px;
+}
+.sucursal-detail__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.sucursal-detail__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.sucursal-detail__hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 // ─── Empty state ──────────────────────────────────────────────────────────────
 
 .empty-state {
