@@ -17,56 +17,70 @@
       <app-kpi-card label="Alertas"      [value]="d.alerts.length"      [status]="alertsStatus(d)"        sublabel="activas"></app-kpi-card>
     </div>
 
-    <!-- Dispositivos de red (routers, firewalls) -->
+    <!-- ── Dispositivos de red ─────────────────────────────────────────────── -->
     <div *ngIf="d.devices.length > 0">
-      <div class="section-label">Dispositivos de red</div>
-      <div class="devices-grid">
-        <div class="device-card device-card--{{ device.status }}" *ngFor="let device of d.devices">
+      <div class="section-label">
+        Dispositivos de red
+        <span class="ha-badge" *ngIf="isHaConfig(d)">
+          <mat-icon>swap_horiz</mat-icon> HA activo
+        </span>
+      </div>
 
-          <!-- Header -->
-          <div class="device-card__header">
-            <app-status-badge [status]="device.status"></app-status-badge>
-            <mat-icon class="device-card__icon">router</mat-icon>
-            <span class="device-card__name">{{ device.name }}</span>
+      <!--
+        Grid de 4 columnas:
+          cols 1-2 → tarjetas de routers (sub-grid de 2 cols)
+          cols 3-4 → gráfico de tráfico
+      -->
+      <div class="router-grid">
+
+        <!-- Cols 1-2: tarjetas de estado de routers -->
+        <div class="router-cards">
+          <div class="device-card device-card--{{ device.status }}" *ngFor="let device of d.devices">
+            <div class="device-card__header">
+              <app-status-badge [status]="device.status"></app-status-badge>
+              <mat-icon class="device-card__icon">router</mat-icon>
+              <span class="device-card__name">{{ device.name }}</span>
+            </div>
             <span class="device-card__uptime mono" *ngIf="deviceUptime(device)">{{ deviceUptime(device) }}</span>
-          </div>
-
-          <!-- Sensor rows (sin sparklines, con alerta inline) -->
-          <div class="sensor-grid">
-            <div class="sensor-row" *ngFor="let sensor of device.sensors">
-              <div class="sensor-row__main">
-                <span class="sensor-row__name">{{ sensor.name }}</span>
-                <span class="mono sensor-row__value sensor-row__value--{{ sensor.status }}">{{ sensor.value }}</span>
-                <app-status-badge [status]="sensor.status"></app-status-badge>
-              </div>
-              <div class="sensor-row__alert sensor-row__alert--{{ sensor.status }}"
-                *ngIf="sensorAlert(d, device, sensor.name) as alert">
-                <mat-icon>warning</mat-icon>
-                <span>{{ alert.message }}</span>
+            <div class="sensor-grid">
+              <div class="sensor-row" *ngFor="let sensor of device.sensors">
+                <div class="sensor-row__main">
+                  <span class="sensor-row__name">{{ sensor.name }}</span>
+                  <span class="mono sensor-row__value sensor-row__value--{{ sensor.status }}">{{ sensor.value }}</span>
+                  <app-status-badge [status]="sensor.status"></app-status-badge>
+                </div>
+                <div class="sensor-row__alert sensor-row__alert--{{ sensor.status }}"
+                  *ngIf="sensorAlert(d, device, sensor.name) as alert">
+                  <mat-icon>warning</mat-icon>
+                  <span>{{ alert.message }}</span>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- History panel (reutiliza DeviceDetailPanel con channelObjids por sensor) -->
-          <app-device-detail-panel
-            *ngIf="expandedDevices().has(device.name)"
-            [objid]="firstSensorObjid(d, device)"
-            [slug]="clientSlug()"
-            [label]="device.name"
-            [channels]="sensorsAsChannels(device)"
-            [channelObjids]="sensorObjids(d, device)"
-          ></app-device-detail-panel>
-
-          <!-- Toggle button -->
-          <button
-            class="device-card__toggle"
-            [class.active]="expandedDevices().has(device.name)"
-            (click)="toggleHistory(device)">
-            <mat-icon>{{ expandedDevices().has(device.name) ? 'expand_less' : 'show_chart' }}</mat-icon>
-            {{ expandedDevices().has(device.name) ? 'Ocultar historial' : 'Ver historial' }}
-          </button>
-
         </div>
+
+        <!-- Cols 3-4: gráfico de tráfico (siempre visible) -->
+        <div class="traffic-card" *ngIf="chartDevices(d).length > 0">
+          <ng-container *ngFor="let device of chartDevices(d); let first = first">
+            <div class="traffic-card__header" [class.traffic-card__header--sep]="!first">
+              <mat-icon class="traffic-card__icon">show_chart</mat-icon>
+              <span class="traffic-card__label">{{ device.name }}</span>
+              <span class="ha-badge ha-badge--{{ haRole(d, device)?.toLowerCase() }}"
+                    *ngIf="haRole(d, device) as role">{{ role }}</span>
+            </div>
+            <app-device-detail-panel
+              [objid]="trafficFirstObjid(d, device)"
+              [slug]="clientSlug()"
+              [label]="device.name"
+              [hideHeader]="true"
+              [channels]="trafficSensors(device)"
+              [channelObjids]="trafficSensorObjids(d, device)"
+              [channelUnits]="trafficChannelUnits(device)"
+              [channelBackendKeys]="trafficBackendChannels(device)"
+            ></app-device-detail-panel>
+          </ng-container>
+        </div>
+
       </div>
     </div>
 
@@ -109,7 +123,7 @@
 <ng-template #loadingTpl>
   <div style="padding: 8px;">
     <div class="skeleton" style="height: 32px; width: 200px; margin-bottom: 24px;"></div>
-    <div class="skeleton" style="height: 180px; margin-bottom: 16px;"></div>
+    <div class="skeleton" style="height: 240px; margin-bottom: 16px;"></div>
     <div class="skeleton" style="height: 180px;"></div>
   </div>
 </ng-template>

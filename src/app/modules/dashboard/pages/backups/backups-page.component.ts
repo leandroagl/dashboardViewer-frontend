@@ -77,7 +77,7 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
     return jobs.filter(j => !this.isLogicalDisk(j.name));
   }
 
-  protected parseFreePct(value: string): number {
+  protected parseUsedPct(value: string): number {
     const m = value.match(/(\d+(?:[.,]\d+)?)/);
     return m ? parseFloat(m[1].replace(',', '.')) : 0;
   }
@@ -89,10 +89,6 @@ export class BackupsPageComponent extends BaseDashboardPage<BackupsDashboard> {
   protected formatGb(gb: number): string {
     if (gb >= 1024) return (gb / 1024).toFixed(1) + ' TB';
     return Math.round(gb) + ' GB';
-  }
-
-  protected jobSparkValues(d: BackupsDashboard, device: BackupDevice, job: BackupJob): number[] {
-    return d.sparklines?.[`${device.name}/${job.name}`]?.values ?? [];
   }
 
   protected jobOkCount(d: BackupsDashboard): number {

@@ -14,7 +14,7 @@ export interface MetricChannel { key: string; label: string; }
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="ddp">
-      <div class="ddp__header">
+      <div class="ddp__header" *ngIf="!hideHeader">
         <mat-icon class="ddp__icon">show_chart</mat-icon>
         <span class="ddp__label">{{ label }}</span>
       </div>
@@ -34,7 +34,9 @@ export interface MetricChannel { key: string; label: string; }
           [objid]="resolvedObjid()"
           [slug]="slug()"
           [label]="label"
-          [channel]="selectedChannel()"
+          [channel]="channelBackendKeys?.[selectedChannel()] ?? selectedChannel()"
+          [forceUnit]="channelUnits?.[selectedChannel()]"
+          [invertValues]="channelInvert?.[selectedChannel()] ?? false"
           [warningThreshold]="warningThreshold"
         ></app-history-chart>
       </div>
@@ -85,10 +87,21 @@ export class DeviceDetailPanelComponent implements OnChanges {
   readonly objid = input.required<number>();
   readonly slug  = input.required<string>();
   @Input() label = '';
+  @Input() hideHeader = false;
   @Input() warningThreshold?: number;
   @Input() channels: MetricChannel[] = [];
   /** Per-channel objids: when set, overrides the base objid for the active channel. */
   @Input() channelObjids?: Record<string, number>;
+  /** Per-channel unit overrides passed down to HistoryChart (e.g. 'MBit/s', 'd', '%'). */
+  @Input() channelUnits?: Record<string, string>;
+  /** Per-channel invert flag: when true for a channel, renders (100 - value) in HistoryChart. */
+  @Input() channelInvert?: Record<string, boolean>;
+  /**
+   * Maps each channel key → the channel string sent to the backend history API.
+   * Use when the unique display key (sensorName) differs from the backend pattern key
+   * (e.g. 'traffic', 'uptime'). Falls back to selectedChannel() when not set.
+   */
+  @Input() channelBackendKeys?: Record<string, string>;
 
   protected readonly selectedChannel = signal('');
 

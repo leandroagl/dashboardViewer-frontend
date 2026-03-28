@@ -45,6 +45,27 @@
 .server-card--warning { background: rgba(255, 167, 38, 0.04); }
 .server-card--error   { background: rgba(239, 83, 80, 0.04);  }
 
+.server-card__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: calc(100% + 32px);
+  margin: 10px -16px -14px;
+  padding: 6px 0;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  transition: background 0.15s, color 0.15s;
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+  &:hover  { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+  &.active { color: var(--color-primary); }
+}
+
 .server-card__header  { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .server-card__name    { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 .server-card__uptime  { margin-left: auto; font-size: 11px; color: var(--text-muted); white-space: nowrap; }

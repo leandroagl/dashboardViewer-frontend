@@ -98,12 +98,16 @@ export class HistoryChartComponent {
   readonly channel = input('');
   @Input() label = '';
   @Input() warningThreshold?: number;
+  /** Override auto-detected unit ('MBit/s' | 'd' | '%' | 'MB' | 'ms'). */
+  @Input() forceUnit?: string;
+  /** When true, renders (100 - value) — use for sensors that report available/free % instead of used %. */
+  @Input() invertValues = false;
 
   private readonly dashboard  = inject(DashboardService);
   private readonly destroyRef = inject(DestroyRef);
   private loadSub?: Subscription;
 
-  readonly ranges: HistoryRange[] = ['1h', '24h', '7d', '30d'];
+  readonly ranges: HistoryRange[] = ['24h', '7d', '30d'];
   readonly range        = signal<HistoryRange>('24h');
   readonly loading      = signal(false);
   readonly error        = signal(false);
@@ -135,27 +139,44 @@ export class HistoryChartComponent {
         const pts: HistoryPoint[] = data.points ?? [];
         const xVals = pts.map(p => new Date(p.datetime).getTime());
 
-        const ch = channel.toLowerCase();
-        const isDisk    = channel === 'diskR' || channel === 'diskW';
-        const isCpuRam  = channel === 'cpu'   || channel === 'ram';
-        const isUptime  = ch.includes('uptime');
-        const isTraffic = ch.includes('traffic') || ch.includes('bandwidth');
-        const isBytes   = isDisk || isTraffic;
+        const ch     = channel.toLowerCase();
+        const forced = (this.forceUnit ?? '').toLowerCase();
 
-        const BYTES_TO_MB  = 1_048_576;
-        const SECS_TO_DAYS = 86_400;
+        const isDisk    = channel === 'diskR' || channel === 'diskW';
+        const isCpuRam  = channel === 'cpu' || channel === 'ram' || forced === '%';
+        const isUptime  = forced === 'd'       || ch.includes('uptime');
+        const isTraffic = forced === 'mbit/s'  || ch.includes('traffic') || ch.includes('bandwidth');
+
+        const BYTES_TO_MB    = 1_048_576;
+        const SECS_TO_DAYS   = 86_400;
+        // PRTG "Traffic * (speed)" channels return bytes/s → ÷ 125_000 = MBit/s
+        // (1 MBit/s = 1_000_000 bits/s = 125_000 bytes/s)
+        const BYTES_S_TO_MBIT = 125_000;
 
         const round2 = (n: number) => Math.round(n * 100) / 100;
-        const yVals = isUptime  ? pts.map(p => round2(p.value / SECS_TO_DAYS))
-                    : isBytes   ? pts.map(p => round2(p.value / BYTES_TO_MB))
-                    :             pts.map(p => round2(p.value));
+        const rawVals = isUptime  ? pts.map(p => round2(p.value / SECS_TO_DAYS))
+                      : isDisk    ? pts.map(p => round2(p.value / BYTES_TO_MB))
+                      : isTraffic ? pts.map(p => round2(p.value / BYTES_S_TO_MBIT))
+                      :             pts.map(p => round2(p.value));
+        const yVals = this.invertValues ? rawVals.map(v => round2(100 - v)) : rawVals;
 
-        const yUnit      = isUptime ? 'd' : isBytes ? 'MB' : isCpuRam ? '%' : 'ms';
+        const yUnit      = isUptime ? 'd' : isDisk ? 'MB' : isTraffic ? 'MBit/s' : isCpuRam ? '%' : 'ms';
         const yFormatter = (v: number) => v.toFixed(2) + ' ' + yUnit;
 
-        const annotations: ApexAnnotations = {};
+        // Líneas de referencia: máx, promedio, mín
+        const yMax = yVals.length > 0 ? Math.max(...yVals) : 0;
+
+        const statsYaxis: NonNullable<ApexAnnotations['yaxis']> = yVals.length > 0 ? [
+          {
+            y: yMax, borderColor: 'rgba(77,208,225,0.6)', strokeDashArray: 4,
+            label: { text: `Máx ${yFormatter(yMax)}`, position: 'right',
+              style: { color: '#4dd0e1', background: 'transparent', fontSize: '10px', padding: { right: 4 } } }
+          },
+        ] : [];
+
+        const annotations: ApexAnnotations = { yaxis: statsYaxis };
         if (this.warningThreshold != null) {
-          annotations.yaxis = [{
+          annotations.yaxis!.push({
             y:            this.warningThreshold,
             borderColor:  'var(--status-warning)',
             strokeDashArray: 4,
@@ -163,7 +184,7 @@ export class HistoryChartComponent {
               text:  `${this.warningThreshold} ms`,
               style: { color: 'var(--status-warning)', background: 'transparent', fontSize: '10px' }
             }
-          }];
+          });
         }
 
         const dateFormat = range === '1h' || range === '24h' ? 'HH:mm' : 'dd/MM';
@@ -201,11 +222,8 @@ export class HistoryChartComponent {
           },
           dataLabels: { enabled: false },
           markers: {
-            size: 3,
-            colors: ['#4dd0e1'],
-            strokeColors: 'transparent',
-            strokeWidth: 0,
-            hover: { size: 5, sizeOffset: 0 },
+            size: 0,
+            hover: { size: 4, sizeOffset: 0 },
           },
           stroke: { curve: 'smooth', width: 2 },
           fill: {
