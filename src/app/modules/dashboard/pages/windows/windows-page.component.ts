@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
 import { WindowsDashboard, WindowsServer, SensorStatus } from '@core/models';
@@ -91,5 +91,24 @@ export class WindowsPageComponent extends BaseDashboardPage<WindowsDashboard> {
 
   protected alertingCol2(d: WindowsDashboard): WindowsServer[] {
     return this.alertingServers(d).filter((_, i) => i % 2 === 1);
+  }
+
+  protected readonly expandedServers = signal<Set<string>>(new Set());
+
+  protected toggleHistory(name: string): void {
+    this.expandedServers.update(set => {
+      const next = new Set(set);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  }
+
+  protected serverObjids(d: WindowsDashboard, srv: WindowsServer): Record<string, number> {
+    return {
+      cpu:      d.sparklines?.[`${srv.name}/cpu`]?.objid      ?? 0,
+      ram:      d.sparklines?.[`${srv.name}/ram`]?.objid      ?? 0,
+      diskFree: d.sparklines?.[`${srv.name}/diskFree`]?.objid ?? 0,
+    };
   }
 }

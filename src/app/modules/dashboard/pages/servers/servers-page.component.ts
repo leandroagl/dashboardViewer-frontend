@@ -22,11 +22,15 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
     return this.service.getServers(slug);
   }
 
-  // Tracks which host's history panel is expanded (only one at a time)
-  protected readonly expandedHost = signal<string | null>(null);
+  protected readonly expandedHosts = signal<Set<string>>(new Set());
 
   protected toggleHistory(hostName: string): void {
-    this.expandedHost.update(curr => curr === hostName ? null : hostName);
+    this.expandedHosts.update(set => {
+      const next = new Set(set);
+      if (next.has(hostName)) next.delete(hostName);
+      else next.add(hostName);
+      return next;
+    });
   }
 
   protected hostsOk(d: VmwareDashboard): number {

@@ -104,6 +104,32 @@
           [alerts]="serverAlerts(d, srv)"
         ></app-alert-list>
 
+        <!-- History panel -->
+        <app-device-detail-panel
+          *ngIf="expandedServers().has(srv.name)"
+          [objid]="serverObjids(d, srv)['cpu']"
+          [slug]="clientSlug()"
+          [label]="srv.name"
+          [channels]="[
+            { key: 'cpu',      label: 'CPU' },
+            { key: 'ram',      label: 'RAM' },
+            { key: 'diskFree', label: 'Disco Libre' }
+          ]"
+          [channelObjids]="serverObjids(d, srv)"
+          [channelUnits]="{ diskFree: '%' }"
+          [channelInvert]="{ ram: true }"
+        ></app-device-detail-panel>
+
+        <!-- History toggle -->
+        <button
+          class="server-card__toggle"
+          [class.active]="expandedServers().has(srv.name)"
+          (click)="toggleHistory(srv.name)"
+        >
+          <mat-icon>{{ expandedServers().has(srv.name) ? 'expand_less' : 'show_chart' }}</mat-icon>
+          {{ expandedServers().has(srv.name) ? 'Ocultar historial' : 'Ver historial' }}
+        </button>
+
       </div>
     </ng-template>
 

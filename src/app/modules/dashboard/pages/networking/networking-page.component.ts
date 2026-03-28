@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DashboardService } from '@core/services/dashboard.service';
 import { NetworkingDashboard, NetworkDevice, SensorStatus } from '@core/models';
@@ -20,32 +20,64 @@ export class NetworkingPageComponent extends BaseDashboardPage<NetworkingDashboa
     return this.service.getNetworking(slug);
   }
 
-  // ─── History panel state (multiple simultaneous) ─────────────────────────────
+  // ─── HA / traffic chart helpers ──────────────────────────────────────────────
 
-  readonly expandedDevices = signal<Set<string>>(new Set());
-
-  protected toggleHistory(device: NetworkDevice): void {
-    this.expandedDevices.update(set => {
-      const next = new Set(set);
-      if (next.has(device.name)) next.delete(device.name);
-      else next.add(device.name);
-      return next;
-    });
+  /** True when any router device has "MASTER" in its name → HA configuration. */
+  protected isHaConfig(d: NetworkingDashboard): boolean {
+    return d.devices.some(dev => /master/i.test(dev.name));
   }
 
-  protected sensorsAsChannels(device: NetworkDevice): { key: string; label: string }[] {
-    return device.sensors.map(s => ({ key: s.name, label: s.name }));
-  }
-
-  protected sensorObjids(d: NetworkingDashboard, device: NetworkDevice): Record<string, number> {
-    return Object.fromEntries(
-      device.sensors.map(s => [s.name, d.sparklines?.[device.name + '/' + s.name]?.objid ?? 0])
+  /** All router devices get a chart; in HA configs MASTER is listed first. */
+  protected chartDevices(d: NetworkingDashboard): NetworkDevice[] {
+    if (!this.isHaConfig(d)) return d.devices;
+    return [...d.devices].sort((a, b) =>
+      (/master/i.test(a.name) ? 0 : 1) - (/master/i.test(b.name) ? 0 : 1)
     );
   }
 
-  protected firstSensorObjid(d: NetworkingDashboard, device: NetworkDevice): number {
-    const first = device.sensors[0]?.name ?? '';
+  /** Badge label for a device in HA config ('MASTER' | 'BACKUP' | null). */
+  protected haRole(d: NetworkingDashboard, device: NetworkDevice): 'MASTER' | 'BACKUP' | null {
+    if (!this.isHaConfig(d)) return null;
+    return /master/i.test(device.name) ? 'MASTER' : 'BACKUP';
+  }
+
+  /**
+   * Traffic sensors of a device (value contains "bit" → MBit/s sensors).
+   * Falls back to all non-uptime sensors if no traffic sensor is detected.
+   */
+  protected trafficSensors(device: NetworkDevice): { key: string; label: string }[] {
+    const traffic = device.sensors
+      .filter(s => (s.value ?? '').toLowerCase().includes('bit'))
+      .map(s => ({ key: s.name, label: s.name }));
+
+    if (traffic.length > 0) return traffic;
+
+    return device.sensors
+      .filter(s => !s.name.toLowerCase().includes('uptime'))
+      .map(s => ({ key: s.name, label: s.name }));
+  }
+
+  protected trafficFirstObjid(d: NetworkingDashboard, device: NetworkDevice): number {
+    const first = this.trafficSensors(device)[0]?.key ?? '';
     return d.sparklines?.[device.name + '/' + first]?.objid ?? 0;
+  }
+
+  protected trafficSensorObjids(d: NetworkingDashboard, device: NetworkDevice): Record<string, number> {
+    return Object.fromEntries(
+      this.trafficSensors(device).map(s => [s.key, d.sparklines?.[device.name + '/' + s.key]?.objid ?? 0])
+    );
+  }
+
+  protected trafficChannelUnits(device: NetworkDevice): Record<string, string> {
+    return Object.fromEntries(
+      this.trafficSensors(device).map(s => [s.key, 'MBit/s'])
+    );
+  }
+
+  protected trafficBackendChannels(device: NetworkDevice): Record<string, string> {
+    return Object.fromEntries(
+      this.trafficSensors(device).map(s => [s.key, 'traffic'])
+    );
   }
 
   // ─── Helpers para el template ────────────────────────────────────────────────
@@ -73,5 +105,4 @@ export class NetworkingPageComponent extends BaseDashboardPage<NetworkingDashboa
   protected sensorAlert(d: NetworkingDashboard, device: NetworkDevice, sensorName: string) {
     return d.alerts.find(a => a.name === device.name + ' — ' + sensorName) ?? null;
   }
-
 }
