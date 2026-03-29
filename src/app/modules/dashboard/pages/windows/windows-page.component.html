@@ -62,40 +62,9 @@
 
         <!-- Metric Rows -->
         <div class="metric-rows">
-
-          <!-- CPU -->
-          <div class="metric-row">
-            <span class="metric-row__name">CPU</span>
-            <div class="metric-row__bar-wrap">
-              <div class="metric-row__bar metric-row__bar--{{ srv.cpu.status }}"
-                [style.width.%]="parseValue(srv.cpu.value)"></div>
-            </div>
-            <span class="metric-row__val mono metric-row__val--{{ srv.cpu.status }}">{{ srv.cpu.value }}</span>
-            <app-sparkline [values]="cpuSparkValues(d, srv)" [color]="statusColor(srv.cpu.status)"></app-sparkline>
-          </div>
-
-          <!-- RAM -->
-          <div class="metric-row">
-            <span class="metric-row__name">RAM</span>
-            <div class="metric-row__bar-wrap">
-              <div class="metric-row__bar metric-row__bar--{{ srv.memory.status }}"
-                [style.width.%]="parseValue(srv.memory.value)"></div>
-            </div>
-            <span class="metric-row__val mono metric-row__val--{{ srv.memory.status }}">{{ srv.memory.value }}</span>
-            <app-sparkline [values]="ramSparkValues(d, srv)" [color]="statusColor(srv.memory.status)"></app-sparkline>
-          </div>
-
-          <!-- Disco -->
-          <div class="metric-row">
-            <span class="metric-row__name">Disco</span>
-            <div class="metric-row__bar-wrap">
-              <div class="metric-row__bar metric-row__bar--{{ srv.disk.status }}"
-                [style.width.%]="parseValue(srv.disk.value)"></div>
-            </div>
-            <span class="metric-row__val mono metric-row__val--{{ srv.disk.status }}">{{ srv.disk.value }}</span>
-            <app-sparkline [values]="diskSparkValues(d, srv)" [color]="statusColor(srv.disk.status)"></app-sparkline>
-          </div>
-
+          <app-metric-row label="CPU"   [value]="srv.cpu.value"    [status]="srv.cpu.status"    [pct]="parseValue(srv.cpu.value)"    [sparkValues]="cpuSparkValues(d, srv)"></app-metric-row>
+          <app-metric-row label="RAM"   [value]="srv.memory.value" [status]="srv.memory.status" [pct]="parseValue(srv.memory.value)" [sparkValues]="ramSparkValues(d, srv)"></app-metric-row>
+          <app-metric-row label="Disco" [value]="srv.disk.value"   [status]="srv.disk.status"   [pct]="parseValue(srv.disk.value)"   [sparkValues]="diskSparkValues(d, srv)"></app-metric-row>
         </div>
 
         <!-- Per-server alerts -->

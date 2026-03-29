@@ -56,14 +56,6 @@ export class ServersPageComponent extends BaseDashboardPage<VmwareDashboard> {
     return d.sparklines?.[`${host.name}/diskW`];
   }
 
-  protected statusColor(status: SensorStatus): string {
-    switch (status) {
-      case 'ok':      return 'var(--status-ok)';
-      case 'warning': return 'var(--status-warning)';
-      case 'error':   return 'var(--status-error)';
-      default:        return 'var(--border-subtle)';
-    }
-  }
 
   protected hasOldSnapshots(d: VmwareDashboard): boolean {
     return d.hosts.some(h => h.snapshots.some((s: any) => {

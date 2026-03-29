@@ -19,6 +19,7 @@ import { SparklineComponent }         from './components/sparkline/sparkline.com
 import { HealthBarComponent }         from './components/health-bar/health-bar.component';
 import { DeviceDetailPanelComponent } from './components/device-detail-panel/device-detail-panel.component';
 import { HistoryChartComponent }      from './components/history-chart/history-chart.component';
+import { MetricRowComponent }         from './components/metric-row/metric-row.component';
 import { StripHtmlPipe } from './pipes/strip-html.pipe';
 
 const COMPONENTS = [
@@ -31,6 +32,7 @@ const COMPONENTS = [
   HealthBarComponent,
   DeviceDetailPanelComponent,
   HistoryChartComponent,
+  MetricRowComponent,
   StripHtmlPipe
 ];
 
