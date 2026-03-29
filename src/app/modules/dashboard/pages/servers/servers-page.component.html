@@ -42,56 +42,10 @@
 
         <!-- Metric Rows -->
         <div class="metric-rows">
-
-          <!-- CPU -->
-          <div class="metric-row">
-            <span class="metric-row__name">CPU</span>
-            <div class="metric-row__bar-wrap">
-              <div class="metric-row__bar metric-row__bar--{{ host.cpu.status }}" [style.width.%]="host.cpu.pct"></div>
-            </div>
-            <span class="metric-row__val mono metric-row__val--{{ host.cpu.status }}">{{ host.cpu.value }}</span>
-            <app-sparkline
-              [values]="cpuSparkline(d, host)?.values ?? []"
-              [color]="statusColor(host.cpu.status)"
-            ></app-sparkline>
-          </div>
-
-          <!-- RAM -->
-          <div class="metric-row">
-            <span class="metric-row__name">RAM</span>
-            <div class="metric-row__bar-wrap">
-              <div class="metric-row__bar metric-row__bar--{{ host.memory.status }}" [style.width.%]="host.memory.pct"></div>
-            </div>
-            <span class="metric-row__val mono metric-row__val--{{ host.memory.status }}">{{ host.memory.value }}</span>
-            <app-sparkline
-              [values]="ramSparkline(d, host)?.values ?? []"
-              [color]="statusColor(host.memory.status)"
-            ></app-sparkline>
-          </div>
-
-          <!-- Disco Lectura -->
-          <div class="metric-row">
-            <span class="metric-row__name">Disco R</span>
-            <div class="metric-row__bar-wrap metric-row__bar-wrap--empty"></div>
-            <span class="metric-row__val mono metric-row__val--{{ host.disk.read.status }}">{{ host.disk.read.value }}</span>
-            <app-sparkline
-              [values]="diskRSparkline(d, host)?.values ?? []"
-              [color]="statusColor(host.disk.read.status)"
-            ></app-sparkline>
-          </div>
-
-          <!-- Disco Escritura -->
-          <div class="metric-row">
-            <span class="metric-row__name">Disco W</span>
-            <div class="metric-row__bar-wrap metric-row__bar-wrap--empty"></div>
-            <span class="metric-row__val mono metric-row__val--{{ host.disk.write.status }}">{{ host.disk.write.value }}</span>
-            <app-sparkline
-              [values]="diskWSparkline(d, host)?.values ?? []"
-              [color]="statusColor(host.disk.write.status)"
-            ></app-sparkline>
-          </div>
-
-
+          <app-metric-row label="CPU"     [value]="host.cpu.value"        [status]="host.cpu.status"        [pct]="host.cpu.pct"    [sparkValues]="cpuSparkline(d, host)?.values ?? []"></app-metric-row>
+          <app-metric-row label="RAM"     [value]="host.memory.value"     [status]="host.memory.status"     [pct]="host.memory.pct" [sparkValues]="ramSparkline(d, host)?.values ?? []"></app-metric-row>
+          <app-metric-row label="Disco R" [value]="host.disk.read.value"  [status]="host.disk.read.status"                          [sparkValues]="diskRSparkline(d, host)?.values ?? []"></app-metric-row>
+          <app-metric-row label="Disco W" [value]="host.disk.write.value" [status]="host.disk.write.status"                         [sparkValues]="diskWSparkline(d, host)?.values ?? []"></app-metric-row>
         </div>
 
         <!-- Datastores -->

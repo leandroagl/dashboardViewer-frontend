@@ -10,47 +10,6 @@
 // ── Metric rows ──────────────────────────────────────────────────────────────
 .metric-rows { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; }
 
-.metric-row {
-  display: grid;
-  grid-template-columns: 80px 1fr 80px 68px;
-  align-items: center;
-  gap: 8px;
-}
-
-.metric-row__name {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-.metric-row__bar-wrap {
-  height: 3px;
-  background: var(--bg-page);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.metric-row__bar-wrap--empty { background: transparent; }
-
-.metric-row__bar {
-  height: 100%;
-  border-radius: 2px;
-  transition: width 0.3s;
-  background: var(--status-ok);
-}
-.metric-row__bar--warning { background: var(--status-warning); }
-.metric-row__bar--error   { background: var(--status-error);   }
-.metric-row__bar--unknown { background: var(--border-subtle);  }
-
-.metric-row__val {
-  font-size: 12px;
-  text-align: right;
-  color: var(--text-primary);
-}
-.metric-row__val--warning { color: var(--status-warning); }
-.metric-row__val--error   { color: var(--status-error);   }
-
 // ── Datastore cards ───────────────────────────────────────────────────────────
 .ds-section { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
 
