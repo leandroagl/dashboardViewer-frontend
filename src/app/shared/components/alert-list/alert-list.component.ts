@@ -25,7 +25,7 @@ export interface AlertItem {
         <mat-icon>check_circle</mat-icon>
         <span>Sin alertas activas</span>
       </div>
-      <div *ngFor="let alert of alerts" class="alert-list__item">
+      <div *ngFor="let alert of alerts" class="alert-list__item alert-list__item--{{ alert.status || 'error' }}">
         <div class="alert-list__severity alert-list__severity--{{ alert.status || 'error' }}"></div>
         <div class="alert-list__content">
           <div class="alert-list__name">{{ alert.name }}</div>
@@ -43,7 +43,10 @@ export interface AlertItem {
     .alert-list__badge--warning { background: var(--status-warning); }
     .alert-list__empty  { display: flex; align-items: center; gap: 8px; color: var(--status-ok); font-size: 13px; padding: 8px 0; }
     .alert-list__empty mat-icon { font-size: 18px; width: 18px; height: 18px; }
-    .alert-list__item   { display: flex; align-items: stretch; gap: 0; padding: 8px 10px; border-radius: var(--radius-sm); background: var(--bg-elevated); }
+    .alert-list__item          { display: flex; align-items: stretch; gap: 0; padding: 8px 10px; border-radius: var(--radius-sm); background: var(--bg-elevated); }
+    .alert-list__item--error   { background: rgba(239, 83, 80, 0.08);  }
+    .alert-list__item--warning { background: rgba(255, 167, 38, 0.08); }
+    .alert-list__item--unusual { background: rgba(41, 182, 246, 0.08); }
     .alert-list__severity { width: 3px; border-radius: 2px; flex-shrink: 0; margin-right: 10px; background: var(--status-error); }
     .alert-list__severity--warning { background: var(--status-warning);  }
     .alert-list__severity--unusual { background: var(--status-unusual);  }
