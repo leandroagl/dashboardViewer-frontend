@@ -1,0 +1,58 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Build and Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular
+        run: npm run build:prod
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Upload dist to server
+        run: |
+          rsync -az --delete \
+            -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            dist/ondra-monitor/browser/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.FRONTEND_DIR }}/dist/ondra-monitor/browser/
+
+      - name: Rebuild and restart frontend container
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} bash << 'SSHEOF'
+            set -e
+            flock -n /tmp/ondra-frontend-deploy.lock bash -c '
+              set -e
+              cd ${{ secrets.BACKEND_DIR }}
+              echo "--- Rebuilding frontend container ---"
+              docker compose up -d --build frontend
+              echo "--- Deploy complete ---"
+              docker compose ps frontend
+            ' || { echo "ERROR: Another deploy is already running"; exit 1; }
+          SSHEOF
