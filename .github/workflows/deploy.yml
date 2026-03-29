@@ -49,8 +49,11 @@ jobs:
             set -e
             flock -n /tmp/ondra-frontend-deploy.lock bash -c '
               set -e
-              cd ${{ secrets.BACKEND_DIR }}
+              echo "--- Pulling latest frontend repo (Dockerfile, nginx.conf) ---"
+              cd ${{ secrets.FRONTEND_DIR }}
+              git pull origin main
               echo "--- Rebuilding frontend container ---"
+              cd ${{ secrets.BACKEND_DIR }}
               docker compose up -d --build frontend
               echo "--- Deploy complete ---"
               docker compose ps frontend
