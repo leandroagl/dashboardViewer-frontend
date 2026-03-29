@@ -36,6 +36,11 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+      - name: Update frontend repo on server
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "cd ${{ secrets.FRONTEND_DIR }} && git pull origin main"
+
       - name: Upload dist to server
         run: |
           rsync -az --delete \
@@ -49,11 +54,8 @@ jobs:
             set -e
             flock -n /tmp/ondra-frontend-deploy.lock bash -c '
               set -e
-              echo "--- Pulling latest frontend repo (Dockerfile, nginx.conf) ---"
-              cd ${{ secrets.FRONTEND_DIR }}
-              git pull origin main
-              echo "--- Rebuilding frontend container ---"
               cd ${{ secrets.BACKEND_DIR }}
+              echo "--- Rebuilding frontend container ---"
               docker compose up -d --build frontend
               echo "--- Deploy complete ---"
               docker compose ps frontend
